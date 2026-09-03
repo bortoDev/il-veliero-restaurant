@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%" aria-label="Poster Menù — Pizze Campione del Mondo e Specialità di Mare">
+  <defs>
+    <!-- Warm Oven & Flame Gradients -->
+    <radialGradient id="ovenGlow" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#ffe6a7"/>
+      <stop offset="30%" stop-color="#ff9f1c"/>
+      <stop offset="70%" stop-color="#d90429"/>
+      <stop offset="90%" stop-color="#4f000b"/>
+      <stop offset="100%" stop-color="#0b090a"/>
+    </radialGradient>
+
+    <!-- Pizza Crust Gradient -->
+    <radialGradient id="crustGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffe5b4"/>
+      <stop offset="70%" stop-color="#d4a373"/>
+      <stop offset="90%" stop-color="#bc6c25"/>
+      <stop offset="100%" stop-color="#6b3a0a"/>
+    </radialGradient>
+
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background Oven Hearth -->
+  <rect width="800" height="600" fill="url(#ovenGlow)"/>
+
+  <!-- Oven Stone Brick Arch in Background -->
+  <path d="M 100,600 C 100,200 700,200 700,600 L 800,600 L 800,0 L 0,0 L 0,600 Z" fill="#1b120c" opacity="0.9"/>
+  <!-- Brick Mortar Lines -->
+  <g stroke="#3e200c" stroke-width="2" opacity="0.6">
+    <path d="M 120,600 C 120,240 680,240 680,600" fill="none"/>
+    <path d="M 150,600 C 150,280 650,280 650,600" fill="none"/>
+  </g>
+
+  <!-- Golden Wood-Fired Pizza on Rustic Peel -->
+  <g id="pizza-dish" transform="translate(400, 360)" filter="url(#cardShadow)">
+    <!-- Wooden Pizza Peel (Pala) Handle & Board -->
+    <path d="M -260,180 L -380,260 L -350,290 L -230,210 Z" fill="#804e28" stroke="#4f2b12" stroke-width="2"/>
+    <circle cx="0" cy="0" r="230" fill="#a07844" stroke="#4f2b12" stroke-width="3"/>
+
+    <!-- Outer Pizza Crust with Charred Neapolitan Blisters (Cornicione) -->
+    <circle cx="0" cy="0" r="210" fill="url(#crustGrad)" stroke="#542a04" stroke-width="2"/>
+    <!-- Leopard Spot Charring (Marmorizzazione) -->
+    <g fill="#331807" opacity="0.65">
+      <ellipse cx="-160" cy="-60" rx="14" ry="8" transform="rotate(20 -160 -60)"/>
+      <ellipse cx="140" cy="-110" rx="18" ry="10" transform="rotate(-35 140 -110)"/>
+      <ellipse cx="170" cy="80" rx="12" ry="7" transform="rotate(45 170 80)"/>
+      <ellipse cx="-130" cy="120" rx="16" ry="9" transform="rotate(-15 -130 120)"/>
+      <ellipse cx="20" cy="-190" rx="15" ry="8"/>
+      <ellipse cx="-40" cy="190" rx="14" ry="7"/>
+    </g>
+
+    <!-- Tomato Sauce & Melted Mozzarella Core -->
+    <circle cx="0" cy="0" r="165" fill="#d90429" stroke="#9d0208" stroke-width="2"/>
+    <circle cx="0" cy="0" r="150" fill="#e63946" opacity="0.9"/>
+
+    <!-- Melted Mozzarella Pools (Fior di Latte) -->
+    <g fill="#ffffff" stroke="#fefae0" stroke-width="1.5" opacity="0.95">
+      <circle cx="-50" cy="-40" r="35"/>
+      <circle cx="45" cy="-60" r="40"/>
+      <circle cx="60" cy="35" r="38"/>
+      <circle cx="-55" cy="50" r="36"/>
+      <circle cx="0" cy="0" r="32"/>
+    </g>
+
+    <!-- Fresh Seafood Toppings: Scampi, Mussels & Clams -->
+    <!-- Center Scampi / Gamberone -->
+    <g id="scampi-topping" transform="translate(10, -15) rotate(25)">
+      <path d="M -30,-10 C -15,-35 25,-35 40,-10 C 50,10 30,30 5,30 C -20,30 -35,10 -30,-10 Z" fill="#ff758f" stroke="#c9184a" stroke-width="2"/>
+      <path d="M 40,-10 C 60,-20 75,-15 80,-5 C 75,5 60,10 40,-10 Z" fill="#ff4d6d"/>
+      <line x1="80" y1="-5" x2="110" y2="-20" stroke="#ff4d6d" stroke-width="1.5"/>
+      <line x1="80" y1="-5" x2="115" y2="5" stroke="#ff4d6d" stroke-width="1.5"/>
+    </g>
+
+    <!-- Fresh Basil Leaves -->
+    <g fill="#2d6a4f" stroke="#1b4332" stroke-width="1">
+      <path d="M -70,-80 Q -105,-110 -80,-130 Q -55,-110 -70,-80 Z"/>
+      <path d="M 80,-10 Q 115,-30 110,-55 Q 85,-40 80,-10 Z"/>
+      <path d="M -10,80 Q 20,110 35,90 Q 20,65 -10,80 Z"/>
+    </g>
+  </g>
+
+  <!-- Overlay Vignette & Badge -->
+  <rect width="800" height="600" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="20"/>
+  <rect x="0" y="480" width="800" height="120" fill="linear-gradient(to top, rgba(7,25,47,0.95), transparent)"/>
+
+  <text x="400" y="550" font-family="'Cinzel', serif" font-size="34" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="4">
+    MENÙ &amp; PIZZE SPECIALI
+  </text>
+</svg>

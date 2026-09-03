@@ -1,0 +1,100 @@
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-timone',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div
+      class="timone-wrapper"
+      [style.width]="size"
+      [style.height]="size"
+      [style.transform]="'rotate(' + rotation + 'deg)'"
+      role="img"
+      aria-label="Timone di Nave"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 200 200"
+        width="100%"
+        height="100%"
+      >
+        <defs>
+          <radialGradient id="helmHubComp" cx="35%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#fff8db"/>
+            <stop offset="40%" stop-color="#dda15e"/>
+            <stop offset="85%" stop-color="#bc6c25"/>
+            <stop offset="100%" stop-color="#542a04"/>
+          </radialGradient>
+
+          <linearGradient id="helmWoodComp" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ab7344"/>
+            <stop offset="50%" stop-color="#804e28"/>
+            <stop offset="100%" stop-color="#4f2b12"/>
+          </linearGradient>
+
+          <filter id="helmShadowComp" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#07192f" flood-opacity="0.3"/>
+          </filter>
+        </defs>
+
+        <g filter="url(#helmShadowComp)">
+          <!-- 8 Spokes Handles -->
+          <rect x="96" y="8" width="8" height="30" rx="4" fill="url(#helmWoodComp)" stroke="#3e200c" stroke-width="1"/>
+          <rect x="96" y="8" width="8" height="30" rx="4" fill="url(#helmWoodComp)" stroke="#3e200c" stroke-width="1" transform="rotate(45 100 100)"/>
+          <rect x="96" y="8" width="8" height="30" rx="4" fill="url(#helmWoodComp)" stroke="#3e200c" stroke-width="1" transform="rotate(90 100 100)"/>
+          <rect x="96" y="8" width="8" height="30" rx="4" fill="url(#helmWoodComp)" stroke="#3e200c" stroke-width="1" transform="rotate(135 100 100)"/>
+          <rect x="96" y="8" width="8" height="30" rx="4" fill="url(#helmWoodComp)" stroke="#3e200c" stroke-width="1" transform="rotate(180 100 100)"/>
+          <rect x="96" y="8" width="8" height="30" rx="4" fill="url(#helmWoodComp)" stroke="#3e200c" stroke-width="1" transform="rotate(225 100 100)"/>
+          <rect x="96" y="8" width="8" height="30" rx="4" fill="url(#helmWoodComp)" stroke="#3e200c" stroke-width="1" transform="rotate(270 100 100)"/>
+          <rect x="96" y="8" width="8" height="30" rx="4" fill="url(#helmWoodComp)" stroke="#3e200c" stroke-width="1" transform="rotate(315 100 100)"/>
+
+          <!-- Wheel Rim -->
+          <circle cx="100" cy="100" r="70" fill="none" stroke="url(#helmWoodComp)" stroke-width="14"/>
+          <circle cx="100" cy="100" r="77" fill="none" stroke="#3e200c" stroke-width="1.5"/>
+          <circle cx="100" cy="100" r="63" fill="none" stroke="#3e200c" stroke-width="1.5"/>
+
+          <!-- Brass Trim -->
+          <circle cx="100" cy="100" r="74" fill="none" stroke="url(#helmHubComp)" stroke-width="1"/>
+          <circle cx="100" cy="100" r="66" fill="none" stroke="url(#helmHubComp)" stroke-width="1"/>
+
+          <!-- Spokes -->
+          <g stroke="url(#helmWoodComp)" stroke-width="7" stroke-linecap="round">
+            <line x1="100" y1="36" x2="100" y2="164"/>
+            <line x1="36" y1="100" x2="164" y2="100"/>
+            <line x1="55" y1="55" x2="145" y2="145"/>
+            <line x1="145" y1="55" x2="55" y2="145"/>
+          </g>
+
+          <!-- Hub -->
+          <circle cx="100" cy="100" r="28" fill="url(#helmHubComp)" stroke="#542a04" stroke-width="2"/>
+          <circle cx="100" cy="100" r="20" fill="url(#helmWoodComp)" stroke="#3e200c" stroke-width="1.5"/>
+          <circle cx="100" cy="100" r="10" fill="url(#helmHubComp)" stroke="#542a04" stroke-width="1.2"/>
+          <circle cx="98" cy="98" r="3" fill="#ffffff" opacity="0.8"/>
+        </g>
+      </svg>
+    </div>
+  `,
+  styles: [`
+    :host {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .timone-wrapper {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.4s ease;
+
+      &:hover {
+        transform: rotate(30deg);
+      }
+    }
+  `],
+})
+export class TimoneComponent {
+  @Input() size = '64px';
+  @Input() rotation = 0;
+}

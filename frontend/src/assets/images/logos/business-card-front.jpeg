@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="100%" height="100%" aria-label="Biglietto da Visita Fronte">
+  <rect x="20" y="20" width="960" height="560" rx="16" fill="#b9d6eb" stroke="#8da9c4" stroke-width="2"/>
+  <text x="250" y="260" font-family="'Brush Script MT', cursive" font-size="44" font-weight="bold" fill="#0b2545" text-anchor="middle">il Veliero</text>
+  <text x="250" y="290" font-family="'Montserrat', sans-serif" font-size="18" fill="#0b2545" text-anchor="middle">Ristorante — Specialità Pesce</text>
+  <text x="750" y="260" font-family="'Impact', sans-serif" font-size="34" fill="#ffd166" stroke="#000" stroke-width="1.5" text-anchor="middle">PIZZA CAMPIONE DEL MONDO</text>
+  <text x="750" y="290" font-family="'Montserrat', sans-serif" font-size="18" fill="#0b2545" text-anchor="middle">Pizzeria — Forno a Legna</text>
+</svg>

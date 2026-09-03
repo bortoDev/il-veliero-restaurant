@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="100%" height="100%" aria-label="Biglietto da Visita Fronte — Il Veliero e Pizza dal Campione del Mondo">
+  <defs>
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d6e6f2"/>
+      <stop offset="50%" stop-color="#b9d6eb"/>
+      <stop offset="100%" stop-color="#a2c4de"/>
+    </linearGradient>
+
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0b2545" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <g id="business-card-front" filter="url(#cardShadow)">
+    <!-- Card Surface (Rounded rectangle) -->
+    <rect x="20" y="20" width="960" height="560" rx="16" fill="url(#cardBg)" stroke="#8da9c4" stroke-width="2"/>
+
+    <!-- Left Side: RISTORANTE IL VELIERO -->
+    <g id="left-section" transform="translate(250, 220)">
+      <!-- Mini Veliero Emblem -->
+      <circle cx="0" cy="-60" r="100" fill="#ffffff" stroke="#0096c7" stroke-width="3"/>
+      <!-- Veliero Silhouette inside -->
+      <g stroke="#0b2545" fill="#0b2545" transform="translate(-50, -110) scale(0.2)">
+        <line x1="180" y1="315" x2="180" y2="100" stroke-width="12"/>
+        <line x1="275" y1="320" x2="275" y2="45" stroke-width="14"/>
+        <line x1="370" y1="315" x2="370" y2="120" stroke-width="10"/>
+        <path d="M 68,248 Q 130,225 178,105 Q 140,185 72,252 Z" fill="#ffffff"/>
+        <path d="M 132,120 Q 180,128 228,120 Q 235,160 238,172 Q 180,185 122,172 Z" fill="#ffffff"/>
+        <path d="M 122,175 Q 180,185 238,175 Q 246,225 248,238 Q 180,252 112,238 Z" fill="#ffffff"/>
+        <path d="M 226,75 Q 275,82 324,75 Q 332,120 338,132 Q 275,145 212,132 Z" fill="#ffffff"/>
+        <path d="M 212,135 Q 275,148 338,135 Q 348,188 352,202 Q 275,218 198,202 Z" fill="#ffffff"/>
+        <path d="M 196,205 Q 275,220 354,205 Q 362,258 364,272 Q 275,290 186,272 Z" fill="#ffffff"/>
+        <path d="M 135,310 C 95,318 85,325 105,365 C 140,405 240,410 340,415 C 415,390 445,355 L 448,310 Z"/>
+      </g>
+
+      <!-- Script "il Veliero" -->
+      <text x="0" y="70" font-family="'Brush Script MT', 'Great Vibes', cursive" font-size="44" font-weight="bold" font-style="italic" fill="#0b2545" text-anchor="middle">
+        il Veliero
+      </text>
+      <!-- "Ristorante" -->
+      <text x="0" y="95" font-family="'Montserrat', sans-serif" font-size="18" fill="#0b2545" text-anchor="middle" letter-spacing="3">
+        Ristorante
+      </text>
+
+      <!-- Horizontal Divider -->
+      <line x1="-150" y1="125" x2="150" y2="125" stroke="#0b2545" stroke-width="2"/>
+
+      <!-- Specialties Text -->
+      <text x="0" y="165" font-family="'Montserrat', sans-serif" font-size="24" font-weight="bold" fill="#0b2545" text-anchor="middle">
+        Specialità pesce
+      </text>
+      <text x="0" y="200" font-family="'Montserrat', sans-serif" font-size="18" font-style="italic" fill="#1d2d44" text-anchor="middle">
+        Pesce sempre fresco
+      </text>
+      <text x="0" y="230" font-family="'Montserrat', sans-serif" font-size="18" font-style="italic" fill="#1d2d44" text-anchor="middle">
+        Piatti stagionali
+      </text>
+    </g>
+
+    <!-- Right Side: PIZZERIA DAL CAMPIONE DEL MONDO -->
+    <g id="right-section" transform="translate(750, 220)">
+      <!-- Mini Laurel & Globe Emblem -->
+      <g transform="translate(0, -60) scale(0.55)">
+        <!-- Laurel -->
+        <path d="M -90,-60 C -120,0 -80,90 0,100 C 80,90 120,0 90,-60" fill="none" stroke="#2d6a4f" stroke-width="12" stroke-linecap="round"/>
+        <!-- Globe -->
+        <circle cx="0" cy="0" r="80" fill="#1d4e89" stroke="#0b2545" stroke-width="3"/>
+        <path d="M -50,-20 Q -20,-10 20,-30 Q 50,0 20,40 Q -20,50 -50,-20 Z" fill="#ffd166"/>
+        <!-- Pizza Title -->
+        <text x="0" y="-30" font-family="'Impact', sans-serif" font-size="34" fill="#ffd166" stroke="#000" stroke-width="2" text-anchor="middle">PIZZA</text>
+        <!-- Banner Ribbon -->
+        <path d="M -80,20 Q 0,-15 80,20 L 85,55 Q 0,20 -85,55 Z" fill="#ffd166" stroke="#8a5e07" stroke-width="2"/>
+        <text x="0" y="38" font-family="'Impact', sans-serif" font-size="16" fill="#0b2545" text-anchor="middle">CAMPIONE DEL MONDO</text>
+      </g>
+
+      <!-- "RISTORANTE - PIZZERIA" -->
+      <text x="0" y="95" font-family="'Impact', sans-serif" font-size="18" fill="#bc6c25" text-anchor="middle" letter-spacing="2">
+        RISTORANTE - PIZZERIA
+      </text>
+
+      <!-- Horizontal Divider -->
+      <line x1="-150" y1="125" x2="150" y2="125" stroke="#0b2545" stroke-width="2"/>
+
+      <!-- Pizzeria Text -->
+      <text x="0" y="165" font-family="'Montserrat', sans-serif" font-size="24" font-weight="bold" fill="#0b2545" text-anchor="middle">
+        Pizzeria
+      </text>
+      <text x="0" y="200" font-family="'Montserrat', sans-serif" font-size="18" font-style="italic" fill="#1d2d44" text-anchor="middle">
+        Forno a legna
+      </text>
+      <text x="0" y="230" font-family="'Montserrat', sans-serif" font-size="18" font-style="italic" fill="#1d2d44" text-anchor="middle">
+        Pizze speciali di stagione
+      </text>
+    </g>
+  </g>
+</svg>

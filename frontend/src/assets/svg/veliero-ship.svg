@@ -1,0 +1,234 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%" aria-label="Veliero — Nave a Tre Alberi Il Veliero">
+  <defs>
+    <!-- Sail Gradients & Shadows -->
+    <linearGradient id="sailLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="60%" stop-color="#f8fafc"/>
+      <stop offset="90%" stop-color="#e2e8f0"/>
+      <stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+
+    <linearGradient id="sailShade" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f1f5f9"/>
+      <stop offset="50%" stop-color="#cbd5e1"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+
+    <linearGradient id="hullGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#134074"/>
+      <stop offset="35%" stop-color="#0b2545"/>
+      <stop offset="85%" stop-color="#07192f"/>
+      <stop offset="100%" stop-color="#020914"/>
+    </linearGradient>
+
+    <linearGradient id="woodMast" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#542a04"/>
+      <stop offset="40%" stop-color="#8a4b12"/>
+      <stop offset="80%" stop-color="#bc6c25"/>
+      <stop offset="100%" stop-color="#542a04"/>
+    </linearGradient>
+
+    <linearGradient id="goldTrim" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#bc6c25"/>
+      <stop offset="50%" stop-color="#fefae0"/>
+      <stop offset="100%" stop-color="#dda15e"/>
+    </linearGradient>
+
+    <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1d4e89" stop-opacity="0.8"/>
+      <stop offset="50%" stop-color="#8da9c4" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#134074" stop-opacity="0.85"/>
+    </linearGradient>
+
+    <filter id="shipShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#07192f" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <g id="veliero-full-art" filter="url(#shipShadow)">
+    <!-- ============================================== -->
+    <!-- MASTS & YARDS (ALBERATURA)                     -->
+    <!-- ============================================== -->
+    <g id="masts-spars" stroke="#3b1d03" stroke-linecap="round">
+      <!-- Bowsprit (Bompresso) extending to upper left -->
+      <line x1="165" y1="310" x2="65" y2="250" stroke="url(#woodMast)" stroke-width="6"/>
+      <line x1="165" y1="308" x2="65" y2="248" stroke="#fefae0" stroke-width="1" opacity="0.6"/>
+
+      <!-- Foremast (Albero di Trinchetto) -->
+      <line x1="180" y1="315" x2="180" y2="100" stroke="url(#woodMast)" stroke-width="5"/>
+      <!-- Fore Yards (Pennoni) -->
+      <line x1="130" y1="120" x2="230" y2="120" stroke="url(#woodMast)" stroke-width="3.5"/>
+      <line x1="120" y1="175" x2="240" y2="175" stroke="url(#woodMast)" stroke-width="4"/>
+      <line x1="110" y1="240" x2="250" y2="240" stroke="url(#woodMast)" stroke-width="4.5"/>
+
+      <!-- Mainmast (Albero Maestro - Tallest) -->
+      <line x1="275" y1="320" x2="275" y2="45" stroke="url(#woodMast)" stroke-width="6"/>
+      <!-- Main Yards (Pennoni) -->
+      <line x1="225" y1="75" x2="325" y2="75" stroke="url(#woodMast)" stroke-width="3.5"/>
+      <line x1="210" y1="135" x2="340" y2="135" stroke="url(#woodMast)" stroke-width="4"/>
+      <line x1="195" y1="205" x2="355" y2="205" stroke="url(#woodMast)" stroke-width="4.5"/>
+      <line x1="185" y1="275" x2="365" y2="275" stroke="url(#woodMast)" stroke-width="5"/>
+
+      <!-- Mizzenmast (Albero di Mezzana - Stern) -->
+      <line x1="370" y1="315" x2="370" y2="120" stroke="url(#woodMast)" stroke-width="4.5"/>
+      <!-- Mizzen Yards & Gaff/Boom -->
+      <line x1="330" y1="145" x2="410" y2="145" stroke="url(#woodMast)" stroke-width="3"/>
+      <line x1="320" y1="205" x2="420" y2="205" stroke="url(#woodMast)" stroke-width="3.5"/>
+      <!-- Spanker Gaff & Boom -->
+      <line x1="370" y1="250" x2="445" y2="225" stroke="url(#woodMast)" stroke-width="3"/>
+      <line x1="370" y1="310" x2="455" y2="305" stroke="url(#woodMast)" stroke-width="3.5"/>
+    </g>
+
+    <!-- Masthead Pennants & Flags catching the wind -->
+    <g id="pennants">
+      <!-- Mainmast Pennant (Swallowtail gold streamer) -->
+      <path d="M 275,45 Q 315,35 365,48 L 345,56 L 365,64 Q 315,55 275,52 Z" fill="url(#goldTrim)" stroke="#8a4b12" stroke-width="0.8"/>
+      <!-- Foremast Pennant -->
+      <path d="M 180,100 Q 215,92 245,102 L 232,108 L 245,114 Q 215,106 180,104 Z" fill="url(#goldTrim)" stroke="#8a4b12" stroke-width="0.8"/>
+      <!-- Mizzen Pennant -->
+      <path d="M 370,120 Q 398,114 425,122 L 415,127 L 425,132 Q 398,126 370,124 Z" fill="url(#goldTrim)" stroke="#8a4b12" stroke-width="0.8"/>
+    </g>
+
+    <!-- Standing Rigging & Shrouds (Manovre Fisse e Sartie) -->
+    <g id="rigging" stroke="#07192f" stroke-width="0.8" opacity="0.65">
+      <!-- Forestays from Bowsprit -->
+      <line x1="65" y1="250" x2="180" y2="100"/>
+      <line x1="95" y1="268" x2="180" y2="175"/>
+      <line x1="125" y1="285" x2="180" y2="240"/>
+      <line x1="180" y1="120" x2="275" y2="50"/>
+      <line x1="180" y1="180" x2="275" y2="140"/>
+      <line x1="275" y1="140" x2="370" y2="120"/>
+
+      <!-- Shrouds & Ratlines (Foremast) -->
+      <line x1="180" y1="175" x2="145" y2="315"/>
+      <line x1="180" y1="175" x2="155" y2="315"/>
+      <line x1="180" y1="175" x2="165" y2="315"/>
+      <line x1="148" y1="290" x2="165" y2="290" stroke-width="0.6"/>
+      <line x1="152" y1="275" x2="168" y2="275" stroke-width="0.6"/>
+      <line x1="156" y1="260" x2="172" y2="260" stroke-width="0.6"/>
+
+      <!-- Shrouds & Ratlines (Mainmast) -->
+      <line x1="275" y1="140" x2="235" y2="320"/>
+      <line x1="275" y1="140" x2="248" y2="320"/>
+      <line x1="275" y1="140" x2="260" y2="320"/>
+      <line x1="238" y1="295" x2="260" y2="295" stroke-width="0.6"/>
+      <line x1="242" y1="278" x2="264" y2="278" stroke-width="0.6"/>
+      <line x1="246" y1="260" x2="268" y2="260" stroke-width="0.6"/>
+    </g>
+
+    <!-- ============================================== -->
+    <!-- BILLOWING WHITE & CREAM SAILS (VELE SPIEGATE)  -->
+    <!-- ============================================== -->
+    <g id="sails">
+      <!-- JIBS (FIOCCHI) - Triangular sails on bowsprit -->
+      <path d="M 68,248 Q 130,225 178,105 Q 140,185 72,252 Z" fill="url(#sailLight)" stroke="#0b2545" stroke-width="1.2"/>
+      <path d="M 100,266 Q 145,248 178,178 Q 148,230 104,270 Z" fill="url(#sailLight)" stroke="#0b2545" stroke-width="1.2"/>
+
+      <!-- FOREMAST SAILS (VELE DI TRINCHETTO) -->
+      <!-- Fore Topgallant (Parrocchetto Alto) -->
+      <path d="M 132,120 Q 180,128 228,120 Q 235,160 238,172 Q 180,185 122,172 Q 125,160 132,120 Z" fill="url(#sailLight)" stroke="#0b2545" stroke-width="1.2"/>
+      <!-- Fore Topsail (Parrocchetto Basso) -->
+      <path d="M 122,175 Q 180,185 238,175 Q 246,225 248,238 Q 180,252 112,238 Q 115,225 122,175 Z" fill="url(#sailLight)" stroke="#0b2545" stroke-width="1.4"/>
+      <!-- Foresail Course (Trinchetto di Basso) -->
+      <path d="M 112,240 Q 180,254 248,240 Q 256,290 258,305 Q 180,320 102,305 Q 105,290 112,240 Z" fill="url(#sailLight)" stroke="#0b2545" stroke-width="1.5"/>
+
+      <!-- MAINMAST SAILS (VELE MAESTRE) -->
+      <!-- Main Royal (Controvelaccio) -->
+      <path d="M 226,75 Q 275,82 324,75 Q 332,120 338,132 Q 275,145 212,132 Q 218,120 226,75 Z" fill="url(#sailLight)" stroke="#0b2545" stroke-width="1.2"/>
+      <!-- Main Topgallant (Velaccio) -->
+      <path d="M 212,135 Q 275,148 338,135 Q 348,188 352,202 Q 275,218 198,202 Q 202,188 212,135 Z" fill="url(#sailLight)" stroke="#0b2545" stroke-width="1.4"/>
+      <!-- Main Topsail (Trevo di Gabbia) -->
+      <path d="M 196,205 Q 275,220 354,205 Q 362,258 364,272 Q 275,290 186,272 Q 188,258 196,205 Z" fill="url(#sailLight)" stroke="#0b2545" stroke-width="1.5"/>
+      <!-- Mainsail Course (Maestra di Basso) -->
+      <path d="M 186,275 Q 275,292 364,275 Q 374,318 376,328 Q 275,348 174,328 Q 176,318 186,275 Z" fill="url(#sailLight)" stroke="#0b2545" stroke-width="1.6"/>
+
+      <!-- MIZZENMAST SAILS (VELE DI MEZZANA) -->
+      <!-- Mizzen Topgallant -->
+      <path d="M 332,145 Q 370,152 408,145 Q 415,190 418,202 Q 370,214 322,202 Q 325,190 332,145 Z" fill="url(#sailLight)" stroke="#0b2545" stroke-width="1.2"/>
+      <!-- Spanker Gaff Sail (Randa di Mezzana - Trapezoidal) -->
+      <path d="M 370,250 L 444,228 Q 460,265 454,304 L 370,310 Q 372,280 370,250 Z" fill="url(#sailLight)" stroke="#0b2545" stroke-width="1.4"/>
+
+      <!-- Sail Seam Lines & Shadow Ribs for Realism -->
+      <g stroke="#94a3b8" stroke-width="0.6" opacity="0.6" stroke-dasharray="3 3">
+        <!-- Main Course seams -->
+        <line x1="230" y1="280" x2="225" y2="335"/>
+        <line x1="275" y1="283" x2="275" y2="345"/>
+        <line x1="320" y1="280" x2="325" y2="335"/>
+        <!-- Fore Course seams -->
+        <line x1="145" y1="245" x2="140" y2="310"/>
+        <line x1="180" y1="248" x2="180" y2="318"/>
+        <line x1="215" y1="245" x2="220" y2="310"/>
+      </g>
+    </g>
+
+    <!-- ============================================== -->
+    <!-- GALLEON HULL & STERN (SCAFO & POPPA)           -->
+    <!-- ============================================== -->
+    <g id="hull">
+      <!-- Main Outer Wooden Hull Shape -->
+      <path d="M 135,310 
+               C 120,310 95,318 85,325 
+               C 105,365 140,405 240,410 
+               C 340,415 415,390 445,355 
+               L 448,310 
+               C 420,315 385,318 360,318 
+               L 165,310 Z" 
+            fill="url(#hullGradient)" stroke="#07192f" stroke-width="2.5"/>
+
+      <!-- Gold Waterline / Hull Stripe -->
+      <path d="M 98,340 C 130,375 220,395 320,392 C 380,388 420,370 442,348" 
+            fill="none" stroke="url(#goldTrim)" stroke-width="3"/>
+
+      <!-- Raised Quarterdeck / Poop Deck at Stern -->
+      <path d="M 380,316 L 448,310 L 445,275 L 395,282 Z" fill="url(#hullGradient)" stroke="#07192f" stroke-width="1.8"/>
+      <!-- Stern Railing & Windows (Galleria di Poppa) -->
+      <rect x="405" y="288" width="8" height="10" rx="1" fill="url(#goldTrim)" stroke="#542a04" stroke-width="0.8"/>
+      <rect x="418" y="287" width="8" height="10" rx="1" fill="url(#goldTrim)" stroke="#542a04" stroke-width="0.8"/>
+      <rect x="431" y="286" width="8" height="10" rx="1" fill="url(#goldTrim)" stroke="#542a04" stroke-width="0.8"/>
+
+      <!-- Gun Ports / Cannon Ports with Brass Lids -->
+      <g id="gun-ports">
+        <rect x="155" y="332" width="10" height="9" rx="1.5" fill="#020914" stroke="#bc6c25" stroke-width="1.2"/>
+        <rect x="195" y="337" width="10" height="9" rx="1.5" fill="#020914" stroke="#bc6c25" stroke-width="1.2"/>
+        <rect x="235" y="340" width="10" height="9" rx="1.5" fill="#020914" stroke="#bc6c25" stroke-width="1.2"/>
+        <rect x="275" y="341" width="10" height="9" rx="1.5" fill="#020914" stroke="#bc6c25" stroke-width="1.2"/>
+        <rect x="315" y="339" width="10" height="9" rx="1.5" fill="#020914" stroke="#bc6c25" stroke-width="1.2"/>
+        <rect x="355" y="335" width="10" height="9" rx="1.5" fill="#020914" stroke="#bc6c25" stroke-width="1.2"/>
+      </g>
+
+      <!-- Hull Wooden Planking Lines -->
+      <path d="M 112,328 C 160,350 250,365 370,358 C 410,352 435,338 446,328" fill="none" stroke="#07192f" stroke-width="1" opacity="0.6"/>
+      <path d="M 125,350 C 180,375 270,385 375,376 C 405,370 425,358 438,348" fill="none" stroke="#07192f" stroke-width="1" opacity="0.6"/>
+    </g>
+
+    <!-- ============================================== -->
+    <!-- SEA WAVES & FOAM AT WATERLINE (ONDE MARINE)   -->
+    <!-- ============================================== -->
+    <g id="waves" transform="translate(0, 10)">
+      <!-- Deep Blue Wave Base -->
+      <path d="M 60,395 
+               Q 110,375 160,390 
+               T 260,392 
+               T 360,385 
+               T 460,380 
+               L 470,430 
+               L 50,430 Z" 
+            fill="url(#waveGradient)" opacity="0.6"/>
+
+      <!-- Foreground Sea Wave Crests -->
+      <path d="M 40,405 
+               C 80,380 110,415 150,398 
+               C 190,382 230,412 280,395 
+               C 330,380 380,405 430,390 
+               C 455,382 480,395 500,388 
+               L 500,440 L 40,440 Z" 
+            fill="#0b2545" opacity="0.85"/>
+
+      <!-- White Sea Spray & Foam Highlights -->
+      <path d="M 70,398 Q 90,388 115,396" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+      <path d="M 140,396 Q 165,386 195,394" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+      <path d="M 270,394 Q 295,384 325,392" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+      <path d="M 420,388 Q 440,380 465,386" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+    </g>
+  </g>
+</svg>

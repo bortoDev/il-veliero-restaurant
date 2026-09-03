@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="100%" height="100%" aria-label="Ancora Marina — Il Veliero">
+  <defs>
+    <linearGradient id="ancIron" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="25%" stop-color="#334155"/>
+      <stop offset="50%" stop-color="#64748b"/>
+      <stop offset="75%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <linearGradient id="ancBrass" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#bc6c25"/>
+      <stop offset="30%" stop-color="#fefae0"/>
+      <stop offset="70%" stop-color="#dda15e"/>
+      <stop offset="100%" stop-color="#6b3a0a"/>
+    </linearGradient>
+
+    <radialGradient id="ancGoldBall" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#dda15e"/>
+      <stop offset="85%" stop-color="#bc6c25"/>
+      <stop offset="100%" stop-color="#542a04"/>
+    </radialGradient>
+
+    <filter id="ancShadow" x="-20%" y="-10%" width="140%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#07192f" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g id="anchor-icon-group" transform="translate(100, 20)" filter="url(#ancShadow)">
+    <!-- Top Shackle / Ring -->
+    <circle cx="0" cy="18" r="18" fill="none" stroke="url(#ancIron)" stroke-width="7"/>
+    <circle cx="0" cy="18" r="18" fill="none" stroke="#07192f" stroke-width="1.5"/>
+    <line x1="-3" y1="6" x2="3" y2="6" stroke="#94a3b8" stroke-width="1"/>
+
+    <!-- Shackle Pin -->
+    <rect x="-14" y="28" width="28" height="6" rx="2" fill="url(#ancBrass)" stroke="#542a04" stroke-width="1"/>
+
+    <!-- Stock Crossbar -->
+    <rect x="-76" y="44" width="152" height="12" rx="4" fill="url(#ancBrass)" stroke="#542a04" stroke-width="1.5"/>
+    <circle cx="-74" cy="50" r="10" fill="url(#ancGoldBall)" stroke="#542a04" stroke-width="1.2"/>
+    <circle cx="74" cy="50" r="10" fill="url(#ancGoldBall)" stroke="#542a04" stroke-width="1.2"/>
+    <rect x="-10" y="42" width="20" height="16" rx="2" fill="url(#ancIron)" stroke="#0b1329" stroke-width="1"/>
+
+    <!-- Central Shank -->
+    <path d="M -8,54 L -7,145 L 7,145 L 8,54 Z" fill="url(#ancIron)" stroke="#07192f" stroke-width="1.5"/>
+    <line x1="0" y1="56" x2="0" y2="143" stroke="#94a3b8" stroke-width="1.5" opacity="0.6"/>
+
+    <!-- Curved Arms & Flukes -->
+    <g id="anchor-flukes">
+      <path d="M -75,130 
+               C -65,188 -28,210 0,210 
+               C 28,210 65,188 75,130 
+               C 64,142 32,188 0,188 
+               C -32,188 -64,142 -75,130 Z" 
+            fill="url(#ancIron)" stroke="#07192f" stroke-width="2"/>
+
+      <!-- Left Palm -->
+      <polygon points="-75,130 -90,110 -58,134" fill="url(#ancIron)" stroke="#07192f" stroke-width="1.5"/>
+      <line x1="-90" y1="110" x2="-66" y2="137" stroke="#94a3b8" stroke-width="1.2"/>
+
+      <!-- Right Palm -->
+      <polygon points="75,130 90,110 58,134" fill="url(#ancIron)" stroke="#07192f" stroke-width="1.5"/>
+      <line x1="90" y1="110" x2="66" y2="137" stroke="#94a3b8" stroke-width="1.2"/>
+
+      <!-- Crown Boss -->
+      <circle cx="0" cy="210" r="8" fill="url(#ancGoldBall)" stroke="#542a04" stroke-width="1"/>
+      <circle cx="0" cy="210" r="3" fill="#07192f"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" width="100%" height="100%" aria-label="Giglio Nautico Fleur-de-lis — Il Veliero">
+  <defs>
+    <linearGradient id="lisGoldLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff8db"/>
+      <stop offset="50%" stop-color="#dda15e"/>
+      <stop offset="100%" stop-color="#bc6c25"/>
+    </linearGradient>
+    <linearGradient id="lisGoldDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#bc6c25"/>
+      <stop offset="70%" stop-color="#8a4b12"/>
+      <stop offset="100%" stop-color="#542a04"/>
+    </linearGradient>
+    <filter id="lisShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#07192f" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g id="fleur-de-lis" filter="url(#lisShadow)" transform="translate(50, 60)">
+    <!-- Center Spear (Petalo Centrale) -->
+    <path d="M 0,-50 C -12,-30 -16,-10 0,15 C 16,-10 12,-30 0,-50 Z" fill="url(#lisGoldLight)" stroke="#8a4b12" stroke-width="1.5"/>
+    <line x1="0" y1="-48" x2="0" y2="12" stroke="#542a04" stroke-width="1"/>
+
+    <!-- Left Wing Petal -->
+    <path d="M -5,5 C -30,5 -42,-15 -35,-32 C -26,-24 -14,-10 -2,2 Z" fill="url(#lisGoldDark)" stroke="#8a4b12" stroke-width="1.2"/>
+
+    <!-- Right Wing Petal -->
+    <path d="M 5,5 C 30,5 42,-15 35,-32 C 26,-24 14,-10 2,2 Z" fill="url(#lisGoldLight)" stroke="#8a4b12" stroke-width="1.2"/>
+
+    <!-- Bottom Tail Flare -->
+    <path d="M 0,22 C -10,32 -18,48 -14,52 C -8,52 -2,40 0,25 C 2,40 8,52 14,52 C 18,48 10,32 0,22 Z" fill="url(#lisGoldDark)" stroke="#8a4b12" stroke-width="1.2"/>
+
+    <!-- Middle Binding Bar / Collar -->
+    <rect x="-18" y="14" width="36" height="8" rx="3" fill="url(#lisGoldLight)" stroke="#542a04" stroke-width="1.5"/>
+    <circle cx="0" cy="18" r="2" fill="#ffffff"/>
+  </g>
+</svg>

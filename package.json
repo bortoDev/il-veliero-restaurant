@@ -1,0 +1,33 @@
+{
+  "name": "il-veliero-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-Stack Restaurant Web Platform for Il Veliero",
+  "scripts": {
+    "dev": "npm run dev:backend",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend start",
+    "build": "npm run build:backend",
+    "build:backend": "npm --prefix backend run build",
+    "build:frontend": "npm --prefix frontend run build",
+    "test": "npm run test:backend",
+    "test:backend": "npm --prefix backend run test",
+    "test:coverage": "npm --prefix backend run test:coverage",
+    "test:frontend": "npm --prefix frontend run test",
+    "seed": "npm --prefix backend run seed",
+    "install:backend": "npm --prefix backend install",
+    "install:frontend": "npm --prefix frontend install",
+    "install:all": "npm run install:backend"
+  },
+  "keywords": [
+    "restaurant",
+    "seafood",
+    "express",
+    "mongoose",
+    "typescript",
+    "angular",
+    "gsap"
+  ],
+  "author": "Il Veliero Development Team",
+  "license": "ISC"
+}

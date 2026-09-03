@@ -1,0 +1,822 @@
+// ==========================================================================
+// RISTORANTE IL VELIERO — DISHOOM HERITAGE GLOBAL DESIGN SYSTEM
+// ==========================================================================
+
+:root {
+  // --- 1. Backgrounds & Surfaces (Carta Avorio, Écru Lino & Sabbia) ---
+  --dishoom-bg-primary: #FAF7F2;          // Warm ivory / Carta avorio calda (main canvas)
+  --dishoom-bg-surface: #F5EFEB;          // Warm écru linen / Carta calda (cards, panels)
+  --dishoom-bg-surface-alt: #EFE8DF;      // Deeper sand linen (subtle contrast sections)
+  --dishoom-bg-sand: #EDE5D8;             // Sand stone accent
+  --dishoom-bg-sand-light: #F5EFEB;       // Soft écru sand
+  --dishoom-bg-parchment: #FDFBF7;        // Light parchment highlight
+  --dishoom-bg-navy-dark: #07192F;        // Midnight maritime navy (hero, footer, topbar)
+  --dishoom-bg-navy-deep: #0D2033;        // Archive ocean blue (rich dark panels)
+  --dishoom-bg-navy-card: #0B1B2B;        // Deep navy card backing
+
+  // --- 2. Inks & Typography (Inchiostro Carbone & Caffè Tostato) ---
+  --dishoom-ink-charcoal: #1C1917;        // Deep carbon ink / Carbone profondo (headings & primary text)
+  --dishoom-ink-espresso: #292524;        // Roasted coffee / Caffè tostato (body copy)
+  --dishoom-ink-stone: #44403C;           // Medium warm stone (subtitles & strong body)
+  --dishoom-ink-muted: #78716C;           // Muted pencil / Warm stone (secondary copy)
+  --dishoom-ink-light: #A8A29E;           // Light caption & placeholder
+  --dishoom-ink-inverse: #FAF7F2;         // Ivory text on dark navy surfaces
+  --dishoom-ink-inverse-muted: #DDD3C4;   // Soft sand text on dark navy
+
+  // --- 3. Metallic Accents & Borders (Ottone Brunito & Filetti Sabbia) ---
+  --dishoom-brass: #C58A3E;               // Burnished brass / Ottone brunito (primary accent)
+  --dishoom-brass-dark: #945C22;          // Antique warm gold / Oro caldo antico (hover & deep accent)
+  --dishoom-brass-light: #EBD8B8;         // Soft champagne brass (subtle outlines & dividers)
+  --dishoom-brass-subtle: rgba(197, 138, 62, 0.25); // Transparent brass glow / hairline
+  --dishoom-border-sand: #E5DDD0;         // Sandstone hairline border (paper & card dividers)
+  --dishoom-border-sand-dark: #D3C7B5;    // Stronger sand border for inputs & active states
+  --dishoom-border-navy-brass: rgba(197, 138, 62, 0.35); // Brass hairline for dark surfaces
+
+  // --- 4. Functional / Culinary Status Tones ---
+  --dishoom-status-success: #2A7B4C;      // Forest sea emerald (available, fresh catch)
+  --dishoom-status-warning: #C07018;      // Warm amber spice (special, notice)
+  --dishoom-status-danger: #B91C1C;       // Venetian crimson (sold out, alert)
+  --dishoom-status-info: #1A5276;         // Archival blue note
+
+  // --- 5. Typography Font Stacks ---
+  --font-serif-primary: 'Cormorant Garamond', Garamond, 'Times New Roman', serif;
+  --font-serif-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-heading-editorial: var(--font-serif-primary);
+  --font-heading-display: var(--font-serif-display);
+  --font-body-editorial: 'Plus Jakarta Sans', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: var(--font-body-editorial);
+  --font-serif-italic: var(--font-serif-primary);
+  --font-mono: 'JetBrains Mono', Consolas, Monaco, monospace;
+
+  --font-heading: var(--font-heading-editorial);
+  --font-display: var(--font-serif-display);
+  --font-body: var(--font-body-editorial);
+
+  // --- 6. Letter Spacing (Tracking) ---
+  --tracking-tight: -0.015em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.04em;
+  --tracking-wider: 0.08em;
+  --tracking-small-caps: 0.12em;
+  --tracking-eyebrow: 0.15em;
+
+  // --- 7. Shadows (Refined Organic Elevation, No Harsh Halos) ---
+  --dishoom-shadow-subtle: 0 1px 3px rgba(28, 25, 23, 0.04), 0 1px 2px rgba(28, 25, 23, 0.02);
+  --dishoom-shadow-card: 0 4px 16px -2px rgba(28, 25, 23, 0.05), 0 2px 6px -1px rgba(28, 25, 23, 0.02);
+  --dishoom-shadow-hover: 0 12px 28px -4px rgba(28, 25, 23, 0.08), 0 4px 12px -2px rgba(28, 25, 23, 0.03);
+  --dishoom-shadow-frame: inset 0 0 0 1px var(--dishoom-border-sand), 0 4px 16px rgba(28, 25, 23, 0.04);
+
+  // --- 8. Transitions ---
+  --transition-fast: 0.2s ease;
+  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  // --- 9. Backward Compatibility Mapping (Aliases) ---
+  --color-bg-main: var(--dishoom-bg-primary);
+  --color-surface-white: var(--dishoom-bg-surface);
+  --color-surface-translucent: rgba(245, 239, 235, 0.92);
+  --color-border: var(--dishoom-border-sand);
+  --color-text-main: var(--dishoom-ink-charcoal);
+  --color-text-muted: var(--dishoom-ink-muted);
+  --color-text-light: var(--dishoom-ink-light);
+  --color-navy-dark: var(--dishoom-bg-navy-dark);
+  --color-navy-primary: var(--dishoom-bg-navy-deep);
+  --color-navy-medium: #134074;
+  --color-ocean-blue: var(--dishoom-bg-navy-deep);
+  --color-adriatic-cyan: #B8C7D9;
+  --color-seafoam: var(--dishoom-bg-surface);
+  --color-gold: var(--dishoom-brass);
+  --color-gold-dark: var(--dishoom-brass-dark);
+  --color-gold-light: var(--dishoom-brass-light);
+  --color-amber: #D97706;
+  --color-success: var(--dishoom-status-success);
+  --color-warning: var(--dishoom-status-warning);
+  --color-danger: var(--dishoom-status-danger);
+  --color-info: var(--dishoom-status-info);
+  --shadow-sm: var(--dishoom-shadow-subtle);
+  --shadow-md: var(--dishoom-shadow-card);
+  --shadow-lg: var(--dishoom-shadow-hover);
+  --shadow-hover: var(--dishoom-shadow-hover);
+}
+
+// ==========================================================================
+// RESET & BASE STYLES
+// ==========================================================================
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  background-color: var(--dishoom-bg-primary, #FAF7F2);
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--dishoom-ink-charcoal);
+  background-color: var(--dishoom-bg-primary, #FAF7F2);
+  line-height: 1.65;
+  font-size: 1rem;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+// ==========================================================================
+// BASE TYPOGRAPHY (NOBLE SERIF & EDITORIAL HIERARCHY)
+// ==========================================================================
+
+h1, h2, h3, h4, h5, h6,
+.dishoom-heading {
+  font-family: var(--font-heading);
+  color: var(--dishoom-ink-charcoal);
+  letter-spacing: var(--tracking-wide);
+  line-height: 1.25;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  font-feature-settings: 'lnum' 1, 'kern' 1;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5vw, 3.75rem);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.12;
+}
+
+h2 {
+  font-size: clamp(1.85rem, 3.5vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  line-height: 1.2;
+}
+
+h3 {
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+h5 {
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+h6 {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+p {
+  margin-bottom: 1rem;
+  color: var(--dishoom-ink-espresso);
+}
+
+a {
+  color: var(--dishoom-brass-dark);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--dishoom-brass);
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+// ==========================================================================
+// TYPOGRAPHY UTILITY CLASSES (DISHOOM HERITAGE SPECIFICATION)
+// ==========================================================================
+
+// 1. Font Family Classes
+.font-display {
+  font-family: var(--font-serif-display) !important;
+}
+
+.font-serif {
+  font-family: var(--font-serif-primary) !important;
+}
+
+.font-sans {
+  font-family: var(--font-sans) !important;
+}
+
+.heading-display {
+  font-family: var(--font-serif-display);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+}
+
+.heading-editorial {
+  font-family: var(--font-serif-primary);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: capitalize;
+}
+
+// 2. Subtitles & Dish Descriptions (Noble Italic Serif)
+.font-italic-serif,
+.dish-desc-italic,
+.subtitle-italic,
+.dishoom-italic,
+.culinary-note {
+  font-family: var(--font-serif-primary);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.02rem;
+  line-height: 1.55;
+  color: var(--dishoom-ink-stone);
+}
+
+.story-quote-serif {
+  font-family: var(--font-serif-primary);
+  font-style: italic;
+  font-size: 1.35rem;
+  line-height: 1.6;
+  color: var(--dishoom-bg-navy-dark);
+  letter-spacing: 0.02em;
+}
+
+.dish-subtitle {
+  font-family: var(--font-serif-primary);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--dishoom-brass-dark);
+}
+
+// 3. Selectors, Categories & Micro-Copy (Spaced Small-Caps)
+.font-small-caps,
+.text-small-caps,
+.dishoom-smallcaps {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-small-caps);
+}
+
+.category-selector,
+.category-tab-label {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-small-caps);
+  color: var(--dishoom-ink-charcoal);
+  transition: all var(--transition-fast);
+}
+
+.micro-copy {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--dishoom-ink-muted);
+}
+
+.nav-link-caps {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-small-caps);
+}
+
+.eyebrow-caps,
+.dishoom-kicker {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--dishoom-brass-dark);
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.badge-caps {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+// 4. Tracking Modifiers
+.tracking-tight { letter-spacing: var(--tracking-tight); }
+.tracking-wide { letter-spacing: var(--tracking-wide); }
+.tracking-wider { letter-spacing: var(--tracking-wider); }
+.tracking-widest { letter-spacing: var(--tracking-small-caps); }
+.tracking-caps { letter-spacing: var(--tracking-eyebrow); }
+
+// ==========================================================================
+// CONTAINER & SECTION LAYOUT
+// ==========================================================================
+
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.section {
+  padding: 5rem 0;
+  position: relative;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .subtitle,
+  .section-subtitle,
+  .eyebrow-caps,
+  .dishoom-kicker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow, 0.15em);
+    color: var(--dishoom-brass-dark);
+    font-weight: 700;
+    margin-bottom: 0.85rem;
+    padding: 0.3rem 0.9rem;
+    border-radius: 4px;
+    background: rgba(197, 138, 62, 0.08);
+    border: 1px solid rgba(197, 138, 62, 0.25);
+    max-width: fit-content;
+  }
+
+  h1, h2, h3, .section-title {
+    display: block;
+    width: 100%;
+    margin: 0 0 1rem 0;
+    font-family: var(--font-heading);
+    color: var(--dishoom-ink-charcoal);
+    position: relative;
+    padding-bottom: 0.85rem;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--dishoom-brass), transparent);
+    }
+  }
+
+  .description {
+    max-width: 680px;
+    margin: 0.75rem auto 0;
+    color: var(--dishoom-ink-muted);
+    font-family: var(--font-serif-primary);
+    font-style: italic;
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+}
+
+// Global Hero Sections Hierarchy (Dishoom Heritage Dark Midnight Style)
+.page-hero,
+.storia-hero-section,
+.menu-hero-section,
+.dove-hero-section,
+.diario-hero-section,
+.eventi-hero-section {
+  background: linear-gradient(135deg, var(--dishoom-bg-navy-dark, #07192F) 0%, var(--dishoom-bg-navy-deep, #0D2033) 100%);
+  color: #FFFFFF;
+  padding: 5.5rem 0 4.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  .hero-inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .hero-badge,
+  .hero-header-badge,
+  .hero-kicker,
+  .hero-sub {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    color: var(--dishoom-brass, #C58A3E);
+    font-family: var(--font-body-editorial, 'Plus Jakarta Sans', sans-serif);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow, 0.15em);
+    margin-bottom: 1rem;
+    padding: 0.35rem 1rem;
+    border-radius: 4px;
+    background: rgba(197, 138, 62, 0.12);
+    border: 1px solid rgba(197, 138, 62, 0.35);
+  }
+
+  h1,
+  .hero-title,
+  .hero-diario-title {
+    font-family: var(--font-heading-display, var(--font-serif-display));
+    font-size: clamp(2.5rem, 5.5vw, 3.8rem);
+    letter-spacing: 0.05em;
+    color: #FFFFFF;
+    margin: 0 0 1.25rem 0;
+    line-height: 1.1;
+    display: block;
+    width: 100%;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  p,
+  .hero-subtitle,
+  .hero-diario-sub {
+    color: var(--dishoom-ink-inverse-muted, #DDD3C4);
+    font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
+    font-style: italic;
+    font-size: 1.2rem;
+    max-width: 720px;
+    margin: 0 auto;
+    line-height: 1.75;
+    display: block;
+  }
+}
+
+// ==========================================================================
+// CARDS & FRAMES (DISHOOM ARCHIVE SPECIFICATION)
+// ==========================================================================
+
+.card,
+.dishoom-card,
+.archive-frame {
+  background: var(--dishoom-bg-surface);
+  border-radius: 4px;
+  border: 1px solid var(--dishoom-border-sand);
+  outline: 1px solid var(--dishoom-brass-subtle);
+  outline-offset: -4px;
+  box-shadow: var(--dishoom-shadow-card);
+  padding: 1.75rem;
+  position: relative;
+  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-fast);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--dishoom-shadow-hover);
+    border-color: var(--dishoom-brass);
+    outline-color: rgba(197, 138, 62, 0.45);
+  }
+}
+
+// ==========================================================================
+// BUTTONS SYSTEM (DISHOOM METALLIC & NAVY HERITAGE)
+// ==========================================================================
+
+.btn,
+.dishoom-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.65rem;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  text-align: center;
+  box-shadow: var(--dishoom-shadow-subtle);
+  text-decoration: none;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--dishoom-shadow-card);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  // Brass / Gold Heritage Button
+  &.btn-brass,
+  &.btn-gold {
+    background-color: var(--dishoom-brass);
+    color: #FAF7F2;
+    border-color: var(--dishoom-brass-dark);
+
+    &:hover {
+      background-color: var(--dishoom-brass-dark);
+      border-color: #78481A;
+      color: #FFFFFF;
+    }
+  }
+
+  // Deep Navy Solid Button
+  &.btn-navy,
+  &.btn-primary {
+    background-color: var(--dishoom-bg-navy-deep);
+    color: #FAF7F2;
+    border-color: var(--dishoom-brass);
+
+    &:hover {
+      background-color: var(--dishoom-bg-navy-dark);
+      border-color: var(--dishoom-brass-light);
+      color: #FFFFFF;
+    }
+  }
+
+  // Outlined Heritage Button (Light / Écru Surfaces)
+  &.btn-outline {
+    background-color: transparent;
+    color: var(--dishoom-ink-charcoal);
+    border-color: var(--dishoom-brass);
+
+    &:hover {
+      background-color: var(--dishoom-brass);
+      color: #FAF7F2;
+      border-color: var(--dishoom-brass-dark);
+    }
+  }
+
+  // Outlined Button for Dark Navy Surfaces
+  &.btn-outline-white,
+  &.btn-outline-navy {
+    background-color: transparent;
+    color: var(--dishoom-bg-primary);
+    border-color: rgba(229, 221, 208, 0.6);
+
+    &:hover {
+      background-color: var(--dishoom-bg-primary);
+      color: var(--dishoom-bg-navy-dark);
+      border-color: var(--dishoom-bg-primary);
+    }
+  }
+
+  &.btn-sm {
+    padding: 0.45rem 1rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+  }
+
+  &.btn-lg {
+    padding: 0.95rem 2.25rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+  }
+
+  &.btn-danger {
+    background-color: var(--dishoom-status-danger);
+    color: #FAF7F2;
+    border-color: #991B1B;
+
+    &:hover {
+      background-color: #7F1D1D;
+    }
+  }
+
+  &.btn-success {
+    background-color: var(--dishoom-status-success);
+    color: #FAF7F2;
+    border-color: #1E5C38;
+
+    &:hover {
+      background-color: #144428;
+    }
+  }
+}
+
+// ==========================================================================
+// DOT LEADERS & PRINTED DINING CARD MENU UTILITIES
+// ==========================================================================
+
+.dot-leader-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 0.35rem;
+
+  .dish-title {
+    font-family: var(--font-heading-editorial);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--dishoom-ink-charcoal);
+    white-space: nowrap;
+  }
+
+  .dot-leader {
+    flex: 1;
+    border-bottom: 1px dotted var(--dishoom-border-sand-dark);
+    margin: 0 0.65rem;
+    transform: translateY(-4px);
+  }
+
+  .dish-price {
+    font-family: var(--font-heading-editorial);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--dishoom-brass-dark);
+    white-space: nowrap;
+  }
+}
+
+// ==========================================================================
+// ORNAMENTAL DIVIDERS
+// ==========================================================================
+
+.dishoom-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2.5rem auto;
+  max-width: 320px;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--dishoom-border-sand-dark), transparent);
+  }
+
+  .divider-symbol {
+    color: var(--dishoom-brass);
+    font-size: 0.9rem;
+    opacity: 0.85;
+  }
+}
+
+// ==========================================================================
+// BADGES (SUBDUED EDITORIAL CLASSIFICATIONS)
+// ==========================================================================
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+
+  &.badge-brass,
+  &.badge-gold {
+    background-color: rgba(197, 138, 62, 0.12);
+    border: 1px solid rgba(197, 138, 62, 0.4);
+    color: var(--dishoom-brass-dark);
+  }
+
+  &.badge-navy {
+    background-color: rgba(13, 32, 51, 0.08);
+    border: 1px solid rgba(13, 32, 51, 0.25);
+    color: var(--dishoom-bg-navy-deep);
+  }
+
+  &.badge-ecru {
+    background-color: var(--dishoom-bg-surface);
+    border: 1px solid var(--dishoom-border-sand);
+    color: var(--dishoom-ink-stone);
+  }
+
+  &.badge-info {
+    background-color: rgba(26, 82, 118, 0.1);
+    border: 1px solid rgba(26, 82, 118, 0.3);
+    color: var(--dishoom-status-info);
+  }
+
+  &.badge-warning {
+    background-color: rgba(192, 112, 24, 0.1);
+    border: 1px solid rgba(192, 112, 24, 0.3);
+    color: var(--dishoom-status-warning);
+  }
+
+  &.badge-danger {
+    background-color: rgba(185, 28, 28, 0.08);
+    border: 1px solid rgba(185, 28, 28, 0.25);
+    color: var(--dishoom-status-danger);
+  }
+
+  &.badge-success {
+    background-color: rgba(42, 123, 76, 0.08);
+    border: 1px solid rgba(42, 123, 76, 0.25);
+    color: var(--dishoom-status-success);
+  }
+}
+
+// ==========================================================================
+// FORM CONTROLS
+// ==========================================================================
+
+.form-group {
+  margin-bottom: 1.25rem;
+
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-small-caps);
+    color: var(--dishoom-ink-charcoal);
+    margin-bottom: 0.4rem;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--dishoom-ink-charcoal);
+    background-color: var(--dishoom-bg-surface);
+    border: 1px solid var(--dishoom-border-sand);
+    border-radius: 3px;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+
+    &:focus {
+      outline: none;
+      border-color: var(--dishoom-brass);
+      box-shadow: 0 0 0 3px rgba(197, 138, 62, 0.18);
+      background-color: #FFFFFF;
+    }
+
+    &::placeholder {
+      color: var(--dishoom-ink-light);
+    }
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .form-error {
+    font-size: 0.8rem;
+    color: var(--dishoom-status-danger);
+    margin-top: 0.35rem;
+  }
+}
+
+// ==========================================================================
+// FLOATING GSAP DECORATOR BASE
+// ==========================================================================
+
+.nautical-float {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+// ==========================================================================
+// REDUCED MOTION ACCESSIBILITY
+// ==========================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

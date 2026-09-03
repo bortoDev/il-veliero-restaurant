@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 600" width="100%" height="100%" aria-label="Catena con Ancora Marina — Il Veliero">
+  <defs>
+    <!-- Metallic Iron & Steel Gradients -->
+    <linearGradient id="ironVertical" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="25%" stop-color="#334155"/>
+      <stop offset="50%" stop-color="#64748b"/>
+      <stop offset="75%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <linearGradient id="ironHorizontal" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="35%" stop-color="#475569"/>
+      <stop offset="70%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <linearGradient id="brassStock" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#bc6c25"/>
+      <stop offset="30%" stop-color="#fefae0"/>
+      <stop offset="70%" stop-color="#dda15e"/>
+      <stop offset="100%" stop-color="#6b3a0a"/>
+    </linearGradient>
+
+    <radialGradient id="brassFinial" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#dda15e"/>
+      <stop offset="85%" stop-color="#bc6c25"/>
+      <stop offset="100%" stop-color="#542a04"/>
+    </radialGradient>
+
+    <filter id="anchorDropShadow" x="-30%" y="-10%" width="160%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#07192f" flood-opacity="0.35"/>
+    </filter>
+
+    <!-- Reusable Chain Link Template -->
+    <g id="chain-link-unit">
+      <!-- Outer Oval -->
+      <path d="M 12,0 C 5.37,0 0,6 0,14 L 0,42 C 0,50 5.37,56 12,56 C 18.63,56 24,50 24,42 L 24,14 C 24,6 18.63,0 12,0 Z" fill="url(#ironVertical)" stroke="#0b1329" stroke-width="1.5"/>
+      <!-- Inner Cutout -->
+      <path d="M 12,10 C 8.7,10 6,12.5 6,16 L 6,40 C 6,43.5 8.7,46 12,46 C 15.3,46 18,43.5 18,40 L 18,16 C 18,12.5 15.3,10 12,10 Z" fill="#07192f" opacity="0.8"/>
+      <!-- Stud Crossbar (Marine Stud-Link) -->
+      <rect x="5.5" y="25" width="13" height="6" rx="2" fill="url(#ironHorizontal)" stroke="#0b1329" stroke-width="1"/>
+      <line x1="8" y1="27" x2="16" y2="27" stroke="#94a3b8" stroke-width="0.75" opacity="0.8"/>
+    </g>
+
+    <!-- Reusable Side Link (Seen edge-on) -->
+    <g id="chain-link-side">
+      <rect x="0" y="0" width="10" height="48" rx="5" fill="url(#ironVertical)" stroke="#0b1329" stroke-width="1.5"/>
+      <line x1="5" y1="4" x2="5" y2="44" stroke="#94a3b8" stroke-width="1.2" opacity="0.7"/>
+    </g>
+  </defs>
+
+  <g id="anchor-chain-system" filter="url(#anchorDropShadow)">
+    <!-- ============================================== -->
+    <!-- MODULAR INTERLOCKING CHAIN (GSAP Animatable)   -->
+    <!-- ============================================== -->
+    <g id="chain-column" transform="translate(68, 0)">
+      <!-- Link 1 (Facing) -->
+      <use href="#chain-link-unit" x="0" y="0" />
+      <!-- Link 2 (Side edge) -->
+      <use href="#chain-link-side" x="7" y="36" />
+      <!-- Link 3 (Facing) -->
+      <use href="#chain-link-unit" x="0" y="68" />
+      <!-- Link 4 (Side edge) -->
+      <use href="#chain-link-side" x="7" y="104" />
+      <!-- Link 5 (Facing) -->
+      <use href="#chain-link-unit" x="0" y="136" />
+      <!-- Link 6 (Side edge) -->
+      <use href="#chain-link-side" x="7" y="172" />
+      <!-- Link 7 (Facing) -->
+      <use href="#chain-link-unit" x="0" y="204" />
+      <!-- Link 8 (Side edge) -->
+      <use href="#chain-link-side" x="7" y="240" />
+      <!-- Link 9 (Facing) -->
+      <use href="#chain-link-unit" x="0" y="272" />
+      <!-- Link 10 (Side edge) -->
+      <use href="#chain-link-side" x="7" y="308" />
+      <!-- Link 11 (Facing) -->
+      <use href="#chain-link-unit" x="0" y="340" />
+    </g>
+
+    <!-- ============================================== -->
+    <!-- ADMIRALTY ANCHOR                               -->
+    <!-- ============================================== -->
+    <g id="anchor-assembly" transform="translate(80, 380)">
+      <!-- Top Shackle / Ring (Jewel ring) -->
+      <circle cx="0" cy="18" r="18" fill="none" stroke="url(#ironVertical)" stroke-width="8"/>
+      <circle cx="0" cy="18" r="18" fill="none" stroke="#07192f" stroke-width="1.5"/>
+      <line x1="-3" y1="6" x2="3" y2="6" stroke="#94a3b8" stroke-width="1"/>
+
+      <!-- Shackle Bolt / Pin -->
+      <rect x="-14" y="28" width="28" height="6" rx="2" fill="url(#brassStock)" stroke="#542a04" stroke-width="1"/>
+
+      <!-- Stock (Wooden / Brass Crossbar) -->
+      <g id="anchor-stock">
+        <rect x="-70" y="44" width="140" height="12" rx="4" fill="url(#brassStock)" stroke="#542a04" stroke-width="1.5"/>
+        <!-- Stock End Finials -->
+        <circle cx="-68" cy="50" r="10" fill="url(#brassFinial)" stroke="#542a04" stroke-width="1.2"/>
+        <circle cx="68" cy="50" r="10" fill="url(#brassFinial)" stroke="#542a04" stroke-width="1.2"/>
+        <!-- Center Collar Band -->
+        <rect x="-10" y="42" width="20" height="16" rx="2" fill="url(#ironHorizontal)" stroke="#0b1329" stroke-width="1"/>
+      </g>
+
+      <!-- Central Shank -->
+      <path d="M -7,54 L -6,140 L 6,140 L 7,54 Z" fill="url(#ironVertical)" stroke="#07192f" stroke-width="1.5"/>
+      <!-- Shank Center Highlight Bevel -->
+      <line x1="0" y1="56" x2="0" y2="138" stroke="#94a3b8" stroke-width="1.5" opacity="0.6"/>
+
+      <!-- Curved Arms & Flukes (Crown & Palm) -->
+      <g id="anchor-arms">
+        <!-- Main Swept Arms Arc -->
+        <path d="M -68,125 
+                 C -60,175 -25,195 0,195 
+                 C 25,195 60,175 68,125 
+                 C 58,135 30,175 0,175 
+                 C -30,175 -58,135 -68,125 Z" 
+              fill="url(#ironVertical)" stroke="#07192f" stroke-width="2"/>
+
+        <!-- Left Triangular Fluke (Palm) -->
+        <polygon points="-68,125 -82,108 -52,128" fill="url(#ironHorizontal)" stroke="#07192f" stroke-width="1.5"/>
+        <line x1="-82" y1="108" x2="-60" y2="132" stroke="#94a3b8" stroke-width="1.2"/>
+
+        <!-- Right Triangular Fluke (Palm) -->
+        <polygon points="68,125 82,108 52,128" fill="url(#ironHorizontal)" stroke="#07192f" stroke-width="1.5"/>
+        <line x1="82" y1="108" x2="60" y2="132" stroke="#94a3b8" stroke-width="1.2"/>
+
+        <!-- Bottom Crown Center Boss / Tripping Ring -->
+        <circle cx="0" cy="195" r="7" fill="url(#brassFinial)" stroke="#542a04" stroke-width="1"/>
+        <circle cx="0" cy="195" r="3" fill="#07192f"/>
+      </g>
+    </g>
+  </g>
+</svg>

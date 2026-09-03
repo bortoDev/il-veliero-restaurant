@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%" aria-label="Hero Video Poster — Mare Adriatico e Veliero al Tramonto">
+  <defs>
+    <!-- Sky & Ocean Sunset Gradients -->
+    <linearGradient id="heroSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#07192f"/>
+      <stop offset="35%" stop-color="#0b2545"/>
+      <stop offset="60%" stop-color="#134074"/>
+      <stop offset="78%" stop-color="#bc6c25"/>
+      <stop offset="88%" stop-color="#dda15e"/>
+      <stop offset="94%" stop-color="#fefae0"/>
+      <stop offset="100%" stop-color="#ffb703"/>
+    </linearGradient>
+
+    <linearGradient id="heroSea" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#dda15e" stop-opacity="0.8"/>
+      <stop offset="15%" stop-color="#1d4e89"/>
+      <stop offset="45%" stop-color="#0e386a"/>
+      <stop offset="75%" stop-color="#07192f"/>
+      <stop offset="100%" stop-color="#030c17"/>
+    </linearGradient>
+
+    <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="25%" stop-color="#fff066"/>
+      <stop offset="60%" stop-color="#f4a261" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#e76f51" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="waterReflection" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffd166" stop-opacity="0.9"/>
+      <stop offset="40%" stop-color="#dda15e" stop-opacity="0.5"/>
+      <stop offset="80%" stop-color="#bc6c25" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#0b2545" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky Background -->
+  <rect width="1920" height="680" fill="url(#heroSky)"/>
+
+  <!-- Sun Disc & Glow at Horizon -->
+  <circle cx="1150" cy="580" r="180" fill="url(#sunGlow)"/>
+  <circle cx="1150" cy="580" r="45" fill="#ffffff" opacity="0.95"/>
+
+  <!-- Distant Clouds & Light Rays -->
+  <g opacity="0.4" fill="#bc6c25">
+    <ellipse cx="400" cy="450" rx="350" ry="25"/>
+    <ellipse cx="900" cy="480" rx="420" ry="30"/>
+    <ellipse cx="1550" cy="460" rx="300" ry="20"/>
+  </g>
+
+  <!-- Sea Water Base -->
+  <rect y="600" width="1920" height="480" fill="url(#heroSea)"/>
+
+  <!-- Sun Light Shimmer / Water Reflection Path -->
+  <polygon points="1150,600 1350,1080 950,1080" fill="url(#waterReflection)"/>
+
+  <!-- Horizontal Shimmer Wavelets -->
+  <g stroke="#fff3b0" stroke-linecap="round" opacity="0.7">
+    <line x1="1100" y1="620" x2="1200" y2="620" stroke-width="3"/>
+    <line x1="1060" y1="640" x2="1240" y2="640" stroke-width="3.5"/>
+    <line x1="1020" y1="670" x2="1280" y2="670" stroke-width="4"/>
+    <line x1="980" y1="710" x2="1320" y2="710" stroke-width="5"/>
+    <line x1="940" y1="760" x2="1360" y2="760" stroke-width="6"/>
+    <line x1="900" y1="820" x2="1400" y2="820" stroke-width="7"/>
+    <line x1="850" y1="900" x2="1450" y2="900" stroke-width="8"/>
+    <line x1="800" y1="1000" x2="1520" y2="1000" stroke-width="9"/>
+  </g>
+
+  <!-- Distant Veliero Sailing Silhouette on Horizon -->
+  <g id="distant-ship" transform="translate(1080, 440) scale(0.42)" opacity="0.95">
+    <!-- Masts & Spars -->
+    <line x1="180" y1="315" x2="180" y2="100" stroke="#07192f" stroke-width="5"/>
+    <line x1="275" y1="320" x2="275" y2="45" stroke="#07192f" stroke-width="6"/>
+    <line x1="370" y1="315" x2="370" y2="120" stroke="#07192f" stroke-width="4.5"/>
+    <line x1="165" y1="310" x2="65" y2="250" stroke="#07192f" stroke-width="6"/>
+    <!-- Sails (Silhouetted against sunset) -->
+    <g fill="#07192f">
+      <path d="M 68,248 Q 130,225 178,105 Q 140,185 72,252 Z"/>
+      <path d="M 132,120 Q 180,128 228,120 Q 235,160 238,172 Q 180,185 122,172 Z"/>
+      <path d="M 122,175 Q 180,185 238,175 Q 246,225 248,238 Q 180,252 112,238 Z"/>
+      <path d="M 112,240 Q 180,254 248,240 Q 256,290 258,305 Q 180,320 102,305 Z"/>
+      <path d="M 226,75 Q 275,82 324,75 Q 332,120 338,132 Q 275,145 212,132 Z"/>
+      <path d="M 212,135 Q 275,148 338,135 Q 348,188 352,202 Q 275,218 198,202 Z"/>
+      <path d="M 196,205 Q 275,220 354,205 Q 362,258 364,272 Q 275,290 186,272 Z"/>
+      <path d="M 186,275 Q 275,292 364,275 Q 374,318 376,328 Q 275,348 174,328 Z"/>
+      <path d="M 332,145 Q 370,152 408,145 Q 415,190 418,202 Q 370,214 322,202 Z"/>
+      <path d="M 370,250 L 444,228 Q 460,265 454,304 L 370,310 Z"/>
+      <!-- Hull -->
+      <path d="M 135,310 C 95,318 85,325 105,365 C 140,405 240,410 340,415 C 415,390 445,355 L 448,310 Z"/>
+    </g>
+  </g>
+
+  <!-- Rolling Foreground Ocean Waves -->
+  <path d="M 0,850 Q 480,780 960,860 T 1920,830 L 1920,1080 L 0,1080 Z" fill="#07192f" opacity="0.7"/>
+  <path d="M 0,940 Q 420,880 980,960 T 1920,920 L 1920,1080 L 0,1080 Z" fill="#030c17" opacity="0.95"/>
+  <!-- Sea Foam Crest Line -->
+  <path d="M 0,945 Q 420,885 980,965 T 1920,925" fill="none" stroke="#e0fbfc" stroke-width="3" opacity="0.6"/>
+</svg>

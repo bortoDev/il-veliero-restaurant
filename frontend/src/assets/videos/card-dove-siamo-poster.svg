@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%" aria-label="Poster Dove Siamo — Bassano del Grappa e Ponte Vecchio">
+  <defs>
+    <!-- Alpine Sunset & River Gradients -->
+    <linearGradient id="bassanoSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0b2545"/>
+      <stop offset="40%" stop-color="#134074"/>
+      <stop offset="70%" stop-color="#dda15e"/>
+      <stop offset="100%" stop-color="#fefae0"/>
+    </linearGradient>
+
+    <linearGradient id="mountainsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1d4e89"/>
+      <stop offset="60%" stop-color="#0e386a"/>
+      <stop offset="100%" stop-color="#07192f"/>
+    </linearGradient>
+
+    <linearGradient id="ponteWood" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#804e28"/>
+      <stop offset="50%" stop-color="#ab7344"/>
+      <stop offset="100%" stop-color="#542a04"/>
+    </linearGradient>
+
+    <linearGradient id="brentaRiver" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#dda15e" stop-opacity="0.8"/>
+      <stop offset="25%" stop-color="#2a9d8f"/>
+      <stop offset="60%" stop-color="#1d4e89"/>
+      <stop offset="100%" stop-color="#07192f"/>
+    </linearGradient>
+
+    <radialGradient id="pinGold" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#dda15e"/>
+      <stop offset="100%" stop-color="#bc6c25"/>
+    </radialGradient>
+
+    <filter id="locationShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#07192f" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Sky Background -->
+  <rect width="800" height="380" fill="url(#bassanoSky)"/>
+
+  <!-- Monte Grappa Mountain Peaks in Background -->
+  <polygon points="0,320 180,180 340,280 480,160 620,250 800,190 800,380 0,380" fill="url(#mountainsGrad)" opacity="0.8"/>
+  <polygon points="0,340 120,260 260,330 400,240 560,320 720,250 800,290 800,380 0,380" fill="#07192f" opacity="0.6"/>
+
+  <!-- Brenta River Water -->
+  <rect y="360" width="800" height="240" fill="url(#brentaRiver)"/>
+
+  <!-- River Water Shimmer Lines -->
+  <g stroke="#ffffff" stroke-linecap="round" opacity="0.5">
+    <line x1="200" y1="420" x2="350" y2="420" stroke-width="2"/>
+    <line x1="450" y1="440" x2="650" y2="440" stroke-width="2.5"/>
+    <line x1="100" y1="480" x2="300" y2="480" stroke-width="3"/>
+    <line x1="500" y1="510" x2="720" y2="510" stroke-width="3.5"/>
+  </g>
+
+  <!-- Iconic Ponte Vecchio / Ponte degli Alpini of Bassano del Grappa -->
+  <g id="ponte-degli-alpini" filter="url(#locationShadow)">
+    <!-- Covered Wooden Roof (Tetto a Capanna in Legno) -->
+    <polygon points="40,285 760,285 740,255 60,255" fill="#800e13" stroke="#4f000b" stroke-width="2"/>
+    <!-- Roof Ridge -->
+    <line x1="60" y1="255" x2="740" y2="255" stroke="#bc6c25" stroke-width="2"/>
+
+    <!-- Wooden Truss Columns & Balustrade -->
+    <g stroke="url(#ponteWood)" stroke-width="4" stroke-linecap="round">
+      <!-- 4 Main Wooden Piers (Pilastri Triangolari a Rostro) -->
+      <!-- Pier 1 -->
+      <polygon points="120,285 100,430 140,430" fill="url(#ponteWood)" stroke="#3e200c" stroke-width="2"/>
+      <polygon points="100,430 120,460 140,430" fill="#3e200c"/>
+
+      <!-- Pier 2 -->
+      <polygon points="280,285 260,430 300,430" fill="url(#ponteWood)" stroke="#3e200c" stroke-width="2"/>
+      <polygon points="260,430 280,460 300,430" fill="#3e200c"/>
+
+      <!-- Pier 3 -->
+      <polygon points="520,285 500,430 540,430" fill="url(#ponteWood)" stroke="#3e200c" stroke-width="2"/>
+      <polygon points="500,430 520,460 540,430" fill="#3e200c"/>
+
+      <!-- Pier 4 -->
+      <polygon points="680,285 660,430 700,430" fill="url(#ponteWood)" stroke="#3e200c" stroke-width="2"/>
+      <polygon points="660,430 680,460 700,430" fill="#3e200c"/>
+
+      <!-- Cross Bracing Beams -->
+      <line x1="120" y1="300" x2="280" y2="350"/>
+      <line x1="280" y1="300" x2="120" y2="350"/>
+      <line x1="280" y1="300" x2="520" y2="350"/>
+      <line x1="520" y1="300" x2="280" y2="350"/>
+      <line x1="520" y1="300" x2="680" y2="350"/>
+      <line x1="680" y1="300" x2="520" y2="350"/>
+
+      <!-- Horizontal Bridge Walkway Deck -->
+      <rect x="40" y="325" width="720" height="12" rx="2" fill="#542a04" stroke="#3e200c" stroke-width="2"/>
+    </g>
+  </g>
+
+  <!-- Golden Location Map Pin Badge for "Il Veliero" -->
+  <g id="map-pin-veliero" transform="translate(400, 160)" filter="url(#locationShadow)">
+    <path d="M 0,0 C -35,-45 -40,-85 0,-115 C 40,-85 35,-45 0,0 Z" fill="url(#pinGold)" stroke="#542a04" stroke-width="2.5"/>
+    <circle cx="0" cy="-75" r="24" fill="#0b2545" stroke="#ffffff" stroke-width="2"/>
+    <!-- Small Sailing Ship / Anchor inside Pin -->
+    <path d="M -12,-68 C -8,-60 8,-60 12,-68 L 14,-75 L -14,-75 Z" fill="#ffffff"/>
+    <line x1="0" y1="-75" x2="0" y2="-92" stroke="#ffffff" stroke-width="1.8"/>
+    <polygon points="0,-90 10,-82 0,-78" fill="#dda15e"/>
+  </g>
+
+  <!-- Overlay Text Badge -->
+  <rect x="0" y="480" width="800" height="120" fill="linear-gradient(to top, rgba(7,25,47,0.95), transparent)"/>
+  <text x="400" y="550" font-family="'Cinzel', serif" font-size="34" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="4">
+    BASSANO DEL GRAPPA
+  </text>
+</svg>

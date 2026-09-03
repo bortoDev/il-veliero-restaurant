@@ -1,0 +1,229 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%" height="100%" aria-label="Rosa dei Venti — Bussola Nautica Il Veliero">
+  <defs>
+    <!-- Gradients & Filters -->
+    <radialGradient id="brassHub" cx="50%" cy="50%" r="50%" fx="35%" fy="35%">
+      <stop offset="0%" stop-color="#fff2b2"/>
+      <stop offset="40%" stop-color="#dda15e"/>
+      <stop offset="85%" stop-color="#bc6c25"/>
+      <stop offset="100%" stop-color="#6b3a0a"/>
+    </radialGradient>
+
+    <radialGradient id="compassDialBg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="70%" stop-color="#f8fafc" stop-opacity="0.9"/>
+      <stop offset="95%" stop-color="#e2e8f0" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#cbd5e1" stop-opacity="0.95"/>
+    </radialGradient>
+
+    <linearGradient id="goldLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff4cc"/>
+      <stop offset="50%" stop-color="#dda15e"/>
+      <stop offset="100%" stop-color="#bc6c25"/>
+    </linearGradient>
+
+    <linearGradient id="goldDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c58231"/>
+      <stop offset="70%" stop-color="#8a4b12"/>
+      <stop offset="100%" stop-color="#542a04"/>
+    </linearGradient>
+
+    <linearGradient id="navyLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1d4e89"/>
+      <stop offset="60%" stop-color="#134074"/>
+      <stop offset="100%" stop-color="#0b2545"/>
+    </linearGradient>
+
+    <linearGradient id="navyDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b2545"/>
+      <stop offset="70%" stop-color="#07192f"/>
+      <stop offset="100%" stop-color="#020914"/>
+    </linearGradient>
+
+    <linearGradient id="crimsonLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff758f"/>
+      <stop offset="50%" stop-color="#e63946"/>
+      <stop offset="100%" stop-color="#9d0208"/>
+    </linearGradient>
+
+    <linearGradient id="crimsonDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9d0208"/>
+      <stop offset="100%" stop-color="#590d22"/>
+    </linearGradient>
+
+    <filter id="compassShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#07192f" flood-opacity="0.25"/>
+    </filter>
+
+    <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Base Group with Shadow -->
+  <g id="rosa-dei-venti-art" filter="url(#compassShadow)">
+    <!-- Outer Dial Disc -->
+    <circle cx="300" cy="300" r="285" fill="url(#compassDialBg)" stroke="#0b2545" stroke-width="3"/>
+    <circle cx="300" cy="300" r="275" fill="none" stroke="#dda15e" stroke-width="1.5" stroke-dasharray="2 4"/>
+    <circle cx="300" cy="300" r="268" fill="none" stroke="#0b2545" stroke-width="2"/>
+
+    <!-- Degree Graduation Ticks (360 degrees, ticks every 5 and 15 deg) -->
+    <g id="dial-ticks" stroke="#0b2545" stroke-linecap="round" opacity="0.8">
+      <!-- 0 / 360 N -->
+      <line x1="300" y1="32" x2="300" y2="48" stroke-width="2.5" stroke="#bc6c25"/>
+      <line x1="300" y1="552" x2="300" y2="568" stroke-width="2.5" stroke="#bc6c25"/>
+      <line x1="32" y1="300" x2="48" y2="300" stroke-width="2.5" stroke="#bc6c25"/>
+      <line x1="552" y1="300" x2="568" y2="300" stroke-width="2.5" stroke="#bc6c25"/>
+
+      <!-- 45 NE, 135 SE, 225 SW, 315 NW -->
+      <line x1="494" y1="106" x2="482" y2="118" stroke-width="2"/>
+      <line x1="494" y1="494" x2="482" y2="482" stroke-width="2"/>
+      <line x1="106" y1="494" x2="118" y2="482" stroke-width="2"/>
+      <line x1="106" y1="106" x2="118" y2="118" stroke-width="2"/>
+
+      <!-- 30 deg ticks -->
+      <line x1="435" y1="66" x2="427" y2="80" stroke-width="1.2"/>
+      <line x1="534" y1="165" x2="520" y2="173" stroke-width="1.2"/>
+      <line x1="534" y1="435" x2="520" y2="427" stroke-width="1.2"/>
+      <line x1="435" y1="534" x2="427" y2="520" stroke-width="1.2"/>
+      <line x1="165" y1="534" x2="173" y2="520" stroke-width="1.2"/>
+      <line x1="66" y1="435" x2="80" y2="427" stroke-width="1.2"/>
+      <line x1="66" y1="165" x2="80" y2="173" stroke-width="1.2"/>
+      <line x1="165" y1="66" x2="173" y2="80" stroke-width="1.2"/>
+
+      <!-- 60 deg ticks -->
+      <line x1="507" y1="180" x2="495" y2="187" stroke-width="1.2"/>
+      <line x1="507" y1="420" x2="495" y2="413" stroke-width="1.2"/>
+      <line x1="93" y1="420" x2="105" y2="413" stroke-width="1.2"/>
+      <line x1="93" y1="180" x2="105" y2="187" stroke-width="1.2"/>
+      <line x1="180" y1="93" x2="187" y2="105" stroke-width="1.2"/>
+      <line x1="420" y1="93" x2="413" y2="105" stroke-width="1.2"/>
+      <line x1="420" y1="507" x2="413" y2="495" stroke-width="1.2"/>
+      <line x1="180" y1="507" x2="187" y2="495" stroke-width="1.2"/>
+    </g>
+
+    <!-- Mid Inner Ring -->
+    <circle cx="300" cy="300" r="230" fill="none" stroke="#dda15e" stroke-width="1"/>
+    <circle cx="300" cy="300" r="180" fill="none" stroke="#0b2545" stroke-width="1.5"/>
+
+    <!-- ============================================== -->
+    <!-- 8 TERTIARY POINTS (16-Point Compass Intermediate) -->
+    <!-- ============================================== -->
+    <g id="tertiary-points" opacity="0.9">
+      <!-- NNE (22.5 deg) -->
+      <polygon points="300,300 300,140 361,153" fill="url(#crimsonLight)"/>
+      <polygon points="300,300 361,153 325,188" fill="url(#crimsonDark)"/>
+
+      <!-- ENE (67.5 deg) -->
+      <polygon points="300,300 460,239 447,300" fill="url(#crimsonLight)"/>
+      <polygon points="300,300 412,275 460,239" fill="url(#crimsonDark)"/>
+
+      <!-- ESE (112.5 deg) -->
+      <polygon points="300,300 447,300 460,361" fill="url(#crimsonLight)"/>
+      <polygon points="300,300 460,361 412,325" fill="url(#crimsonDark)"/>
+
+      <!-- SSE (157.5 deg) -->
+      <polygon points="300,300 361,447 300,460" fill="url(#crimsonLight)"/>
+      <polygon points="300,300 325,412 361,447" fill="url(#crimsonDark)"/>
+
+      <!-- SSW (202.5 deg) -->
+      <polygon points="300,300 300,460 239,447" fill="url(#crimsonLight)"/>
+      <polygon points="300,300 239,447 275,412" fill="url(#crimsonDark)"/>
+
+      <!-- WSW (247.5 deg) -->
+      <polygon points="300,300 140,361 153,300" fill="url(#crimsonLight)"/>
+      <polygon points="300,300 188,325 140,361" fill="url(#crimsonDark)"/>
+
+      <!-- WNW (292.5 deg) -->
+      <polygon points="300,300 153,300 140,239" fill="url(#crimsonLight)"/>
+      <polygon points="300,300 140,239 188,275" fill="url(#crimsonDark)"/>
+
+      <!-- NNW (337.5 deg) -->
+      <polygon points="300,300 239,153 300,140" fill="url(#crimsonLight)"/>
+      <polygon points="300,300 275,188 239,153" fill="url(#crimsonDark)"/>
+    </g>
+
+    <!-- ============================================== -->
+    <!-- 4 SECONDARY POINTS (NE, SE, SW, NW)            -->
+    <!-- ============================================== -->
+    <g id="secondary-points">
+      <!-- North-East (NE) -->
+      <polygon points="300,300 445,155 300,265" fill="url(#goldLight)" stroke="#bc6c25" stroke-width="0.5"/>
+      <polygon points="300,300 445,155 335,300" fill="url(#goldDark)" stroke="#bc6c25" stroke-width="0.5"/>
+
+      <!-- South-East (SE) -->
+      <polygon points="300,300 445,445 335,300" fill="url(#goldLight)" stroke="#bc6c25" stroke-width="0.5"/>
+      <polygon points="300,300 445,445 300,335" fill="url(#goldDark)" stroke="#bc6c25" stroke-width="0.5"/>
+
+      <!-- South-West (SW) -->
+      <polygon points="300,300 155,445 300,335" fill="url(#goldLight)" stroke="#bc6c25" stroke-width="0.5"/>
+      <polygon points="300,300 155,445 265,300" fill="url(#goldDark)" stroke="#bc6c25" stroke-width="0.5"/>
+
+      <!-- North-West (NW) -->
+      <polygon points="300,300 155,155 265,300" fill="url(#goldLight)" stroke="#bc6c25" stroke-width="0.5"/>
+      <polygon points="300,300 155,155 300,265" fill="url(#goldDark)" stroke="#bc6c25" stroke-width="0.5"/>
+    </g>
+
+    <!-- ============================================== -->
+    <!-- 4 PRIMARY CARDINAL POINTS (N, E, S, W)         -->
+    <!-- ============================================== -->
+    <g id="primary-points">
+      <!-- NORTH POINT (Tramontana) with Fleur-de-Lis Spearhead -->
+      <polygon points="300,300 300,55 272,300" fill="url(#navyLight)" stroke="#07192f" stroke-width="0.75"/>
+      <polygon points="300,300 300,55 328,300" fill="url(#goldLight)" stroke="#bc6c25" stroke-width="0.75"/>
+
+      <!-- EAST POINT (Levante) -->
+      <polygon points="300,300 545,300 300,272" fill="url(#navyLight)" stroke="#07192f" stroke-width="0.75"/>
+      <polygon points="300,300 545,300 300,328" fill="url(#goldLight)" stroke="#bc6c25" stroke-width="0.75"/>
+
+      <!-- SOUTH POINT (Ostro) -->
+      <polygon points="300,300 300,545 328,300" fill="url(#navyLight)" stroke="#07192f" stroke-width="0.75"/>
+      <polygon points="300,300 300,545 272,300" fill="url(#goldLight)" stroke="#bc6c25" stroke-width="0.75"/>
+
+      <!-- WEST POINT (Ponente) -->
+      <polygon points="300,300 55,300 300,328" fill="url(#navyLight)" stroke="#07192f" stroke-width="0.75"/>
+      <polygon points="300,300 55,300 300,272" fill="url(#goldLight)" stroke="#bc6c25" stroke-width="0.75"/>
+    </g>
+
+    <!-- North Fleur-de-Lis Decorative Finial -->
+    <g id="north-finial" transform="translate(300, 52) scale(0.65)" filter="url(#subtleGlow)">
+      <!-- Center Spear Petal -->
+      <path d="M 0 -22 C -6 -10 -8 -2 0 10 C 8 -2 6 -10 0 -22 Z" fill="url(#goldLight)" stroke="#8a4b12" stroke-width="1.2"/>
+      <!-- Left Petal -->
+      <path d="M -3 3 C -14 3 -20 -8 -16 -16 C -12 -12 -6 -4 -1 2 Z" fill="url(#goldDark)" stroke="#8a4b12" stroke-width="1"/>
+      <!-- Right Petal -->
+      <path d="M 3 3 C 14 3 20 -8 16 -16 C 12 -12 6 -4 1 2 Z" fill="url(#goldLight)" stroke="#8a4b12" stroke-width="1"/>
+      <!-- Tie Ring Crossbar -->
+      <rect x="-8" y="2" width="16" height="3" rx="1" fill="url(#brassHub)" stroke="#542a04" stroke-width="0.8"/>
+    </g>
+
+    <!-- Central Decorative Concentric Rings -->
+    <circle cx="300" cy="300" r="100" fill="none" stroke="#dda15e" stroke-width="1.5"/>
+    <circle cx="300" cy="300" r="70" fill="none" stroke="#0b2545" stroke-width="2" stroke-dasharray="4 2"/>
+    <circle cx="300" cy="300" r="45" fill="none" stroke="#dda15e" stroke-width="2"/>
+
+    <!-- Central Brass Hub & Boss -->
+    <circle cx="300" cy="300" r="30" fill="url(#brassHub)" stroke="#542a04" stroke-width="2"/>
+    <circle cx="300" cy="300" r="22" fill="url(#goldLight)" stroke="#bc6c25" stroke-width="1.2"/>
+    <circle cx="300" cy="300" r="12" fill="url(#navyLight)" stroke="#0b2545" stroke-width="1"/>
+    <circle cx="297" cy="297" r="4" fill="#ffffff" opacity="0.8"/>
+
+    <!-- Cardinal Letter Inscriptions (Cinzel / Serif Styling) -->
+    <g id="cardinal-letters" font-family="'Cinzel', 'Times New Roman', 'Georgia', serif" font-weight="bold" text-anchor="middle" dominant-baseline="central">
+      <!-- N (North) -->
+      <text x="300" y="22" font-size="24" fill="#0b2545" stroke="#ffffff" stroke-width="0.5">N</text>
+      <!-- E (East / Levante) -->
+      <text x="580" y="300" font-size="22" fill="#0b2545">E</text>
+      <!-- S (South / Ostro) -->
+      <text x="300" y="580" font-size="22" fill="#0b2545">S</text>
+      <!-- O (West / Ponente / Ovest) -->
+      <text x="20" y="300" font-size="22" fill="#0b2545">O</text>
+
+      <!-- Sub-cardinal winds (Italian maritime tradition) -->
+      <text x="475" y="125" font-size="11" fill="#8a4b12" font-weight="600">NE</text>
+      <text x="475" y="475" font-size="11" fill="#8a4b12" font-weight="600">SE</text>
+      <text x="125" y="475" font-size="11" fill="#8a4b12" font-weight="600">SO</text>
+      <text x="125" y="125" font-size="11" fill="#8a4b12" font-weight="600">NO</text>
+    </g>
+  </g>
+</svg>

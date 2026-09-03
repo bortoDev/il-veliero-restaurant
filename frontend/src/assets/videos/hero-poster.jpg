@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%" aria-label="Hero Video Poster JPG">
+  <defs>
+    <linearGradient id="heroSkyJ" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#07192f"/>
+      <stop offset="35%" stop-color="#0b2545"/>
+      <stop offset="60%" stop-color="#134074"/>
+      <stop offset="78%" stop-color="#bc6c25"/>
+      <stop offset="88%" stop-color="#dda15e"/>
+      <stop offset="94%" stop-color="#fefae0"/>
+      <stop offset="100%" stop-color="#ffb703"/>
+    </linearGradient>
+    <linearGradient id="heroSeaJ" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#dda15e" stop-opacity="0.8"/>
+      <stop offset="15%" stop-color="#1d4e89"/>
+      <stop offset="45%" stop-color="#0e386a"/>
+      <stop offset="75%" stop-color="#07192f"/>
+      <stop offset="100%" stop-color="#030c17"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="680" fill="url(#heroSkyJ)"/>
+  <circle cx="1150" cy="580" r="180" fill="#fff066" opacity="0.6"/>
+  <circle cx="1150" cy="580" r="45" fill="#ffffff" opacity="0.95"/>
+  <rect y="600" width="1920" height="480" fill="url(#heroSeaJ)"/>
+  <polygon points="1150,600 1350,1080 950,1080" fill="#ffd166" opacity="0.4"/>
+</svg>
