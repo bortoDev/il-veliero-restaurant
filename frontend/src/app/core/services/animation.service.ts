@@ -27,126 +27,261 @@ export class AnimationService {
    * fluidly to fill all 4 corners of the hero container.
    */
   public initHeroVelieroMorph(
-    shipEl: HTMLElement | Element,
+    shipEl: HTMLElement | Element | null,
     videoWallEl: HTMLElement | Element,
     containerEl: HTMLElement | Element,
-    quoteEl?: HTMLElement | Element | null
-  ): gsap.core.Timeline | null {
-    if (typeof window === 'undefined' || !shipEl || !videoWallEl || !containerEl) {
+    quoteEl?: HTMLElement | Element | null,
+    mobileShipEl?: HTMLElement | Element | null,
+    videoSlotEl?: HTMLElement | Element | null
+  ): gsap.MatchMedia | null {
+    if (typeof window === 'undefined' || !videoWallEl || !containerEl) {
       return null;
     }
 
     if (this.prefersReducedMotion()) {
-      gsap.set(shipEl, { opacity: 1 });
+      if (shipEl) gsap.set(shipEl, { opacity: 1 });
+      if (mobileShipEl) gsap.set(mobileShipEl, { opacity: 1 });
+      gsap.set(videoWallEl, { top: 0, left: 0, width: '100%', height: '100%', borderRadius: '0px' });
       return null;
     }
 
     // Refresh ScrollTrigger to ensure accurate layout metrics
     ScrollTrigger.refresh();
 
-    // Set initial transform origins
-    gsap.set(shipEl, { transformOrigin: 'bottom left' });
-    gsap.set(videoWallEl, { transformOrigin: 'top left' });
-    if (quoteEl) {
-      gsap.set(quoteEl, { transformOrigin: 'center center', scale: 1 });
-    }
+    const mm = gsap.matchMedia();
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerEl,
-        start: 'top top',
-        end: '+=130%',
-        scrub: 1,
-        pin: true,
-        pinSpacing: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-      },
-    });
+    // Helper: calculate exact pixel bounds of slot relative to hero container
+    const computeBounds = (slotElement?: HTMLElement | Element | null) => {
+      const cRect = containerEl.getBoundingClientRect();
+      const slot = slotElement || videoSlotEl || containerEl;
+      const sRect = slot.getBoundingClientRect();
+      return {
+        top: Math.max(0, Math.round(sRect.top - cRect.top)),
+        left: Math.max(0, Math.round(sRect.left - cRect.left)),
+        width: Math.max(10, Math.round(sRect.width)),
+        height: Math.max(10, Math.round(sRect.height)),
+        cWidth: Math.round(cRect.width),
+        cHeight: Math.round(cRect.height),
+      };
+    };
 
-    // 1. Gently scale down ship to an elegant visible size (0.58) and keep it fixed without disappearing
-    tl.to(
-      shipEl,
-      {
-        scale: 0.58,
-        transformOrigin: 'bottom left',
-        opacity: 1,
-        ease: 'power2.out',
-        duration: 0.45,
-      },
-      0
-    );
+    // 1. DESKTOP LANDSCAPE (> 1024px AND landscape): 2 columns, left ship fades out, video expands from right col to full screen
+    mm.add('(min-width: 1025px) and (orientation: landscape)', () => {
+      if (shipEl) {
+        gsap.set(shipEl, { transformOrigin: 'bottom left', opacity: 1, scale: 1, x: 0 });
+      }
+      if (quoteEl) {
+        gsap.set(quoteEl, { transformOrigin: 'center center', scale: 1, x: 0, y: 0 });
+      }
 
-    // 2. Smoothly expand video wall rectangle so that all 4 corners match the hero container
-    tl.to(
-      videoWallEl,
-      {
-        x: () => {
-          const cRect = containerEl.getBoundingClientRect();
-          const vRect = videoWallEl.getBoundingClientRect();
-          const currentX = (gsap.getProperty(videoWallEl, 'x') as number) || 0;
-          const leftOffset = vRect.left - cRect.left - currentX;
-          return -leftOffset;
-        },
-        y: () => {
-          const cRect = containerEl.getBoundingClientRect();
-          const vRect = videoWallEl.getBoundingClientRect();
-          const currentY = (gsap.getProperty(videoWallEl, 'y') as number) || 0;
-          const topOffset = vRect.top - cRect.top - currentY;
-          return -topOffset;
-        },
-        scaleX: () => {
-          const cRect = containerEl.getBoundingClientRect();
-          const vRect = videoWallEl.getBoundingClientRect();
-          const currentScaleX = (gsap.getProperty(videoWallEl, 'scaleX') as number) || 1;
-          const initialW = vRect.width / currentScaleX;
-          return cRect.width / initialW;
-        },
-        scaleY: () => {
-          const cRect = containerEl.getBoundingClientRect();
-          const vRect = videoWallEl.getBoundingClientRect();
-          const currentScaleY = (gsap.getProperty(videoWallEl, 'scaleY') as number) || 1;
-          const initialH = vRect.height / currentScaleY;
-          return cRect.height / initialH;
-        },
-        borderRadius: '0px',
-        boxShadow: 'none',
-        ease: 'power2.inOut',
-        duration: 1,
-      },
-      0
-    );
+      // Initial position & dimensions strictly matching the 16:9 slot in the right column
+      gsap.set(videoWallEl, {
+        top: () => `${computeBounds().top}px`,
+        left: () => `${computeBounds().left}px`,
+        width: () => `${computeBounds().width}px`,
+        height: () => `${computeBounds().height}px`,
+        borderRadius: '8px',
+      });
 
-    // 3. Smoothly center the fixed, unscaled quote over the full-bleed video as it expands
-    if (quoteEl) {
-      tl.to(
-        quoteEl,
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerEl,
+          start: 'top top',
+          end: '+=130%',
+          scrub: 1,
+          pin: true,
+          pinSpacing: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      // Veliero ship on the left smoothly fades out as video takes center stage
+      if (shipEl) {
+        tl.to(
+          shipEl,
+          {
+            opacity: 0,
+            scale: 0.85,
+            x: -40,
+            ease: 'power2.inOut',
+            duration: 0.7,
+          },
+          0
+        );
+      }
+
+      // Video smoothly expands to 100% full-screen while keeping full video visible
+      tl.fromTo(
+        videoWallEl,
         {
-          x: () => {
-            const cRect = containerEl.getBoundingClientRect();
-            const qRect = quoteEl.getBoundingClientRect();
-            const currentQuoteX = (gsap.getProperty(quoteEl, 'x') as number) || 0;
-            const initialCenterQuoteX = qRect.left + qRect.width / 2 - currentQuoteX;
-            const targetCenterX = cRect.left + cRect.width / 2;
-            return targetCenterX - initialCenterQuoteX;
-          },
-          y: () => {
-            const cRect = containerEl.getBoundingClientRect();
-            const qRect = quoteEl.getBoundingClientRect();
-            const currentQuoteY = (gsap.getProperty(quoteEl, 'y') as number) || 0;
-            const initialCenterQuoteY = qRect.top + qRect.height / 2 - currentQuoteY;
-            const targetCenterY = cRect.top + cRect.height / 2;
-            return targetCenterY - initialCenterQuoteY;
-          },
-          scale: 1,
+          top: () => `${computeBounds().top}px`,
+          left: () => `${computeBounds().left}px`,
+          width: () => `${computeBounds().width}px`,
+          height: () => `${computeBounds().height}px`,
+          borderRadius: '8px',
+        },
+        {
+          top: 0,
+          left: 0,
+          width: () => `${computeBounds().cWidth}px`,
+          height: () => `${computeBounds().cHeight}px`,
+          borderRadius: '0px',
           ease: 'power2.inOut',
           duration: 1,
         },
         0
       );
-    }
 
-    return tl;
+      // Fade out slot shadow as it merges into full-bleed
+      if (videoSlotEl) {
+        tl.to(
+          videoSlotEl,
+          {
+            boxShadow: 'none',
+            duration: 0.6,
+            ease: 'power1.out',
+          },
+          0
+        );
+      }
+
+      // Quote & CTA stay visible and center horizontally and vertically over the full-bleed video
+      if (quoteEl) {
+        tl.to(
+          quoteEl,
+          {
+            x: () => {
+              const cRect = containerEl.getBoundingClientRect();
+              const qRect = quoteEl.getBoundingClientRect();
+              const currentQuoteX = (gsap.getProperty(quoteEl, 'x') as number) || 0;
+              const initialCenterQuoteX = qRect.left + qRect.width / 2 - currentQuoteX;
+              const targetCenterX = cRect.left + cRect.width / 2;
+              return targetCenterX - initialCenterQuoteX;
+            },
+            y: () => {
+              const cRect = containerEl.getBoundingClientRect();
+              const qRect = quoteEl.getBoundingClientRect();
+              const currentQuoteY = (gsap.getProperty(quoteEl, 'y') as number) || 0;
+              const initialCenterQuoteY = qRect.top + qRect.height / 2 - currentQuoteY;
+              const targetCenterY = cRect.top + cRect.height / 2;
+              return targetCenterY - initialCenterQuoteY;
+            },
+            scale: 1,
+            ease: 'power2.inOut',
+            duration: 1,
+          },
+          0
+        );
+      }
+
+      // Recalculate metrics on fullscreen changes (F11), window resizing, or orientation changes
+      const onResizeOrFullscreen = () => {
+        ScrollTrigger.refresh();
+      };
+      window.addEventListener('fullscreenchange', onResizeOrFullscreen);
+      window.addEventListener('resize', onResizeOrFullscreen);
+      window.addEventListener('orientationchange', onResizeOrFullscreen);
+
+      return () => {
+        window.removeEventListener('fullscreenchange', onResizeOrFullscreen);
+        window.removeEventListener('resize', onResizeOrFullscreen);
+        window.removeEventListener('orientationchange', onResizeOrFullscreen);
+      };
+    });
+
+    // 2. MOBILE & TABLET PORTRAIT (all portrait screens, and landscape <= 1024px): 1 centered column
+    mm.add('(max-width: 1024px), (orientation: portrait)', () => {
+      if (mobileShipEl) {
+        gsap.set(mobileShipEl, { transformOrigin: 'center center', scale: 1, opacity: 1 });
+      }
+
+      // Initial mobile position matching slot
+      gsap.set(videoWallEl, {
+        top: () => `${computeBounds().top}px`,
+        left: () => `${computeBounds().left}px`,
+        width: () => `${computeBounds().width}px`,
+        height: () => `${computeBounds().height}px`,
+        borderRadius: '14px',
+      });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerEl,
+          start: 'top top',
+          end: '+=100%',
+          scrub: 1,
+          pin: true,
+          pinSpacing: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      // Mobile boat under quote: smoothly fades out on scroll down
+      if (mobileShipEl) {
+        tl.to(
+          mobileShipEl,
+          {
+            opacity: 0,
+            scale: 0.75,
+            ease: 'power2.inOut',
+            duration: 0.7,
+          },
+          0
+        );
+      }
+
+      // Expand mobile video frame to fill 100% of viewport with dynamic recalculation on refresh
+      tl.fromTo(
+        videoWallEl,
+        {
+          top: () => `${computeBounds().top}px`,
+          left: () => `${computeBounds().left}px`,
+          width: () => `${computeBounds().width}px`,
+          height: () => `${computeBounds().height}px`,
+          borderRadius: '14px',
+        },
+        {
+          top: 0,
+          left: 0,
+          width: () => `${computeBounds().cWidth}px`,
+          height: () => `${computeBounds().cHeight}px`,
+          borderRadius: '0px',
+          ease: 'power2.inOut',
+          duration: 1,
+        },
+        0
+      );
+
+      // Fade out slot shadow on mobile
+      if (videoSlotEl) {
+        tl.to(
+          videoSlotEl,
+          {
+            boxShadow: 'none',
+            duration: 0.6,
+            ease: 'power1.out',
+          },
+          0
+        );
+      }
+
+      const onResizeOrFullscreen = () => {
+        ScrollTrigger.refresh();
+      };
+      window.addEventListener('fullscreenchange', onResizeOrFullscreen);
+      window.addEventListener('resize', onResizeOrFullscreen);
+      window.addEventListener('orientationchange', onResizeOrFullscreen);
+
+      return () => {
+        window.removeEventListener('fullscreenchange', onResizeOrFullscreen);
+        window.removeEventListener('resize', onResizeOrFullscreen);
+        window.removeEventListener('orientationchange', onResizeOrFullscreen);
+      };
+    });
+
+    return mm;
   }
 
   /**
@@ -473,6 +608,50 @@ export class AnimationService {
       stagger: 0.08,
       ease: 'power2.out',
     });
+  }
+
+  /**
+   * Editorial Word-by-Word Scroll Reveal:
+   * As user scrolls down towards the title, words transition progressively
+   * from faded/muted (opacity 0.2) to fully sharp and crisp (opacity 1.0)
+   * in a smooth scrubbed sequence inspired by high-end editorial designs (e.g. Dishoom).
+   */
+  public initWordScrollReveal(
+    titleEl: HTMLElement | Element,
+    words: (HTMLElement | Element)[] | NodeListOf<Element>
+  ): gsap.core.Timeline | null {
+    if (typeof window === 'undefined' || !titleEl || !words || (words as any).length === 0) {
+      return null;
+    }
+
+    if (this.prefersReducedMotion()) {
+      gsap.set(words, { opacity: 1 });
+      return null;
+    }
+
+    const wordsArray = Array.from(words);
+    gsap.set(wordsArray, { opacity: 0.2 });
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: titleEl,
+        start: 'top 85%',
+        end: 'top 35%',
+        scrub: 0.3,
+        invalidateOnRefresh: true,
+      },
+    });
+
+    // Animate each word in a discrete, distinct sequence with zero overlapping blur
+    wordsArray.forEach((word) => {
+      tl.to(word, {
+        opacity: 1,
+        duration: 0.25,
+        ease: 'power2.out',
+      });
+    });
+
+    return tl;
   }
 
   /**

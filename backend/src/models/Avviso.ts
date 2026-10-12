@@ -10,6 +10,8 @@ export interface IAvviso extends Document {
   startDate: Date;
   endDate?: Date;
   isActive: boolean;
+  image?: string;
+  images: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,6 +39,15 @@ const AvvisoSchema = new Schema<IAvviso>(
       },
       default: 'info',
       lowercase: true,
+    },
+    image: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    images: {
+      type: [String],
+      default: [],
     },
     startDate: {
       type: Date,

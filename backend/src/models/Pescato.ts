@@ -3,10 +3,11 @@ import mongoose, { Document, Schema, Model } from 'mongoose';
 export interface IPescato extends Document {
   title: string;
   description: string;
-  image: string;
-  price: number;
+  image?: string;
+  images?: string[];
+  price?: number;
   catchDate: Date;
-  isAvailable: boolean;
+  isAvailable?: boolean;
   marketLocation?: string;
   kilogramsAvailable?: number;
   createdAt: Date;
@@ -32,9 +33,13 @@ const PescatoSchema = new Schema<IPescato>(
       default: '',
       trim: true,
     },
+    images: {
+      type: [String],
+      default: [],
+    },
     price: {
       type: Number,
-      required: [true, 'Price is required'],
+      default: 0,
       min: [0, 'Price cannot be negative'],
     },
     catchDate: {

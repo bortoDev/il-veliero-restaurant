@@ -115,6 +115,20 @@ import { ModalComponent } from '../../../shared/components/modal/modal.component
             </select>
           </div>
 
+          <div class="form-group">
+            <label>Foto dell'Avviso (opzionali, una o più immagini)</label>
+            <textarea
+              class="form-control"
+              [(ngModel)]="imagesText"
+              name="imagesText"
+              rows="2"
+              placeholder="/uploads/avvisi/foto1.jpg&#10;/uploads/avvisi/foto2.jpg"
+            ></textarea>
+            <small style="display: block; margin-top: 0.35rem; color: var(--color-text-muted); font-size: 0.78rem;">
+              Inserisci uno o più URL per accompagnare l'avviso con una o più fotografie nel banner.
+            </small>
+          </div>
+
           <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
             <div class="form-group">
               <label>Data Inizio</label>
@@ -252,6 +266,7 @@ export class AvvisiManagementComponent implements OnInit {
 
   public startDateString: string = '';
   public endDateString: string = '';
+  public imagesText: string = '';
 
   public formData: Partial<Avviso> = {
     title: '',
@@ -278,6 +293,7 @@ export class AvvisiManagementComponent implements OnInit {
       severity: 'info',
       isActive: true,
     };
+    this.imagesText = '';
     this.startDateString = '';
     this.endDateString = '';
     this.isModalOpen.set(true);
@@ -291,6 +307,13 @@ export class AvvisiManagementComponent implements OnInit {
       severity: avviso.severity,
       isActive: avviso.isActive,
     };
+    if (avviso.images && avviso.images.length > 0) {
+      this.imagesText = avviso.images.join('\n');
+    } else if (avviso.image) {
+      this.imagesText = avviso.image;
+    } else {
+      this.imagesText = '';
+    }
     this.startDateString = avviso.startDate ? new Date(avviso.startDate).toISOString().slice(0, 16) : '';
     this.endDateString = avviso.endDate ? new Date(avviso.endDate).toISOString().slice(0, 16) : '';
     this.isModalOpen.set(true);
@@ -305,6 +328,14 @@ export class AvvisiManagementComponent implements OnInit {
     if (this.startDateString) payload.startDate = new Date(this.startDateString).toISOString();
     if (this.endDateString) payload.endDate = new Date(this.endDateString).toISOString();
     else payload.endDate = null;
+
+    const parsedImages = this.imagesText
+      ? this.imagesText.split(/[\n,]+/).map(s => s.trim()).filter(Boolean)
+      : [];
+    payload.images = parsedImages;
+    if (parsedImages.length > 0) {
+      payload.image = parsedImages[0];
+    }
 
     const id = this.editingId();
     if (id) {

@@ -141,6 +141,7 @@ export const createEvento = async (
       title,
       description,
       image = '',
+      images = [],
       eventDate,
       price = 0,
       maxSeats,
@@ -181,10 +182,18 @@ export const createEvento = async (
       }
     }
 
+    const sanitizedImages = Array.isArray(images)
+      ? images.map((img: any) => String(img).trim()).filter(Boolean)
+      : [];
+    const primaryImage = typeof image === 'string' && image.trim()
+      ? image.trim()
+      : (sanitizedImages.length > 0 ? sanitizedImages[0] : '');
+
     const event = new Evento({
       title: title.trim(),
       description: description.trim(),
-      image: typeof image === 'string' ? image.trim() : '',
+      image: primaryImage,
+      images: sanitizedImages,
       eventDate: parsedEventDate,
       price: Number(price) || 0,
       maxSeats: maxSeats !== undefined && maxSeats !== null ? Number(maxSeats) : undefined,
@@ -235,6 +244,7 @@ export const updateEvento = async (
       title,
       description,
       image,
+      images,
       eventDate,
       price,
       maxSeats,
@@ -258,6 +268,13 @@ export const updateEvento = async (
 
     if (image !== undefined) {
       event.image = String(image).trim();
+    }
+
+    if (images !== undefined && Array.isArray(images)) {
+      event.images = images.map((img: any) => String(img).trim()).filter(Boolean);
+      if (!event.image && event.images.length > 0) {
+        event.image = event.images[0];
+      }
     }
 
     if (eventDate !== undefined) {

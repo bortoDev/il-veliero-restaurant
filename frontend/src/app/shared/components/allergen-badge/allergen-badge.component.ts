@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ALLERGEN_SVG_ICONS, AllergenSvgDef } from './allergen-icons.data';
 
 export interface AllergenDef {
   number: number;
@@ -33,55 +34,32 @@ export const OFFICIAL_ALLERGENS: AllergenDef[] = [
   template: `
     <span class="allergen-pill" [title]="getAllergenTooltip(allergen)">
       <span class="allergen-num" *ngIf="getAllergenNumber(allergen)">{{ getAllergenNumber(allergen) }}</span>
-      <i [class]="getAllergenIcon(allergen)"></i>
       <span class="allergen-text">{{ getAllergenLabel(allergen) }}</span>
     </span>
   `,
   styles: [`
     .allergen-pill {
       display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      padding: 0.18rem 0.48rem;
-      background: var(--dishoom-bg-surface, #F5EFEB);
-      color: var(--dishoom-ink-charcoal, #292524);
-      border: 1px solid var(--dishoom-border-sand, #E5DDD0);
-      border-radius: 4px;
-      font-size: 0.72rem;
-      font-weight: 600;
+      align-items: baseline;
+      gap: 0.25rem;
+      background: transparent;
+      border: none;
+      font-size: 0.74rem;
+      font-weight: 500;
       white-space: nowrap;
       line-height: 1.2;
-      transition: all 0.2s ease;
-
-      &:hover {
-        border-color: var(--dishoom-brass, #C58A3E);
-        background: #FFFDF9;
-      }
 
       .allergen-num {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 15px;
-        height: 15px;
-        padding: 0 2px;
-        background: var(--dishoom-brass-dark, #945C22);
-        color: #ffffff;
-        border-radius: 3px;
-        font-size: 0.62rem;
         font-weight: 700;
-        line-height: 1;
+        color: var(--dishoom-brass-dark, #945C22);
         font-family: var(--font-body-editorial, sans-serif);
-      }
-
-      i {
-        font-size: 0.72rem;
-        color: var(--dishoom-brass, #C58A3E);
+        font-size: 0.74rem;
       }
 
       .allergen-text {
         font-family: var(--font-body-editorial, sans-serif);
-        letter-spacing: 0.02em;
+        letter-spacing: 0.01em;
+        color: var(--dishoom-ink-espresso, #44403C);
       }
     }
   `],
@@ -110,9 +88,10 @@ export class AllergenBadgeComponent {
     return def ? def.label : String(val);
   }
 
-  getAllergenIcon(val: string | number): string {
+  getAllergenSvg(val: string | number): AllergenSvgDef | undefined {
     const def = this.findDef(val);
-    return def ? def.icon : 'fa-solid fa-circle-exclamation';
+    if (!def) return undefined;
+    return ALLERGEN_SVG_ICONS[def.key];
   }
 
   getAllergenTooltip(val: string | number): string {

@@ -37,6 +37,9 @@ export async function connectDatabase(options: DatabaseConnectOptions = {}): Pro
     await mongoose.connect(targetUri, {
       serverSelectionTimeoutMS: timeoutMs,
       connectTimeoutMS: timeoutMs,
+      maxPoolSize: 50,
+      minPoolSize: 5,
+      socketTimeoutMS: 45000,
     });
 
     activeDatabaseType = 'external';
@@ -67,8 +70,13 @@ export async function connectMemoryDatabase(): Promise<typeof mongoose> {
   }
 
   if (!mongoMemoryServerInstance) {
-    const { MongoMemoryServer } = require('mongodb-memory-server');
-    mongoMemoryServerInstance = await MongoMemoryServer.create();
+    try {
+      const { MongoMemoryServer } = require('mongodb-memory-server');
+      mongoMemoryServerInstance = await MongoMemoryServer.create();
+    } catch (err: any) {
+      console.error('[Database] Failed to load mongodb-memory-server (it is a dev-only dependency):', err?.message || err);
+      throw new Error('Memory database fallback is not available in production environments without devDependencies.');
+    }
   }
 
   const memoryUri = mongoMemoryServerInstance.getUri();

@@ -72,10 +72,11 @@ export interface PescatoItem {
   _id?: string;
   title: string;
   description: string;
-  price: number;
-  image: string;
+  price?: number;
+  image?: string;
+  images?: string[];
   catchDate: string;
-  isAvailable: boolean;
+  isAvailable?: boolean;
   marketLocation?: string;
   kilogramsAvailable?: number;
   createdAt?: string;
@@ -93,6 +94,8 @@ export interface Avviso {
   startDate: string;
   endDate?: string;
   isActive: boolean;
+  image?: string;
+  images?: string[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -102,7 +105,8 @@ export interface Evento {
   _id?: string;
   title: string;
   description: string;
-  image: string;
+  image?: string;
+  images?: string[];
   eventDate: string;
   price: number;
   maxSeats?: number;

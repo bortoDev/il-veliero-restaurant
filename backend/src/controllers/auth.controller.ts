@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import bcrypt from 'bcryptjs';
 import { User, IUser } from '../models/User';
 import { TokenBlacklist } from '../models/TokenBlacklist';
 import { jwtService } from '../services/jwt.service';
@@ -9,6 +10,9 @@ import {
   ConflictError,
   NotFoundError,
 } from '../utils/errors';
+
+// Dummy bcrypt hash at cost 12 to guarantee constant-time execution on non-existent users
+const DUMMY_PASSWORD_HASH = '$2a$12$e8vE5dJz2VqWqUv7IqGkQe9yF5vK7f9L1d2m3n4o5p6q7r8s9t0u1';
 
 /**
  * Register a new client user.
@@ -61,6 +65,11 @@ export const register = async (
       tokenVersion: user.tokenVersion || 0,
     });
 
+    const refreshToken = jwtService.generateRefreshToken({
+      id: user._id.toString(),
+      tokenVersion: user.tokenVersion || 0,
+    });
+
     res.locals.auditAction = 'AUTH_REGISTER';
     res.locals.auditRole = user.role;
     res.locals.auditUser = user._id.toString();
@@ -73,6 +82,7 @@ export const register = async (
       success: true,
       message: 'User registered successfully',
       token,
+      refreshToken,
       user: {
         id: user._id.toString(),
         name: user.name,
@@ -109,6 +119,8 @@ export const login = async (
     }).select('+password');
 
     if (!user) {
+      // Execute dummy bcrypt compare to ensure constant response time and prevent timing attacks
+      await bcrypt.compare(password, DUMMY_PASSWORD_HASH);
       throw new UnauthorizedError('Invalid email or password');
     }
 
@@ -116,9 +128,29 @@ export const login = async (
       throw new UnauthorizedError('Account is deactivated. Please contact an administrator.');
     }
 
+    // Check account lockout
+    if (user.lockUntil && user.lockUntil > new Date()) {
+      const minutesLeft = Math.ceil((user.lockUntil.getTime() - Date.now()) / 60000);
+      throw new UnauthorizedError(
+        `Account temporaneamente bloccato per troppi tentativi falliti. Riprova tra ${minutesLeft} minuti.`
+      );
+    }
+
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
+      // Increment failed attempts and trigger lockout if >= 5 attempts
+      user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
+      if (user.failedLoginAttempts >= 5) {
+        user.lockUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 min lock
+      }
+      await user.save({ validateBeforeSave: false });
       throw new UnauthorizedError('Invalid email or password');
+    }
+
+    // Reset failed login counter on success
+    if (user.failedLoginAttempts && user.failedLoginAttempts > 0) {
+      user.failedLoginAttempts = 0;
+      user.lockUntil = undefined;
     }
 
     // Update lastLogin without triggering validation hooks
@@ -135,6 +167,11 @@ export const login = async (
       tokenVersion: user.tokenVersion || 0,
     });
 
+    const refreshToken = jwtService.generateRefreshToken({
+      id: user._id.toString(),
+      tokenVersion: user.tokenVersion || 0,
+    });
+
     res.locals.auditAction = 'AUTH_LOGIN';
     res.locals.auditRole = user.role;
     res.locals.auditUser = user._id.toString();
@@ -146,6 +183,7 @@ export const login = async (
     res.status(200).json({
       success: true,
       token,
+      refreshToken,
       user: {
         id: user._id.toString(),
         email: user.email,
@@ -419,6 +457,11 @@ export const changePassword = async (
       tokenVersion: user.tokenVersion || 0,
     });
 
+    const refreshToken = jwtService.generateRefreshToken({
+      id: user._id.toString(),
+      tokenVersion: user.tokenVersion || 0,
+    });
+
     res.locals.auditAction = 'PASSWORD_CHANGE';
     res.locals.auditRole = user.role;
     res.locals.auditUser = user._id.toString();
@@ -431,6 +474,71 @@ export const changePassword = async (
       success: true,
       message: 'Password modificata con successo',
       token,
+      refreshToken,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Refresh access token using a valid refresh token.
+ * POST /api/v1/auth/refresh
+ */
+export const refreshTokenHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      throw new BadRequestError('Refresh token is required');
+    }
+
+    let payload;
+    try {
+      payload = jwtService.verifyRefreshToken(refreshToken);
+    } catch {
+      throw new UnauthorizedError('Invalid or expired refresh token');
+    }
+
+    const user = await User.findById(payload.id);
+    if (!user || !user.isActive) {
+      throw new UnauthorizedError('User account not found or inactive');
+    }
+
+    if (user.tokenVersion !== payload.tokenVersion) {
+      throw new UnauthorizedError('Refresh token has been revoked');
+    }
+
+    const newAccessToken = jwtService.generateAccessToken({
+      id: user._id.toString(),
+      email: user.email,
+      username: user.username,
+      role: user.role,
+      name: user.name,
+      isMasterAdmin: user.isMasterAdmin,
+      tokenVersion: user.tokenVersion || 0,
+    });
+
+    const newRefreshToken = jwtService.generateRefreshToken({
+      id: user._id.toString(),
+      tokenVersion: user.tokenVersion || 0,
+    });
+
+    res.status(200).json({
+      success: true,
+      token: newAccessToken,
+      refreshToken: newRefreshToken,
+      user: {
+        id: user._id.toString(),
+        email: user.email,
+        username: user.username,
+        name: user.name,
+        role: user.role,
+        isMasterAdmin: user.isMasterAdmin,
+      },
     });
   } catch (error) {
     next(error);

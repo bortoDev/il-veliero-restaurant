@@ -130,4 +130,36 @@ describe('AuthService (Milestone 4 - Security & Dual Auth)', () => {
       done();
     });
   });
+
+  it('should not navigate to /login on clearSession if on a public route', () => {
+    Object.defineProperty(routerSpy, 'url', { value: '/pescato', configurable: true });
+    localStorage.setItem('il_veliero_token', 'test_token');
+    localStorage.setItem('il_veliero_user', JSON.stringify({ id: '1', name: 'User' }));
+
+    service.clearSession();
+
+    expect(localStorage.getItem('il_veliero_token')).toBeNull();
+    expect(localStorage.getItem('il_veliero_user')).toBeNull();
+    expect(service.currentUser()).toBeNull();
+    expect(routerSpy.navigate).not.toHaveBeenCalled();
+  });
+
+  it('should navigate to /login on clearSession if on a protected admin/gestore route', () => {
+    Object.defineProperty(routerSpy, 'url', { value: '/admin/dashboard', configurable: true });
+    localStorage.setItem('il_veliero_token', 'test_token');
+
+    service.clearSession();
+
+    expect(localStorage.getItem('il_veliero_token')).toBeNull();
+    expect(service.currentUser()).toBeNull();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
+  });
+
+  it('should navigate to /login when forceRedirect is true regardless of route', () => {
+    Object.defineProperty(routerSpy, 'url', { value: '/', configurable: true });
+
+    service.clearSession(true);
+
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
+  });
 });

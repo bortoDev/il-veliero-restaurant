@@ -273,7 +273,7 @@ export class AdminDashboardComponent implements OnInit {
     });
 
     this.adminService.getBlacklistedTokens({ limit: 1 }).subscribe({
-      next: (res) => { if (res.success) this.totalBlacklisted.set(res.total); },
+      next: (res) => { if (res.success) this.totalBlacklisted.set(res.pagination?.total ?? res.total ?? 0); },
     });
   }
 }

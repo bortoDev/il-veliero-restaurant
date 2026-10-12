@@ -48,6 +48,7 @@ export const MENU_SUBCATEGORIES = [
   'speciali',
   'bianche',
   'verdure',
+  'vegetariane',
   // Carta dei Vini
   'bollicine_charmat',
   'bollicine_metodo_classico',

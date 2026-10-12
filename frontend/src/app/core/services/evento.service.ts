@@ -13,7 +13,7 @@ export class EventoService {
     return this.api.get<{ success: boolean; count: number; data: Evento[] }>('/eventi/upcoming');
   }
 
-  public getAllEventi(params?: { timeframe?: 'upcoming' | 'past'; search?: string }): Observable<{ success: boolean; count: number; data: Evento[] }> {
+  public getAllEventi(params?: { timeframe?: 'upcoming' | 'past'; search?: string; isActive?: boolean | string }): Observable<{ success: boolean; count: number; data: Evento[] }> {
     return this.api.get<{ success: boolean; count: number; data: Evento[] }>('/eventi', params);
   }
 

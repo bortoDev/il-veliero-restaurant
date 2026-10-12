@@ -3,14 +3,32 @@ import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 import { PescatoItem } from '../models';
 
+export interface PescatoListParams {
+  available?: boolean | string;
+  date?: string;
+  search?: string;
+  all?: boolean;
+  page?: number;
+  limit?: number;
+}
+
+export interface PescatoListResponse {
+  success: boolean;
+  count: number;
+  total?: number;
+  page?: number;
+  totalPages?: number;
+  data: PescatoItem[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class PescatoService {
   private api = inject(ApiService);
 
-  public getPescatoList(params?: { available?: boolean | string; date?: string; search?: string; all?: boolean }): Observable<{ success: boolean; count: number; data: PescatoItem[] }> {
-    return this.api.get<{ success: boolean; count: number; data: PescatoItem[] }>('/pescato', params);
+  public getPescatoList(params?: PescatoListParams): Observable<PescatoListResponse> {
+    return this.api.get<PescatoListResponse>('/pescato', params);
   }
 
   public getPescatoById(id: string): Observable<{ success: boolean; data: PescatoItem }> {

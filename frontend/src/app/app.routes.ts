@@ -10,11 +10,17 @@ export const routes: Routes = [
       import('./features/public/home/home.component').then((m) => m.HomeComponent),
     title: 'Il Veliero — Ristorante & Pizzeria dal Campione del Mondo',
   },
+  // Rotta Storia — momentaneamente disattivata per il futuro
+  // {
+  //   path: 'storia',
+  //   loadComponent: () =>
+  //     import('./features/public/storia/storia.component').then((m) => m.StoriaComponent),
+  //   title: 'La Nostra Storia — Il Veliero',
+  // },
   {
     path: 'storia',
-    loadComponent: () =>
-      import('./features/public/storia/storia.component').then((m) => m.StoriaComponent),
-    title: 'La Nostra Storia — Il Veliero',
+    redirectTo: '',
+    pathMatch: 'full',
   },
   {
     path: 'menu',
@@ -180,9 +186,21 @@ export const routes: Routes = [
     ],
   },
 
-  // Fallback Wildcard
+  // 404 Route & Wildcard Fallback
+  {
+    path: '404',
+    loadComponent: () =>
+      import('./features/public/not-found/not-found.component').then(
+        (m) => m.NotFoundComponent
+      ),
+    title: 'Rotta Fuori Mare — Il Veliero',
+  },
   {
     path: '**',
-    redirectTo: '',
+    loadComponent: () =>
+      import('./features/public/not-found/not-found.component').then(
+        (m) => m.NotFoundComponent
+      ),
+    title: 'Rotta Fuori Mare — Il Veliero',
   },
 ];

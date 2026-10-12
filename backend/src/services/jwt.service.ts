@@ -12,34 +12,72 @@ export interface TokenPayload {
   tokenVersion?: number;
 }
 
+export interface RefreshTokenPayload {
+  id: string;
+  tokenVersion?: number;
+  tokenType: 'refresh';
+}
+
 export interface DecodedTokenPayload extends TokenPayload {
   iat?: number;
   exp?: number;
   iss?: string;
   sub?: string;
+  tokenType?: string;
 }
 
 export class JwtService {
   private readonly secret: string;
-  private readonly defaultExpiresIn: string;
+  private readonly accessExpiresIn: string;
+  private readonly refreshExpiresIn: string;
   private readonly issuer: string = 'il-veliero-api';
 
   constructor() {
     this.secret = env.jwt.secret;
-    this.defaultExpiresIn = env.jwt.expiresIn;
+    this.accessExpiresIn = env.jwt.expiresIn;
+    this.refreshExpiresIn = env.jwt.refreshExpiresIn;
   }
 
   /**
-   * Generates a signed JWT token containing user identity and role.
+   * Generates a signed access token (default: 15m).
    */
-  public generateToken(payload: TokenPayload, expiresIn?: string | number): string {
+  public generateAccessToken(payload: TokenPayload, expiresIn?: string | number): string {
     const options: SignOptions = {
-      expiresIn: (expiresIn || this.defaultExpiresIn) as any,
+      expiresIn: (expiresIn || this.accessExpiresIn) as any,
       issuer: this.issuer,
       subject: payload.id,
     };
 
-    return jwt.sign(payload, this.secret, options);
+    return jwt.sign({ ...payload, tokenType: 'access' }, this.secret, options);
+  }
+
+  /**
+   * Alias for generateAccessToken to ensure backwards compatibility.
+   */
+  public generateToken(payload: TokenPayload, expiresIn?: string | number): string {
+    return this.generateAccessToken(payload, expiresIn);
+  }
+
+  /**
+   * Generates a signed refresh token (default: 7d).
+   */
+  public generateRefreshToken(
+    payload: { id: string; tokenVersion?: number },
+    expiresIn?: string | number
+  ): string {
+    const options: SignOptions = {
+      expiresIn: (expiresIn || this.refreshExpiresIn) as any,
+      issuer: this.issuer,
+      subject: payload.id,
+    };
+
+    const refreshPayload: RefreshTokenPayload = {
+      id: payload.id,
+      tokenVersion: payload.tokenVersion ?? 0,
+      tokenType: 'refresh',
+    };
+
+    return jwt.sign(refreshPayload, this.secret, options);
   }
 
   /**
@@ -52,6 +90,17 @@ export class JwtService {
     };
 
     return jwt.verify(token, this.secret, options) as T;
+  }
+
+  /**
+   * Verifies specifically a refresh token.
+   */
+  public verifyRefreshToken(token: string): RefreshTokenPayload {
+    const payload = this.verifyToken<RefreshTokenPayload>(token);
+    if (payload.tokenType !== 'refresh') {
+      throw new Error('Invalid token type: expected refresh token');
+    }
+    return payload;
   }
 
   /**

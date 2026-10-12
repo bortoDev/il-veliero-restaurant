@@ -135,13 +135,17 @@ export const createUser = async (
       }
     }
 
+    // Privilege Escalation Guard: Only an existing Master Admin can grant Master Admin privileges
+    const callerIsMasterAdmin = isMasterAdminUser(req.user);
+    const safeIsMasterAdmin = Boolean(isMasterAdmin && callerIsMasterAdmin);
+
     const user = new User({
       name: name.trim(),
       email: normalizedEmail,
       username: normalizedUsername,
       password,
       role,
-      isMasterAdmin: Boolean(isMasterAdmin),
+      isMasterAdmin: safeIsMasterAdmin,
       isActive: Boolean(isActive),
       tokenVersion: 0,
     });

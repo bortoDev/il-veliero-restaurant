@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import mongoose from 'mongoose';
+import { ZodError } from 'zod';
 import { AppError } from '../utils/errors';
 
 export const errorHandler = (
@@ -62,6 +63,17 @@ export const errorHandler = (
     statusCode = 400;
     code = 'INVALID_JSON';
     message = 'Malformed JSON body';
+  }
+
+  // Handle Zod Schema Validation Errors
+  if (err instanceof ZodError) {
+    statusCode = 400;
+    code = 'VALIDATION_ERROR';
+    message = 'Validation failed';
+    details = err.issues.map((e) => ({
+      field: e.path.join('.'),
+      message: e.message,
+    }));
   }
 
   // Handle JWT errors

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { AdminService } from './admin.service';
 import { ApiService } from './api.service';
-import { User, AuditLog } from '../models';
+import { User, AuditLog, BlacklistedToken } from '../models';
 
 describe('AdminService (Milestone 4 - User Governance & Audit)', () => {
   let service: AdminService;
@@ -89,6 +89,39 @@ describe('AdminService (Milestone 4 - User Governance & Audit)', () => {
       expect(apiSpy.get).toHaveBeenCalledWith('/admin/audit-logs', filters);
       expect(res.data.length).toBe(1);
       expect(res.data[0].operator).toBe('gestore_veliero');
+      done();
+    });
+  });
+
+  it('should query blacklisted tokens with pagination response', (done) => {
+    const params = { page: 1, limit: 10 };
+    const mockBlacklistResponse = {
+      success: true,
+      count: 1,
+      pagination: {
+        total: 1,
+        totalPages: 1,
+        page: 1,
+        limit: 10,
+      },
+      data: [
+        {
+          token: 'token_123',
+          reason: 'admin_revocation',
+          expiresAt: new Date().toISOString(),
+          revokedAt: new Date().toISOString(),
+        } as BlacklistedToken,
+      ],
+    };
+
+    apiSpy.get.and.returnValue(of(mockBlacklistResponse));
+
+    service.getBlacklistedTokens(params).subscribe((res) => {
+      expect(res.success).toBeTrue();
+      expect(apiSpy.get).toHaveBeenCalledWith('/admin/blacklist', params);
+      expect(res.pagination.total).toBe(1);
+      expect(res.data.length).toBe(1);
+      expect(res.data[0].token).toBe('token_123');
       done();
     });
   });

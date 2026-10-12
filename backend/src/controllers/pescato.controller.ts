@@ -122,8 +122,9 @@ export const createPescato = async (
     const {
       title,
       description,
-      price,
+      price = 0,
       image = '',
+      images = [],
       catchDate,
       isAvailable = true,
       marketLocation = 'Mercato Ittico Adriatico',
@@ -136,8 +137,12 @@ export const createPescato = async (
     if (!description || typeof description !== 'string' || description.trim().length === 0) {
       throw new BadRequestError('Description is required');
     }
-    if (price === undefined || price === null || typeof price !== 'number' || price < 0 || isNaN(price)) {
-      throw new BadRequestError('A valid non-negative price is required');
+    let numericPrice = 0;
+    if (price !== undefined && price !== null) {
+      if (typeof price !== 'number' || price < 0 || isNaN(price)) {
+        throw new BadRequestError('A valid non-negative price is required');
+      }
+      numericPrice = Number(price);
     }
 
     let parsedCatchDate = new Date();
@@ -155,11 +160,22 @@ export const createPescato = async (
       }
     }
 
+    let parsedImages: string[] = [];
+    if (Array.isArray(images)) {
+      parsedImages = images.map(img => String(img).trim()).filter(Boolean);
+    } else if (typeof images === 'string' && images.trim().length > 0) {
+      parsedImages = images.split(/[\n,]+/).map(img => img.trim()).filter(Boolean);
+    }
+    if (parsedImages.length === 0 && image) {
+      parsedImages = [String(image).trim()];
+    }
+
     const item = new Pescato({
       title: title.trim(),
       description: description.trim(),
-      price: Number(price),
-      image: typeof image === 'string' ? image.trim() : '',
+      price: numericPrice,
+      image: typeof image === 'string' && image.trim().length > 0 ? image.trim() : (parsedImages[0] || ''),
+      images: parsedImages,
       catchDate: parsedCatchDate,
       isAvailable: Boolean(isAvailable),
       marketLocation: typeof marketLocation === 'string' ? marketLocation.trim() : 'Mercato Ittico Adriatico',
@@ -239,6 +255,15 @@ export const updatePescato = async (
 
     if (image !== undefined) {
       item.image = String(image).trim();
+    }
+
+    if (req.body.images !== undefined) {
+      const incomingImages = req.body.images;
+      if (Array.isArray(incomingImages)) {
+        item.images = incomingImages.map(img => String(img).trim()).filter(Boolean);
+      } else if (typeof incomingImages === 'string') {
+        item.images = incomingImages.split(/[\n,]+/).map(img => img.trim()).filter(Boolean);
+      }
     }
 
     if (catchDate !== undefined) {

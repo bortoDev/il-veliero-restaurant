@@ -216,11 +216,12 @@ import { ModalComponent } from '../../../shared/components/modal/modal.component
   `,
   styles: [`
     .login-page {
-      min-height: 80vh;
+      margin-top: -82px;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 3rem 1.5rem;
+      padding: calc(82px + 2rem) 1.5rem 2.5rem;
       position: relative;
       background: linear-gradient(135deg, var(--color-navy-dark) 0%, var(--color-navy-primary) 100%);
     }

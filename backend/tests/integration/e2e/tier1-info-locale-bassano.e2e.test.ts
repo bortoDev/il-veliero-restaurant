@@ -101,7 +101,7 @@ describe('Tier 1: Real Bassano del Grappa Info Locale & Corporate Data E2E Suite
       expect(data.address || data.indirizzo).toMatch(/Via G\.? Fattori 7/i);
     });
 
-    it('1.2 should return real telephone contacts (Landline 0424 500 200, WhatsApp 334 623 2941)', async () => {
+    it('1.2 should return real telephone contacts (Landline 0424 500 200)', async () => {
       let response = await request(app).get('/api/v1/info');
       if (response.status === 404) {
         response = await request(app).get('/api/v1/info-locale');

@@ -13,6 +13,17 @@ import { VelieroShipComponent } from '../../../shared/components/svg-icons';
 import { AnimationService } from '../../../core/services/animation.service';
 import gsap from 'gsap';
 
+export interface ShowcaseCardItem {
+  id: string;
+  title: string;
+  subtitle: string;
+  routerLink: string;
+  ariaLabel: string;
+  posterSrc: string;
+  webmSrc?: string;
+  mp4Src?: string;
+}
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -26,68 +37,100 @@ import gsap from 'gsap';
     <div class="home-page">
       <!-- HERO SECTION with Scroll-Expansion Video & Veliero Anchor -->
       <section class="hero-morph-wrapper" #heroWrapper>
+        <!-- Full-Bleed Video Surface (Clipped via GPU clip-path to videoSlotEl) -->
+        <div class="hero-video-fullbleed" #videoWallEl>
+          <video
+            #heroVideoEl
+            class="video-wall-media"
+            autoplay
+            [muted]="true"
+            muted
+            loop
+            playsinline
+            preload="auto"
+            poster="assets/videos/hero-poster.jpg"
+            (loadedmetadata)="onHeroVideoLoaded()"
+            (canplay)="onHeroVideoCanPlay()"
+          >
+            <source src="assets/videos/Temp_home_Sito_IlVeliero_desktop.mp4" type="video/mp4" />
+            <source src="assets/videos/Temp_home_Sito_IlVeliero_desktop.webm" type="video/webm" />
+          </video>
+          <img
+            src="assets/videos/hero-poster.jpg"
+            alt="Il Veliero Experience"
+            class="video-wall-fallback"
+            (error)="onHeroPosterError($event)"
+          />
+          <div class="video-scrim"></div>
+        </div>
+
         <div class="container hero-layout">
           <!-- Left Column: Veliero Ship Alone -->
           <div class="hero-left-col" #heroLeftCol>
             <div class="hero-ship-container" #heroShipEl>
               <app-veliero-ship
-                size="360px"
-                mode="gold"
+                size="100%"
+                [withWaves]="true"
+                [animated]="true"
+                [primaryColor]="'#bc6c25'"
+                [waveColor]="'var(--veliero-wave-color, #D4D4D8)'"
+                [sailColor]="'var(--veliero-ship-sail, #FFFFFF)'"
+                [sailOpacity]="'0.95'"
                 alt="Incisione autentica del galeone Il Veliero"
               ></app-veliero-ship>
             </div>
           </div>
 
-          <!-- Right Column: Video Wall Grid Container with Fixed Quote -->
+          <!-- Right Column: Video Slot Anchor with Fixed Quote -->
           <div class="hero-right-col" #heroRightCol>
-            <div class="video-wall-box" #videoWallEl>
-              <video
-                class="video-wall-media"
-                autoplay
-                muted
-                loop
-                playsinline
-                poster="assets/videos/hero-poster.jpg"
-              >
-                <source src="assets/videos/hero-ocean-loop.webm" type="video/webm" />
-                <source src="assets/videos/hero-ocean-loop.mp4" type="video/mp4" />
-              </video>
-              <img
-                src="assets/videos/hero-poster.jpg"
-                alt="Il Veliero Experience"
-                class="video-wall-fallback"
-                (error)="onHeroPosterError($event)"
-              />
-              <div class="video-scrim"></div>
-            </div>
+            <div class="video-slot-anchor" #videoSlotEl></div>
 
-            <!-- Fixed Non-Scaling Poetic Quote Overlay -->
+            <!-- Fixed Non-Scaling Poetic Quote Overlay & Mobile Boat -->
             <div class="video-quote-overlay" #heroQuoteEl>
-              <h2 class="video-wall-quote">
-                "Il gusto autentico del mare dell'Adriatico e l'arte bianca cotta nel forno a legna del Campione del Mondo."
-              </h2>
+              <div class="quote-content-wrap">
+                <h2 class="video-wall-quote">
+                  "Ti aspettiamo a Bassano del Grappa per farti vivere un'esperienza tra il pescato fresco dell'Adriatico e la pizza del Campione del Mondo."
+                </h2>
+                <!-- Mobile boat under the quote -->
+                <div class="hero-mobile-ship" #heroMobileShipEl>
+                  <app-veliero-ship
+                    size="100%"
+                    [withWaves]="true"
+                    [animated]="true"
+                    [primaryColor]="'#bc6c25'"
+                    [waveColor]="'var(--veliero-wave-color, #D4D4D8)'"
+                    [sailColor]="'var(--veliero-ship-sail, #FFFFFF)'"
+                    [sailOpacity]="'0.95'"
+                    alt="Incisione autentica del galeone Il Veliero"
+                  ></app-veliero-ship>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- CHEF & WORLD CHAMPION DISHOOM EDITORIAL SECTION -->
+      <!-- CHEF & WORLD CHAMPION EDITORIAL SECTION -->
       <section class="section chef-intro-section">
         <div class="container">
-          <!-- Centered Love Letter Header -->
-          <div class="dishoom-love-letter">
-            <span class="editorial-kicker">PASSIONE, MAESTRIA & ACCOGLIENZA</span>
-            <h2 class="love-letter-title">
-              Ogni piatto de Il Veliero è una dichiarazione d'amore per il nostro mare —
+          <div class="editorial-header">
+            <h2 class="editorial-main-title dishoom-title-layout" #editorialTitleEl>
+              <span class="editorial-line-primary">
+                @for (word of firstLineWords; track $index) {
+                  <span class="reveal-word">{{ word }}</span>{{ ' ' }}
+                }
+              </span>
+              <span class="editorial-line-indent">
+                @for (word of secondLineWords; track $index) {
+                  <span class="reveal-word">{{ word }}</span>{{ ' ' }}
+                }
+              </span>
             </h2>
-            <p class="love-letter-sub">
-              il pescato freschissimo dell'Adriatico, la cura artigianale degli impasti a lunga lievitazione e la convivialità della vera tavola veneta.
-            </p>
           </div>
 
           <!-- Editorial Asymmetrical 2-Column Photo & Story Grid -->
-          <div class="dishoom-editorial-grid">
-            <!-- Left Editorial Photo with Vintage Caption -->
+          <div class="editorial-grid">
+            <!-- Left Editorial Photo -->
             <div class="editorial-col-left">
               <div class="editorial-photo-frame">
                 <img
@@ -96,21 +139,17 @@ import gsap from 'gsap';
                   class="editorial-main-img"
                   (error)="onChampionLogoError($event)"
                 />
-                <div class="editorial-caption">
-                  <span class="caption-tag">SOPRA:</span>
-                  <span class="caption-text">La passione dei fondatori Federico e Sabina, custodi di una tradizione culinaria che unisce mare e arte bianca a Bassano del Grappa.</span>
-                </div>
               </div>
             </div>
 
-            <!-- Right Editorial Story & Secondary Framed Photo -->
+            <!-- Right Editorial Story & Secondary Photo -->
             <div class="editorial-col-right">
               <div class="editorial-text-flow">
                 <p class="editorial-lead">
-                  Tutto nasce dalla ricerca quotidiana dell'eccellenza. All'alba selezioniamo il pescato fresco dai mercati dell'Adriatico, mentre in cucina i forni e gli impasti a lievitazione naturale oltre 48 ore danno vita alla pizza insignita del titolo di <strong>Campione del Mondo</strong>.
+                  Tutto nasce dalla ricerca quotidiana dell'eccellenza. Selezioniamo il pescato fresco dai mercati ittici dell'Adriatico, mentre in pizzeria gli impasti a lievitazione naturale oltre 48 ore danno vita alla celebre pizza del <strong>Campione del Mondo</strong>.
                 </p>
                 <p class="editorial-body">
-                  Tra le sale accoglienti e il profumo del forno a legna, ogni ospite ritrova il calore sincero della tradizione marinara, dove la freschezza degli ingredienti incontra la maestria di chi ha dedicato la propria vita all'arte gastronomica.
+                  Tra le sale accoglienti e il profumo del forno a legna a 450°C, ogni ospite ritrova il calore autentico della tradizione gastronomica veneta.
                 </p>
               </div>
 
@@ -122,26 +161,6 @@ import gsap from 'gsap';
                     class="editorial-side-img"
                     (error)="onChampionLogoError($event)"
                   />
-                  <div class="editorial-caption">
-                    <span class="caption-tag">A DESTRA:</span>
-                    <span class="caption-text">La celebre pizza cotta a 450°C nel forno a legna dal Campione del Mondo Federico Bortolato.</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Refined Key Highlights -->
-              <div class="editorial-pills-row">
-                <div class="editorial-pill">
-                  <i class="fa-solid fa-trophy"></i>
-                  <span>Pizza Campione del Mondo</span>
-                </div>
-                <div class="editorial-pill">
-                  <i class="fa-solid fa-fish"></i>
-                  <span>Pescato Fresco Quotidiano</span>
-                </div>
-                <div class="editorial-pill">
-                  <i class="fa-solid fa-fire"></i>
-                  <span>Forno a Legna Tradizionale</span>
                 </div>
               </div>
             </div>
@@ -149,174 +168,95 @@ import gsap from 'gsap';
         </div>
       </section>
 
-      <!-- 3 DISHOOM ARCHIVE FRAME CARDS WITH VIDEO LOOP -->
+      <!-- 3 SHOWCASE CARDS (MENÙ, PESCATO, DOVE SIAMO) -->
       <section class="section cards-showcase-section">
         <div class="container">
           <div class="section-header">
-            <div class="header-decor-ship">
-              <app-veliero-ship size="56px" mode="gold"></app-veliero-ship>
-            </div>
-            <span class="eyebrow-caps">La Tavola & l'Ospitalità</span>
+            <span class="eyebrow-caps">PASSIONE, MAESTRIA & ACCOGLIENZA</span>
             <h2 class="section-title">
-              "Consulta i Menù, Scopri i Nostri Prodotti, Vieni a Trovarci"
+              Menù, Pescato del Giorno & Dove Siamo
             </h2>
-            <p class="description">
-              Esplora la nostra prestigiosa carta gastronomica, il diario del pescato fresco di giornata e la calorosa accoglienza a Bassano del Grappa.
-            </p>
           </div>
 
           <div class="archive-cards-grid">
-            <!-- Card 1: MENÙ -->
-            <a
-              routerLink="/menu"
-              class="archive-frame-card"
-              aria-label="Consulta il Menù e le Pizze del Campione del Mondo"
-              (mouseenter)="menuVideo.playVideo()"
-              (mouseleave)="menuVideo.pauseVideo()"
-              (focusin)="menuVideo.playVideo()"
-              (focusout)="menuVideo.pauseVideo()"
-            >
-              <div class="card-inner-frame">
+            @for (card of showcaseCards; track card.id) {
+              <a
+                [routerLink]="card.routerLink"
+                class="veliero-large-card"
+                [attr.aria-label]="card.ariaLabel"
+                (mouseenter)="cardVideo.playVideo()"
+                (mouseleave)="cardVideo.pauseVideo()"
+                (focusin)="cardVideo.playVideo()"
+                (focusout)="cardVideo.pauseVideo()"
+              >
                 <div class="card-media-wrapper">
                   <app-video-card-media
-                    #menuVideo
-                    mp4Src="assets/videos/card-menu-loop.mp4"
-                    webmSrc="assets/videos/card-menu-loop.webm"
-                    posterSrc="assets/videos/card-menu-poster.svg"
-                    title="Menù Il Veliero"
+                    #cardVideo
+                    [mp4Src]="card.mp4Src || ''"
+                    [webmSrc]="card.webmSrc || ''"
+                    [posterSrc]="card.posterSrc"
+                    [title]="card.title"
                   ></app-video-card-media>
                 </div>
-                <div class="card-caption-content">
-                  <span class="card-category-tag">Carta Gastronomica</span>
-                  <h3 class="card-title">MENÙ</h3>
-                  <p class="card-narrative">
-                    Antipasti marinari, crudi freschi dell'Adriatico, primi trafilati al bronzo e le celebri pizze a lunga lievitazione cotte nel forno a legna del Campione del Mondo.
-                  </p>
-                  <span class="card-action-link">
-                    Consulta i Menù <i class="fa-solid fa-arrow-right-long"></i>
-                  </span>
+                <div class="card-gradient-overlay"></div>
+                <div class="veliero-card-plaque">
+                  <h3 class="plaque-title">{{ card.title }}</h3>
+                  <p class="plaque-subtitle">{{ card.subtitle }}</p>
+                  <div class="plaque-arrow-wrap">
+                    <svg class="feather-arrow" viewBox="0 0 52 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <line x1="3" y1="6" x2="48" y2="6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+                      <path d="M3 2.5L7 6L3 9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M7 2.5L11 6L7 9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M11 2.5L15 6L11 9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+                      <polygon points="42,2.5 49,6 42,9.5" fill="currentColor" />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-            </a>
-
-            <!-- Card 2: DIARIO DI BORDO -->
-            <a
-              routerLink="/pescato"
-              class="archive-frame-card"
-              aria-label="Consulta il Diario di Bordo del Pescato del Giorno"
-              (mouseenter)="pescatoVideo.playVideo()"
-              (mouseleave)="pescatoVideo.pauseVideo()"
-              (focusin)="pescatoVideo.playVideo()"
-              (focusout)="pescatoVideo.pauseVideo()"
-            >
-              <div class="card-inner-frame">
-                <div class="card-media-wrapper">
-                  <app-video-card-media
-                    #pescatoVideo
-                    mp4Src="assets/videos/card-pescato-loop.mp4"
-                    webmSrc="assets/videos/card-pescato-loop.webm"
-                    posterSrc="assets/videos/card-pescato-poster.svg"
-                    title="Pescato del Giorno"
-                  ></app-video-card-media>
-                </div>
-                <div class="card-caption-content">
-                  <span class="card-category-tag">Mercato Ittico</span>
-                  <h3 class="card-title">DIARIO DI BORDO</h3>
-                  <p class="card-narrative">
-                    Il Diario di Bordo aggiornato ogni mattina con gli arrivi d'asta: crostacei vivi, dentici, orate, calamaretti spillo e fritture fragranti di paranza.
-                  </p>
-                  <span class="card-action-link">
-                    Diario di Bordo <i class="fa-solid fa-arrow-right-long"></i>
-                  </span>
-                </div>
-              </div>
-            </a>
-
-            <!-- Card 3: DOVE SIAMO -->
-            <a
-              routerLink="/dove-siamo"
-              class="archive-frame-card"
-              aria-label="Indicazioni per Raggiungerci a Bassano del Grappa"
-              (mouseenter)="doveSiamoVideo.playVideo()"
-              (mouseleave)="doveSiamoVideo.pauseVideo()"
-              (focusin)="doveSiamoVideo.playVideo()"
-              (focusout)="doveSiamoVideo.pauseVideo()"
-            >
-              <div class="card-inner-frame">
-                <div class="card-media-wrapper">
-                  <app-video-card-media
-                    #doveSiamoVideo
-                    mp4Src="assets/videos/card-dove-siamo-loop.mp4"
-                    webmSrc="assets/videos/card-dove-siamo-loop.webm"
-                    posterSrc="assets/videos/card-dove-siamo-poster.svg"
-                    title="Dove Siamo"
-                  ></app-video-card-media>
-                </div>
-                <div class="card-caption-content">
-                  <span class="card-category-tag">Ospitalità & Territorio</span>
-                  <h3 class="card-title">DOVE SIAMO</h3>
-                  <p class="card-narrative">
-                    In Via G. Fattori 7 a Bassano del Grappa (San Michele). Atmosfera calda d'archivio, cantina curata, terrazza estiva e comodo parcheggio riservato.
-                  </p>
-                  <span class="card-action-link">
-                    Come Raggiungerci <i class="fa-solid fa-arrow-right-long"></i>
-                  </span>
-                </div>
-              </div>
-            </a>
+              </a>
+            }
           </div>
         </div>
       </section>
 
-      <!-- OPENING HOURS & LOCATION HIGHLIGHT SECTION -->
+      <!-- OPENING HOURS & DIRECT BOOKING HIGHLIGHT -->
       <section class="section hours-info-section">
         <div class="container">
-          <div class="hours-info-box card">
-            <div class="hours-left">
-              <div class="hours-header-badge">
-                <i class="fa-solid fa-clock"></i>
-                <span>Orari di Apertura Reali</span>
-              </div>
-              <h3 class="hours-main-title">Orari della Cucina</h3>
-              <p class="hours-desc">
-                La cucina è attiva esclusivamente nei turni indicati e non effettua pasti fuori orario. La pizzeria può effettuare aperture leggermente anticipate o prolungate.
-              </p>
+          <div class="hours-editorial-grid">
+            <!-- Left Column: Open Frameless Editorial Hours -->
+            <div class="hours-col-left">
+              <span class="eyebrow-caps">ORARI DEL SERVIZIO</span>
+              <h2 class="hours-main-title">Cucina & Pizzeria</h2>
 
-              <div class="schedule-chips-grid">
-                <div class="schedule-chip">
-                  <span class="chip-label">Pranzo Cucina</span>
-                  <strong>12:00 – 14:00</strong>
+              <div class="schedule-editorial-list">
+                <div class="schedule-row">
+                  <span class="service-label">Pranzo</span>
+                  <span class="service-time">12:00 – 14:00</span>
                 </div>
-                <div class="schedule-chip">
-                  <span class="chip-label">Cena Cucina</span>
-                  <strong>19:00 – 22:00</strong>
+                <div class="schedule-row">
+                  <span class="service-label">Cena</span>
+                  <span class="service-time">19:00 – 22:00</span>
                 </div>
-                <div class="schedule-chip chip-closed">
-                  <span class="chip-label">Riposo Settimanale</span>
-                  <strong>CHIUSO IL MERCOLEDÌ</strong>
+                <div class="schedule-row schedule-closed">
+                  <span class="service-label">Riposo settimanale</span>
+                  <span class="service-time">Mercoledì chiuso</span>
                 </div>
               </div>
             </div>
 
-            <div class="hours-right">
-              <div class="direct-call-box">
-                <h4>Prenota il Tuo Tavolo</h4>
-                <p>È consigliata la prenotazione per il fine settimana.</p>
+            <!-- Right Column: Dark Booking Block -->
+            <div class="hours-col-right">
+              <div class="booking-dark-panel">
+                <h3 class="booking-title">Prenota il Tuo Tavolo</h3>
+                <p class="booking-note">Consigliata la prenotazione per il fine settimana.</p>
                 <div class="cta-call-group">
-                  <a href="tel:0424500200" class="btn btn-gold btn-call">
-                    <i class="fa-solid fa-phone"></i> 0424 500 200
-                  </a>
-                  <a
-                    href="https://wa.me/393346232941"
-                    target="_blank"
-                    rel="noopener"
-                    class="btn btn-whatsapp"
-                  >
-                    <i class="fa-brands fa-whatsapp"></i> WhatsApp 334 623 2941
+                  <a href="tel:0424500200" class="btn-call" aria-label="Chiama il Ristorante Il Veliero al numero 0424 500 200">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>0424 500 200</span>
                   </a>
                 </div>
                 <span class="direct-address">
-                  <i class="fa-solid fa-location-dot"></i> Via G. Fattori 7, 36061 Bassano del Grappa (VI)
+                  <i class="fa-solid fa-location-dot"></i>
+                  Via G. Fattori 7, Bassano del Grappa (VI)
                 </span>
               </div>
             </div>
@@ -329,96 +269,111 @@ import gsap from 'gsap';
     .home-page {
       position: relative;
       overflow-x: hidden;
-      background-color: var(--dishoom-bg-primary, #FAF7F2);
+      background-color: var(--bg-primary, #F1F5F9);
     }
 
-    /* Hero Section with Solid Monocolor Background & Scroll Expansion */
+    /* Hero Section with Deep Slate Navy Background & Scroll Expansion */
     .hero-morph-wrapper {
-      background: #07192F;
+      background: linear-gradient(180deg, var(--bg-navy-dark, #1E293B) 0%, var(--bg-navy-deep, #0F172A) 100%);
       color: #ffffff;
-      margin-top: -68px;
-      padding: calc(68px + 2.5rem) 0 4.5rem;
+      margin-top: -82px;
+      padding: calc(82px + 2.5rem) 0 4.5rem;
       position: relative;
       overflow: hidden;
-      border-bottom: 1px solid var(--dishoom-brass, #C58A3E);
+      border-bottom: none;
       box-shadow: none;
+      height: 100vh;
+      height: 100dvh;
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       align-items: center;
+      justify-content: center;
+      transition: background-color 0.4s ease;
 
-      .hero-layout {
-        display: grid;
-        grid-template-columns: 1fr 1.25fr;
-        gap: 3.5rem;
-        align-items: center;
-        position: relative;
-        z-index: 2;
-        width: 100%;
-      }
+      .hero-video-fullbleed {
+        position: absolute;
+        z-index: 1;
+        overflow: hidden;
+        pointer-events: none;
+        will-change: top, left, width, height, border-radius;
 
-      .hero-left-col {
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 15;
+        .video-wall-media {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center center;
+          display: block;
+        }
 
-        .hero-ship-container {
-          transform-origin: bottom left;
-          will-change: transform;
-          display: inline-block;
-          filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
+        .video-wall-fallback {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          pointer-events: none;
+          opacity: 0;
+        }
+
+        .video-scrim {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            180deg,
+            rgba(30, 41, 59, 0.35) 0%,
+            rgba(15, 23, 42, 0.65) 50%,
+            rgba(15, 23, 42, 0.88) 100%
+          );
+          pointer-events: none;
         }
       }
 
-      .hero-right-col {
+      /* Mobile-First & Portrait Layout (Default for phones, tablets & portrait devices) */
+      .hero-layout {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding: 0 16px;
+        margin: 0 auto;
+        max-width: 680px;
         position: relative;
+        z-index: 2;
+      }
+
+      .hero-left-col {
+        display: none;
+      }
+
+      .hero-right-col {
+        width: 100%;
+        height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 380px;
+        position: relative;
 
-        .video-wall-box {
+        .video-slot-anchor {
           position: relative;
-          width: 100%;
-          aspect-ratio: 16 / 9;
-          max-height: 480px;
-          border-radius: 0px;
-          overflow: hidden;
-          background: #000000;
-          border: none;
-          outline: none;
-          box-shadow: none;
-          transform-origin: top left;
-          will-change: transform;
+          width: calc(100% - 32px);
+          max-width: 420px;
+          height: clamp(500px, 72dvh, 660px);
+          aspect-ratio: auto;
+          border-radius: 14px;
+          box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.7);
+          margin: 0 auto;
+          pointer-events: none;
+          transition: box-shadow 0.3s ease;
 
-          .video-wall-media {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-          }
-
-          .video-wall-fallback {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            pointer-events: none;
-            opacity: 0;
-          }
-
-          .video-scrim {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(
-              180deg,
-              rgba(7, 25, 47, 0.3) 0%,
-              rgba(7, 25, 47, 0.6) 100%
-            );
-            pointer-events: none;
+          /* Tablet Portrait (iPad Mini, Surface Pro, iPad Pro 13) */
+          @media (min-width: 641px) {
+            width: min(85vw, 640px);
+            max-width: 640px;
+            height: clamp(560px, 66dvh, 780px);
           }
         }
 
@@ -428,75 +383,182 @@ import gsap from 'gsap';
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 2rem 2.5rem;
+          padding: 1.5rem 1rem;
           z-index: 20;
           pointer-events: none;
           text-align: center;
           will-change: transform;
           transform-origin: center center;
 
+          .quote-content-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: calc(100% - 32px);
+            max-width: 380px;
+            margin: 0 auto;
+            padding: 0;
+
+            @media (min-width: 641px) {
+              max-width: 540px;
+            }
+          }
+
           .video-wall-quote {
-            color: #FAF7F2;
-            font-size: clamp(1.35rem, 2.2vw, 1.85rem);
+            font-size: clamp(1.2rem, 4.4vw, 1.55rem);
             font-style: italic;
             font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
-            text-shadow: 0 4px 18px rgba(0, 0, 0, 0.9), 0 2px 6px rgba(0, 0, 0, 0.95);
-            line-height: 1.55;
-            max-width: 620px;
-            margin: 0 auto;
+            color: var(--text-inverse, #F1F5F9);
+            line-height: 1.38;
+            max-width: 100%;
+            width: 100%;
+            text-shadow:
+              0 4px 24px rgba(0, 0, 0, 1),
+              0 2px 8px rgba(0, 0, 0, 0.95),
+              0 0 12px rgba(0, 0, 0, 0.8);
+
+            @media (min-width: 641px) {
+              font-size: clamp(1.4rem, 3vw, 1.85rem);
+            }
+          }
+
+          .hero-mobile-ship {
+            display: block;
+            margin-top: 1rem;
+            width: clamp(110px, 28vw, 135px);
+            filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.85));
+            transform-origin: center center;
+            will-change: transform;
+
+            @media (min-width: 641px) {
+              margin-top: 1.5rem;
+              width: clamp(140px, 18vw, 170px);
+            }
+
+            app-veliero-ship {
+              width: 100%;
+              display: block;
+            }
+          }
+        }
+      }
+
+      /* Desktop Landscape (Laptops, Desktops, 4K Displays) */
+      @media (min-width: 1025px) and (orientation: landscape) {
+        padding: calc(82px + 2.5rem) 0 4.5rem;
+
+        .hero-layout {
+          display: grid;
+          grid-template-columns: 1fr 1.25fr;
+          gap: 5rem;
+          max-width: 1380px;
+          width: 100%;
+          margin: 0 auto;
+          height: auto;
+          padding: 0 2rem;
+        }
+
+        .hero-left-col {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          z-index: 15;
+
+          .hero-ship-container {
+            transform-origin: bottom left;
+            will-change: transform;
+            display: inline-block;
+            width: 390px;
+            max-width: 94vw;
+            filter: drop-shadow(0 14px 35px rgba(15, 23, 42, 0.45));
+
+            app-veliero-ship {
+              width: 100%;
+              display: block;
+            }
+          }
+        }
+
+        .hero-right-col {
+          min-height: 380px;
+          width: 100%;
+          height: auto;
+
+          .video-slot-anchor {
+            width: 100%;
+            max-width: 100%;
+            aspect-ratio: 16 / 9;
+            max-height: 480px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 16px 40px -10px rgba(15, 23, 42, 0.55);
+            margin: 0;
+          }
+
+          .video-quote-overlay {
+            position: absolute;
+            inset: -1.75rem -2.5rem;
+            padding: 0;
+
+            .quote-content-wrap {
+              width: 100%;
+              max-width: 100%;
+            }
+
+            .video-wall-quote {
+              font-size: clamp(1.35rem, 2.05vw, 1.85rem);
+              max-width: 720px;
+              line-height: 1.45;
+            }
+
+            .hero-mobile-ship {
+              display: none;
+            }
           }
         }
       }
     }
 
-    /* Dishoom Editorial & Love Letter Section */
+    /* Editorial Chef Section */
     .chef-intro-section {
-      padding: 6rem 0;
-      background-color: var(--dishoom-bg-primary, #FAF7F2);
-      border-bottom: 1px solid var(--dishoom-border-sand, #E5DDD0);
+      padding: 5rem 0;
+      background-color: var(--bg-primary, #F1F5F9);
+      border-bottom: none;
 
-      .dishoom-love-letter {
-        text-align: center;
-        max-width: 820px;
-        margin: 0 auto 4.5rem;
+      .editorial-header {
+        text-align: left;
+        max-width: 980px;
+        margin: 0 auto 3.5rem;
 
-        .editorial-kicker {
-          font-family: var(--font-body-editorial, 'Plus Jakarta Sans', sans-serif);
-          font-size: 0.76rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: var(--tracking-eyebrow, 0.16em);
-          color: var(--dishoom-brass-dark, #945C22);
-          display: inline-block;
-          margin-bottom: 1.25rem;
-          padding: 0.25rem 0.85rem;
-          border-radius: 4px;
-          background: rgba(197, 138, 62, 0.08);
-          border: 1px solid rgba(197, 138, 62, 0.25);
-        }
-
-        .love-letter-title {
+        .editorial-main-title {
           font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
-          font-size: clamp(2rem, 3.6vw, 2.75rem);
-          font-weight: 600;
-          color: var(--dishoom-ink-charcoal, #1C1917);
-          line-height: 1.25;
+          font-size: clamp(1.85rem, 3.2vw, 2.6rem);
+          font-weight: 500;
+          color: var(--text-primary, #1E293B);
+          line-height: 1.45;
           letter-spacing: 0.02em;
-          margin-bottom: 1.25rem;
-        }
+          margin-top: 0;
 
-        .love-letter-sub {
-          font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
-          font-style: italic;
-          font-size: 1.22rem;
-          color: var(--dishoom-ink-muted, #78716C);
-          line-height: 1.7;
-          max-width: 720px;
-          margin: 0 auto;
+          .editorial-line-primary {
+            display: block;
+            margin-bottom: 0.4rem;
+          }
+
+          .editorial-line-indent {
+            display: block;
+            padding-left: clamp(2.5rem, 9vw, 7rem);
+          }
+
+          .reveal-word {
+            display: inline-block;
+            opacity: 0.2;
+            will-change: opacity;
+          }
         }
       }
 
-      .dishoom-editorial-grid {
+      .editorial-grid {
         display: grid;
         grid-template-columns: 1fr 1.15fr;
         gap: 4rem;
@@ -504,43 +566,21 @@ import gsap from 'gsap';
 
         .editorial-col-left {
           .editorial-photo-frame {
-            background: #FFFFFF;
-            padding: 12px 12px 16px;
-            border-radius: 3px;
-            border: 1px solid var(--dishoom-border-sand, #E5DDD0);
-            box-shadow: var(--dishoom-shadow-card, 0 4px 16px -2px rgba(28, 25, 23, 0.08));
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
 
             .editorial-main-img {
               width: 100%;
-              height: 420px;
+              max-height: 480px;
               object-fit: cover;
-              border-radius: 2px;
+              border-radius: 4px;
               display: block;
-              margin-bottom: 1rem;
-            }
-
-            .editorial-caption {
-              display: flex;
-              gap: 0.5rem;
-              font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
-              font-size: 0.95rem;
-              line-height: 1.5;
-              color: var(--dishoom-ink-stone, #44403C);
-              padding: 0 0.25rem;
-
-              .caption-tag {
-                font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
-                font-size: 0.72rem;
-                font-weight: 800;
-                text-transform: uppercase;
-                letter-spacing: 0.1em;
-                color: var(--dishoom-ink-charcoal, #1C1917);
-                flex-shrink: 0;
-              }
-
-              .caption-text {
-                font-style: italic;
-              }
+              margin-bottom: 0;
+              border: 1px solid var(--border-subtle, #D4D4D8);
+              box-shadow: var(--shadow-card);
             }
           }
         }
@@ -553,89 +593,42 @@ import gsap from 'gsap';
           .editorial-text-flow {
             .editorial-lead {
               font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
-              font-size: 1.35rem;
-              line-height: 1.75;
-              color: var(--dishoom-ink-charcoal, #1C1917);
-              margin-bottom: 1.25rem;
+              font-size: 1.28rem;
+              line-height: 1.7;
+              color: var(--text-primary, #1E293B);
+              margin-bottom: 1rem;
 
               strong {
-                color: var(--dishoom-brass-dark, #945C22);
+                color: var(--color-gold-dark, #CA8A04);
               }
             }
 
             .editorial-body {
               font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
-              font-size: 1.15rem;
-              line-height: 1.8;
-              color: var(--dishoom-ink-stone, #44403C);
+              font-size: 1.12rem;
+              line-height: 1.75;
+              color: var(--text-stone, #475569);
             }
           }
 
           .editorial-side-photo-wrap {
             .editorial-photo-frame.side-frame {
-              background: #FFFFFF;
-              padding: 10px 10px 14px;
-              border-radius: 3px;
-              border: 1px solid var(--dishoom-border-sand, #E5DDD0);
-              box-shadow: var(--dishoom-shadow-card, 0 4px 16px -2px rgba(28, 25, 23, 0.08));
-              display: grid;
-              grid-template-columns: 140px 1fr;
-              gap: 1.25rem;
-              align-items: center;
+              background: transparent;
+              padding: 0;
+              border-radius: 0;
+              border: none;
+              box-shadow: none;
+              display: block;
 
               .editorial-side-img {
-                width: 140px;
-                height: 110px;
+                width: 100%;
+                max-width: 320px;
+                max-height: 180px;
                 object-fit: cover;
-                border-radius: 2px;
-              }
-
-              .editorial-caption {
-                display: flex;
-                flex-direction: column;
-                gap: 0.25rem;
-                font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
-                font-size: 0.92rem;
-                line-height: 1.45;
-                color: var(--dishoom-ink-stone, #44403C);
-
-                .caption-tag {
-                  font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
-                  font-size: 0.72rem;
-                  font-weight: 800;
-                  text-transform: uppercase;
-                  letter-spacing: 0.1em;
-                  color: var(--dishoom-ink-charcoal, #1C1917);
-                }
-
-                .caption-text {
-                  font-style: italic;
-                }
-              }
-            }
-          }
-
-          .editorial-pills-row {
-            display: flex;
-            gap: 0.85rem;
-            flex-wrap: wrap;
-
-            .editorial-pill {
-              display: inline-flex;
-              align-items: center;
-              gap: 0.5rem;
-              background: var(--dishoom-bg-surface, #F5EFEB);
-              padding: 0.55rem 1rem;
-              border-radius: 3px;
-              font-family: var(--font-body-editorial, 'Plus Jakarta Sans', sans-serif);
-              font-weight: 600;
-              font-size: 0.82rem;
-              color: var(--dishoom-ink-charcoal, #1C1917);
-              border: 1px solid var(--dishoom-border-sand, #E5DDD0);
-
-              i {
-                color: var(--dishoom-brass-dark, #945C22);
-                font-size: 0.95rem;
+                border-radius: 4px;
+                display: block;
+                border: 1px solid var(--border-subtle, #D4D4D8);
+                box-shadow: var(--shadow-card);
               }
             }
           }
@@ -643,56 +636,14 @@ import gsap from 'gsap';
       }
     }
 
-    /* 3 Dishoom Archive Frame Cards */
+    /* 3 Showcase Vertical Cards */
     .cards-showcase-section {
-      padding: 5.5rem 0;
-      background-color: var(--dishoom-bg-primary, #FAF7F2);
-      border-top: 1px solid var(--dishoom-border-sand, #E5DDD0);
-      border-bottom: 1px solid var(--dishoom-border-sand, #E5DDD0);
-      position: relative;
+      padding: 4.5rem 0 5.5rem;
+      background-color: var(--bg-primary, #F1F5F9);
+      border-bottom: none;
 
-      .section-header {
-        text-align: center;
-        max-width: 860px;
-        margin: 0 auto 3.75rem;
-
-        .header-decor-ship {
-          margin-bottom: 1rem;
-          display: flex;
-          justify-content: center;
-          opacity: 0.9;
-        }
-
-        .eyebrow-caps {
-          font-family: var(--font-sans);
-          font-size: 0.76rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: var(--tracking-eyebrow, 0.15em);
-          color: var(--dishoom-brass-dark, #945C22);
-          display: block;
-          margin-bottom: 0.65rem;
-        }
-
-        .section-title {
-          font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
-          font-size: clamp(2rem, 3.5vw, 2.65rem);
-          font-weight: 600;
-          color: var(--dishoom-ink-charcoal, #1C1917);
-          letter-spacing: var(--tracking-wide, 0.04em);
-          line-height: 1.2;
-          margin-bottom: 1rem;
-        }
-
-        .description {
-          font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
-          font-style: italic;
-          font-size: 1.1rem;
-          line-height: 1.6;
-          color: var(--dishoom-ink-muted, #78716C);
-          max-width: 680px;
-          margin: 0 auto;
-        }
+      .container {
+        max-width: 1360px;
       }
 
       .archive-cards-grid {
@@ -700,120 +651,134 @@ import gsap from 'gsap';
         grid-template-columns: repeat(3, 1fr);
         gap: 2.25rem;
 
-        .archive-frame-card {
-          background-color: var(--dishoom-bg-surface, #F5EFEB);
-          border-radius: 4px;
-          border: 1px solid var(--dishoom-brass, #C58A3E);
-          outline: 1px solid rgba(197, 138, 62, 0.35);
-          outline-offset: -5px;
-          box-shadow: var(--dishoom-shadow-card, 0 4px 16px -2px rgba(28, 25, 23, 0.05));
-          display: flex;
-          flex-direction: column;
-          text-decoration: none;
-          color: inherit;
-          padding: 7px;
+        .veliero-large-card {
           position: relative;
-          transition: transform var(--transition-smooth, 0.35s cubic-bezier(0.16, 1, 0.3, 1)),
-                      box-shadow var(--transition-smooth, 0.35s cubic-bezier(0.16, 1, 0.3, 1)),
-                      border-color var(--transition-fast, 0.2s ease),
-                      outline-color var(--transition-fast, 0.2s ease);
+          display: block;
+          height: 560px;
+          border-radius: 0;
+          overflow: hidden;
+          text-decoration: none;
+          background-color: var(--bg-navy-dark, #1E293B);
+          border: 1px solid var(--border-subtle, #D4D4D8);
+          box-shadow: var(--shadow-card);
+          transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-fast);
 
           &:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--dishoom-shadow-hover, 0 12px 28px -4px rgba(28, 25, 23, 0.09));
-            border-color: var(--dishoom-brass-dark, #945C22);
-            outline-color: var(--dishoom-brass, #C58A3E);
-          }
+            transform: translateY(-4px);
+            border-color: var(--color-accent, #0EA5E9);
+            box-shadow: var(--shadow-hover);
 
-          &:focus-visible {
-            outline: 2px solid var(--dishoom-brass, #C58A3E);
-            outline-offset: 2px;
-          }
-
-          .card-inner-frame {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            border-radius: 2px;
-            overflow: hidden;
-            background-color: var(--dishoom-bg-surface, #F5EFEB);
-          }
-
-          .card-media-wrapper {
-            height: 225px;
-            position: relative;
-            overflow: hidden;
-            border-bottom: 1px solid var(--dishoom-border-sand, #E5DDD0);
-          }
-
-          .card-caption-content {
-            padding: 1.65rem 1.35rem 1.4rem;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-
-            .card-category-tag {
-              font-family: var(--font-sans);
-              font-size: 0.72rem;
-              font-weight: 700;
-              text-transform: uppercase;
-              letter-spacing: var(--tracking-small-caps, 0.12em);
-              color: var(--dishoom-brass-dark, #945C22);
-              margin-bottom: 0.45rem;
-              display: block;
+            .card-media-wrapper {
+              transform: scale(1.03);
             }
 
-            .card-title {
-              font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
-              font-size: 1.65rem;
-              font-weight: 600;
-              letter-spacing: var(--tracking-wide, 0.04em);
-              color: var(--dishoom-ink-charcoal, #1C1917);
-              line-height: 1.2;
-              margin-bottom: 0.75rem;
-              transition: color var(--transition-fast);
-            }
+            .veliero-card-plaque {
+              background-color: #FAF7F2;
+              border-color: var(--color-accent, #0EA5E9);
 
-            .card-narrative {
-              font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
-              font-style: italic;
-              font-size: 1.02rem;
-              line-height: 1.55;
-              color: var(--dishoom-ink-stone, #44403C);
-              margin-bottom: 1.5rem;
-              flex: 1;
-            }
+              &::before {
+                border-color: rgba(14, 165, 233, 0.45);
+              }
 
-            .card-action-link {
-              font-family: var(--font-sans);
-              font-weight: 700;
-              font-size: 0.8rem;
-              text-transform: uppercase;
-              letter-spacing: var(--tracking-small-caps, 0.12em);
-              color: var(--dishoom-brass-dark, #945C22);
-              display: inline-flex;
-              align-items: center;
-              gap: 0.45rem;
-              transition: gap var(--transition-fast), color var(--transition-fast);
+              .plaque-title {
+                color: var(--color-accent, #0EA5E9);
+              }
 
-              i {
-                font-size: 0.85rem;
-                transition: transform var(--transition-fast);
+              .plaque-arrow-wrap {
+                color: var(--color-accent, #0EA5E9);
+
+                .feather-arrow {
+                  transform: translateX(4px);
+                }
               }
             }
           }
 
-          &:hover {
-            .card-title {
-              color: var(--dishoom-brass-dark, #945C22);
+          .card-media-wrapper {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+            overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+
+            app-video-card-media {
+              width: 100%;
+              height: 100%;
+              display: block;
+              border-radius: 0;
+            }
+          }
+
+          .card-gradient-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+              180deg,
+              rgba(30, 41, 59, 0.05) 0%,
+              rgba(30, 41, 59, 0.35) 40%,
+              rgba(15, 23, 42, 0.9) 100%
+            );
+            pointer-events: none;
+            z-index: 2;
+          }
+
+          .veliero-card-plaque {
+            position: absolute;
+            bottom: 1.25rem;
+            left: 1.25rem;
+            right: 1.25rem;
+            z-index: 10;
+            background: #FAF7F2;
+            backdrop-filter: blur(8px);
+            border-radius: 0;
+            padding: 1.15rem 1.15rem 0.95rem;
+            text-align: center;
+            border: 1px solid var(--border-medium, #A1A1AA);
+            box-shadow: 0 6px 20px rgba(30, 41, 59, 0.12);
+            transition: all var(--transition-fast);
+
+            &::before {
+              content: '';
+              position: absolute;
+              inset: 3px;
+              border: 1px solid rgba(30, 41, 59, 0.35);
+              pointer-events: none;
+              transition: border-color var(--transition-fast);
             }
 
-            .card-action-link {
-              gap: 0.75rem;
-              color: var(--dishoom-brass, #C58A3E);
+            .plaque-title {
+              font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
+              font-size: 1.35rem;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: var(--tracking-small-caps);
+              color: var(--bg-navy-dark, #1E293B);
+              line-height: 1.2;
+              margin: 0;
+            }
 
-              i {
-                transform: translateX(3px);
+            .plaque-subtitle {
+              font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
+              font-size: 0.92rem;
+              font-style: italic;
+              color: var(--text-stone, #475569);
+              margin: 0.35rem 0 0;
+              line-height: 1.35;
+            }
+
+            .plaque-arrow-wrap {
+              display: flex;
+              justify-content: flex-end;
+              align-items: center;
+              margin-top: 0.35rem;
+              color: var(--bg-navy-dark, #1E293B);
+
+              .feather-arrow {
+                width: 44px;
+                height: 10px;
+                transition: transform 0.25s ease, color 0.2s ease;
               }
             }
           }
@@ -821,176 +786,186 @@ import gsap from 'gsap';
       }
     }
 
-    /* Hours & Dining Info Box */
+    /* Hours & Dining Section (Frameless Editorial, Zero Nested Cards) */
     .hours-info-section {
-      padding: 4.5rem 0 6rem;
-      background-color: var(--dishoom-bg-primary, #FAF7F2);
+      padding: 5rem 0 6rem;
+      background-color: var(--bg-primary, #F1F5F9);
 
-      .hours-info-box {
+      .hours-editorial-grid {
         display: grid;
-        grid-template-columns: 1.3fr 1fr;
-        gap: 3.5rem;
-        background: var(--dishoom-bg-surface, #F5EFEB);
-        padding: 3.5rem;
-        border-radius: 4px;
-        box-shadow: var(--dishoom-shadow-card, 0 4px 16px -2px rgba(28, 25, 23, 0.05));
-        border: 1px solid var(--dishoom-border-sand, #E5DDD0);
-        outline: 1px solid rgba(197, 138, 62, 0.25);
-        outline-offset: -5px;
+        grid-template-columns: 1.18fr 1fr;
+        gap: 4.5rem;
+        align-items: center;
+        max-width: 1140px;
+        margin: 0 auto;
 
-        .hours-left {
-          .hours-header-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.45rem;
-            color: var(--dishoom-brass-dark, #945C22);
-            font-size: 0.8rem;
-            font-weight: 700;
+        .hours-col-left {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+
+          .eyebrow-caps {
+            font-family: var(--font-sans);
+            font-size: 0.74rem;
+            font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: var(--tracking-eyebrow, 0.15em);
-            margin-bottom: 0.75rem;
+            letter-spacing: 0.18em;
+            color: var(--color-accent, #0EA5E9);
+            margin-bottom: 0.6rem;
           }
 
           .hours-main-title {
             font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
-            font-size: 2.2rem;
-            color: var(--dishoom-ink-charcoal, #1C1917);
-            letter-spacing: 0.04em;
-            margin-bottom: 0.75rem;
-          }
-
-          .hours-desc {
-            font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
-            font-style: italic;
-            font-size: 1.08rem;
-            color: var(--dishoom-ink-muted, #78716C);
+            font-size: clamp(2.2rem, 3.4vw, 2.9rem);
+            font-weight: 300;
+            color: var(--text-primary, #1E293B);
+            letter-spacing: 0.02em;
             margin-bottom: 2rem;
-            line-height: 1.6;
+            line-height: 1.15;
           }
 
-          .schedule-chips-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.25rem;
+          .schedule-editorial-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
 
-            .schedule-chip {
-              background: var(--dishoom-bg-primary, #FAF7F2);
-              border-radius: 3px;
-              padding: 1.25rem;
-              text-align: center;
-              border: 1px solid var(--dishoom-border-sand, #E5DDD0);
+            .schedule-row {
+              display: flex;
+              justify-content: space-between;
+              align-items: baseline;
+              padding: 0.95rem 0;
+              border-bottom: 1px solid rgba(203, 213, 225, 0.65);
 
-              .chip-label {
-                font-family: var(--font-sans);
-                font-size: 0.72rem;
-                text-transform: uppercase;
-                letter-spacing: var(--tracking-small-caps, 0.12em);
-                color: var(--dishoom-ink-muted, #78716C);
-                display: block;
-                margin-bottom: 0.35rem;
-                font-weight: 600;
+              &:first-child {
+                padding-top: 0;
               }
 
-              strong {
+              &:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+              }
+
+              .service-label {
                 font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
                 font-size: 1.25rem;
-                font-weight: 700;
-                color: var(--dishoom-ink-charcoal, #1C1917);
+                font-weight: 400;
+                letter-spacing: 0.02em;
+                color: var(--text-secondary, #334155);
               }
 
-              &.chip-closed {
-                background: #FDF2F2;
-                border-color: #FECACA;
+              .service-time {
+                font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
+                font-size: 1.35rem;
+                font-weight: 400;
+                letter-spacing: 0.04em;
+                color: var(--text-primary, #1E293B);
+              }
 
-                strong {
-                  color: #DC2626;
-                  font-size: 1.05rem;
+              &.schedule-closed {
+                .service-label {
+                  color: var(--text-muted, #64748B);
+                }
+
+                .service-time {
+                  font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
+                  font-size: 1.2rem;
+                  font-style: italic;
+                  font-weight: 400;
+                  letter-spacing: 0.02em;
+                  color: var(--status-danger, #DC2626);
                 }
               }
             }
           }
         }
 
-        .hours-right {
-          display: flex;
-          align-items: center;
-
-          .direct-call-box {
-            background: linear-gradient(145deg, #07192F 0%, #0B1B2B 65%, #0D2033 100%);
-            color: #ffffff;
+        .hours-col-right {
+          .booking-dark-panel {
+            background: linear-gradient(155deg, #0F172A 0%, #1E293B 100%);
+            color: #FFFFFF;
+            padding: 3.25rem 2.75rem;
             border-radius: 4px;
-            padding: 2.5rem;
-            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            border: 1px solid var(--dishoom-brass, #C58A3E);
-            outline: 1px solid rgba(197, 138, 62, 0.3);
-            outline-offset: -5px;
-            box-shadow: 0 10px 25px rgba(7, 25, 47, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 16px 40px -12px rgba(15, 23, 42, 0.28);
 
-            h4 {
-              color: var(--dishoom-ink-inverse, #FAF7F2);
+            .booking-title {
+              color: #FFFFFF;
               font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
-              font-size: 1.65rem;
+              font-size: clamp(1.8rem, 2.4vw, 2.2rem);
+              font-weight: 300;
+              letter-spacing: 0.03em;
               margin-bottom: 0.5rem;
+              line-height: 1.2;
             }
 
-            p {
+            .booking-note {
               font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
               font-style: italic;
-              color: var(--dishoom-ink-inverse-muted, #DDD3C4);
-              font-size: 0.98rem;
+              font-weight: 300;
+              color: rgba(226, 232, 240, 0.78);
+              font-size: 1.05rem;
               margin-bottom: 1.75rem;
+              line-height: 1.45;
             }
 
             .cta-call-group {
               display: flex;
-              flex-direction: column;
-              gap: 0.85rem;
-              margin-bottom: 1.5rem;
+              justify-content: center;
+              margin-bottom: 0;
 
               .btn-call {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.65rem;
+                padding: 0.68rem 2rem;
                 font-family: var(--font-sans);
                 font-size: 0.92rem;
-                padding: 0.85rem;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: var(--tracking-small-caps, 0.12em);
-                background-color: var(--dishoom-brass, #C58A3E);
-                color: #FAF7F2;
-                border: 1px solid var(--dishoom-brass-dark, #945C22);
+                font-weight: 500;
+                letter-spacing: 0.08em;
+                color: #FFFFFF;
+                background-color: var(--color-accent, #0EA5E9);
+                border: 1px solid var(--color-accent-hover, #0284C7);
+                border-radius: 2px;
+                text-decoration: none;
+                box-shadow: 0 4px 14px rgba(14, 165, 233, 0.28);
+                transition: all var(--transition-fast);
 
-                &:hover {
-                  background-color: var(--dishoom-brass-dark, #945C22);
+                i {
+                  font-size: 0.82rem;
                 }
-              }
-
-              .btn-whatsapp {
-                font-family: var(--font-sans);
-                background: #25D366;
-                color: #ffffff;
-                font-weight: 700;
-                font-size: 0.92rem;
-                padding: 0.85rem;
-                text-transform: uppercase;
-                letter-spacing: var(--tracking-small-caps, 0.12em);
-                border: 1px solid #1EBE5D;
 
                 &:hover {
-                  background: #1EB954;
+                  background-color: var(--color-accent-hover, #0284C7);
+                  transform: translateY(-2px);
+                  box-shadow: 0 6px 18px rgba(14, 165, 233, 0.42);
+                }
+
+                &:active {
+                  transform: translateY(0);
                 }
               }
             }
 
             .direct-address {
               font-family: var(--font-sans);
-              font-size: 0.82rem;
-              color: var(--dishoom-ink-inverse-muted, #DDD3C4);
+              font-size: 0.8rem;
+              font-weight: 400;
+              letter-spacing: 0.03em;
+              color: rgba(203, 213, 225, 0.75);
               display: inline-flex;
               align-items: center;
-              gap: 0.4rem;
+              gap: 0.45rem;
+              margin-top: 1.5rem;
 
               i {
-                color: var(--dishoom-brass, #C58A3E);
+                color: var(--color-accent-light, #BAE6FD);
+                font-size: 0.82rem;
               }
             }
           }
@@ -998,55 +973,191 @@ import gsap from 'gsap';
       }
     }
 
-    @media (max-width: 1024px) {
-      .hero-morph-wrapper {
-        min-height: auto;
-        padding: 3rem 0 4rem;
+    @media (max-width: 1024px), (orientation: portrait) {
+      .chef-intro-section .editorial-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
 
-        .hero-layout {
+      .cards-showcase-section {
+        padding: 3.25rem 0 3.75rem;
+        scroll-margin-top: 90px;
+
+        .container {
+          padding-left: 1.25rem;
+          padding-right: 1.75rem;
+        }
+
+        .section-header {
+          margin-bottom: 2rem;
+          text-align: center;
+
+          .eyebrow-caps {
+            font-size: 0.72rem;
+            letter-spacing: 0.16em;
+            margin-bottom: 0.35rem;
+          }
+
+          .section-title {
+            font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
+            font-size: clamp(1.35rem, 4.6vw, 1.75rem);
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            line-height: 1.25;
+          }
+        }
+
+        .archive-cards-grid {
           grid-template-columns: 1fr;
-          gap: 2.5rem;
-        }
+          gap: 1.25rem;
+          max-width: 440px;
+          margin: 0 auto;
 
-        .hero-left-col {
-          justify-content: center;
+          .veliero-large-card {
+            aspect-ratio: 5 / 3;
+            height: auto;
+            width: 100%;
+            position: relative;
+            overflow: visible;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
 
-          .hero-ship-container {
-            display: flex;
-            justify-content: center;
-          }
-        }
+            &:active {
+              transform: scale(0.99);
 
-        .hero-right-col {
-          min-height: 280px;
+              .veliero-card-plaque {
+                border-color: var(--color-accent, #0EA5E9);
 
-          .video-wall-box {
-            max-height: 380px;
-          }
+                &::before {
+                  border-color: rgba(14, 165, 233, 0.45);
+                }
 
-          .video-quote-overlay {
-            padding: 1.5rem;
+                .plaque-title,
+                .plaque-arrow-wrap {
+                  color: var(--color-accent, #0EA5E9);
+                }
 
-            .video-wall-quote {
-              font-size: 1.25rem;
+                .feather-arrow {
+                  transform: translateX(4px);
+                }
+              }
+            }
+
+            .card-media-wrapper {
+              position: absolute;
+              inset: 0;
+              width: 100%;
+              height: 100%;
+              border-radius: 0;
+              overflow: hidden;
+              border: 1.6px solid #1E293B;
+              box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+
+              ::ng-deep img,
+              ::ng-deep video {
+                object-position: 25% center;
+              }
+            }
+
+            .card-gradient-overlay {
+              display: none;
+            }
+
+            .veliero-card-plaque {
+              position: absolute;
+              bottom: 1.25rem;
+              left: clamp(44px, 13vw, 76px);
+              top: auto;
+              right: -24px;
+              transform: none;
+              width: auto;
+              max-width: none;
+              padding: 16px 24px 20px 20px;
+              text-align: center;
+              border: 1.6px solid #1E293B;
+              background: #FAF5EE;
+              box-shadow: -4px 6px 20px rgba(15, 23, 42, 0.16);
+              z-index: 10;
+
+              &::before {
+                inset: 4px;
+                border: 1px solid #1E293B;
+                pointer-events: none;
+              }
+
+              .plaque-title {
+                font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
+                font-size: clamp(1.05rem, 3.8vw, 1.25rem);
+                font-weight: 500;
+                letter-spacing: 0.16em;
+                color: #1E293B;
+                margin: 0;
+                line-height: 1.2;
+              }
+
+              .plaque-subtitle {
+                font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
+                font-size: clamp(0.85rem, 2.9vw, 0.96rem);
+                font-style: italic;
+                font-weight: 400;
+                color: #334155;
+                margin: 0.35rem 0 0;
+                line-height: 1.35;
+              }
+
+              .plaque-arrow-wrap {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                margin-top: 0.5rem;
+                padding-right: 0.4rem;
+                color: #1E293B;
+
+                .feather-arrow {
+                  width: 48px;
+                  height: 11px;
+                }
+              }
             }
           }
         }
       }
 
-      .chef-intro-section .dishoom-editorial-grid {
+      .hours-info-section .hours-editorial-grid {
         grid-template-columns: 1fr;
-        gap: 2.5rem;
+        gap: 3rem;
+        max-width: 580px;
+
+        .hours-col-right .booking-dark-panel {
+          padding: 2.5rem 2rem;
+        }
+      }
+    }
+
+    @media (max-width: 640px) {
+      .cards-showcase-section .archive-cards-grid .veliero-large-card {
+        aspect-ratio: 5 / 3;
+        height: auto;
       }
 
-      .cards-showcase-section .archive-cards-grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-      }
+      .hours-info-section {
+        padding: 3.5rem 0 4.5rem;
 
-      .hours-info-section .hours-info-box {
-        grid-template-columns: 1fr;
-        padding: 2rem;
+        .hours-editorial-grid {
+          gap: 2.5rem;
+
+          .hours-col-right .booking-dark-panel {
+            padding: 2rem 1.5rem;
+          }
+        }
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .editorial-main-title .reveal-word {
+        opacity: 1 !important;
       }
     }
   `],
@@ -1054,34 +1165,151 @@ import gsap from 'gsap';
 export class HomeComponent implements AfterViewInit, OnDestroy {
   private animService = inject(AnimationService);
 
+  /**
+   * Centralized configuration for the 3 showcase cards.
+   * Swap or update video sources (local assets or external CDN URLs) with a single line here.
+   */
+  readonly showcaseCards: ShowcaseCardItem[] = [
+    {
+      id: 'menu',
+      title: 'MENÙ ALLA CARTA',
+      subtitle: 'Cucina marinara, crudi & forno a legna',
+      routerLink: '/menu',
+      ariaLabel: 'Consulta il Menù alla Carta',
+      posterSrc: 'assets/images/cards/card-menu.jpg',
+      webmSrc: 'assets/videos/card-menu-loop.webm',
+    },
+    {
+      id: 'pescato',
+      title: 'DIARIO DI BORDO',
+      subtitle: 'Il pescato fresco del giorno',
+      routerLink: '/pescato',
+      ariaLabel: 'Consulta il Diario di Bordo del Pescato del Giorno',
+      posterSrc: 'assets/images/cards/card-pescato.jpg',
+      webmSrc: 'assets/videos/card-pescato-loop.webm',
+    },
+    {
+      id: 'dove-siamo',
+      title: 'DOVE SIAMO & ORARI',
+      subtitle: 'Bassano del Grappa, orari & contatti',
+      routerLink: '/dove-siamo',
+      ariaLabel: 'Indicazioni e Prenotazioni a Bassano del Grappa',
+      posterSrc: 'assets/images/cards/card-dove-siamo.jpg',
+      webmSrc: 'assets/videos/card-dove-siamo-loop.webm',
+    },
+  ];
+
   @ViewChild('heroWrapper') heroWrapperRef!: ElementRef;
   @ViewChild('heroShipEl') heroShipRef!: ElementRef;
   @ViewChild('videoWallEl') videoWallRef!: ElementRef;
+  @ViewChild('heroVideoEl') heroVideoRef?: ElementRef<HTMLVideoElement>;
+  @ViewChild('videoSlotEl') videoSlotRef?: ElementRef;
   @ViewChild('heroQuoteEl') heroQuoteRef!: ElementRef;
+  @ViewChild('heroMobileShipEl') heroMobileShipRef?: ElementRef;
+  @ViewChild('editorialTitleEl') editorialTitleRef!: ElementRef;
 
-  private heroMorphTimeline: gsap.core.Timeline | null = null;
+  readonly firstLineWords = 'Cucina di mare adriatica –'.split(' ');
+  readonly secondLineWords = 'e la pizza cotta a legna del Campione del Mondo'.split(' ');
+
+  private heroMm: gsap.MatchMedia | null = null;
+  private wordRevealTimeline: gsap.core.Timeline | null = null;
+  private interactionCleanupFns: Array<() => void> = [];
 
   ngAfterViewInit(): void {
-    // Initialize Hero Scroll-Expansion with GSAP ScrollTrigger
+    this.initHeroVideoPlayback();
+
     if (
-      this.heroShipRef?.nativeElement &&
       this.videoWallRef?.nativeElement &&
       this.heroWrapperRef?.nativeElement
     ) {
-      this.heroMorphTimeline = this.animService.initHeroVelieroMorph(
-        this.heroShipRef.nativeElement,
+      this.heroMm = this.animService.initHeroVelieroMorph(
+        this.heroShipRef?.nativeElement || null,
         this.videoWallRef.nativeElement,
         this.heroWrapperRef.nativeElement,
-        this.heroQuoteRef?.nativeElement
+        this.heroQuoteRef?.nativeElement || null,
+        this.heroMobileShipRef?.nativeElement || null,
+        this.videoSlotRef?.nativeElement || null
       );
+    }
+
+    if (this.editorialTitleRef?.nativeElement) {
+      const words = this.editorialTitleRef.nativeElement.querySelectorAll('.reveal-word');
+      if (words && words.length > 0) {
+        this.wordRevealTimeline = this.animService.initWordScrollReveal(
+          this.editorialTitleRef.nativeElement,
+          words
+        );
+      }
+    }
+  }
+
+  private initHeroVideoPlayback(): void {
+    const video = this.heroVideoRef?.nativeElement;
+    if (!video) return;
+
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+
+    const playVideo = () => {
+      if (video && video.paused) {
+        video.muted = true;
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((err) => {
+            console.debug('Hero video autoplay waiting for user interaction:', err);
+          });
+        }
+      }
+    };
+
+    // Immediate attempt
+    playVideo();
+
+    // Interaction fallback for strict browser autoplay policies
+    const triggerEvents = ['click', 'touchstart', 'scroll', 'mousemove'];
+    const onUserInteraction = () => {
+      playVideo();
+      this.interactionCleanupFns.forEach((fn) => fn());
+      this.interactionCleanupFns = [];
+    };
+
+    triggerEvents.forEach((evt) => {
+      window.addEventListener(evt, onUserInteraction, { once: true, passive: true });
+      this.interactionCleanupFns.push(() =>
+        window.removeEventListener(evt, onUserInteraction)
+      );
+    });
+  }
+
+  onHeroVideoCanPlay(): void {
+    const video = this.heroVideoRef?.nativeElement;
+    if (video && video.paused) {
+      video.muted = true;
+      video.play().catch(() => {});
+    }
+  }
+
+  onHeroVideoLoaded(): void {
+    const video = this.heroVideoRef?.nativeElement;
+    if (video && video.paused) {
+      video.muted = true;
+      video.play().catch(() => {});
     }
   }
 
   ngOnDestroy(): void {
-    if (this.heroMorphTimeline) {
-      this.heroMorphTimeline.scrollTrigger?.kill();
-      this.heroMorphTimeline.kill();
-      this.heroMorphTimeline = null;
+    this.interactionCleanupFns.forEach((fn) => fn());
+    this.interactionCleanupFns = [];
+
+    if (this.heroMm) {
+      this.heroMm.revert();
+      this.heroMm = null;
+    }
+    if (this.wordRevealTimeline) {
+      this.wordRevealTimeline.scrollTrigger?.kill();
+      this.wordRevealTimeline.kill();
+      this.wordRevealTimeline = null;
     }
   }
 

@@ -4,6 +4,7 @@ export interface IEvento extends Document {
   title: string;
   description: string;
   image: string;
+  images: string[];
   eventDate: Date;
   price: number;
   maxSeats?: number;
@@ -31,6 +32,10 @@ const EventoSchema = new Schema<IEvento>(
       type: String,
       default: '',
       trim: true,
+    },
+    images: {
+      type: [String],
+      default: [],
     },
     eventDate: {
       type: Date,

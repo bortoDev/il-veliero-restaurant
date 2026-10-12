@@ -1,280 +1,138 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { InfoService } from '../../../core/services/info.service';
 import { InfoLocale } from '../../../core/models';
-import { NauticalDecorComponent } from '../../../shared/components/nautical-decor/nautical-decor.component';
-import {
-  VelieroShipComponent,
-  RosaDeiVentiComponent,
-  NauticalStarComponent,
-} from '../../../shared/components/svg-icons';
+import { VelieroShipComponent } from '../../../shared/components/svg-icons';
 
 @Component({
   selector: 'app-dove-siamo',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    NauticalDecorComponent,
     VelieroShipComponent,
-    RosaDeiVentiComponent,
-    NauticalStarComponent,
   ],
   template: `
     <div class="dove-siamo-page">
       <!-- HERO HEADER -->
       <section class="dove-hero-section">
-        <app-nautical-decor></app-nautical-decor>
         <div class="container hero-inner">
-          <div class="hero-badge">
-            <app-nautical-star size="24px"></app-nautical-star>
-            <span>Bassano del Grappa — Località San Michele</span>
-            <app-nautical-star size="24px"></app-nautical-star>
-          </div>
-          <h1 class="hero-title">DOVE SIAMO & CONTATTI</h1>
-          <p class="hero-subtitle">
-            Ti aspettiamo a Bassano del Grappa per farti vivere un'esperienza indimenticabile tra il pescato fresco dell'Adriatico e la pizza del Campione del Mondo.
-          </p>
+          <h1 class="hero-title">Dove Siamo & Contatti</h1>
         </div>
       </section>
 
-      <!-- CONTACT DETAILS & HOURS SECTION -->
+      <!-- CONTACT DETAILS & HOURS SECTION (FRAMELESS EDITORIAL) -->
       <section class="section contacts-content-section" id="orari">
         <div class="container">
-          <div class="contacts-grid-layout">
-            <!-- Left: Restaurant Contact & Hours Card -->
-            <div class="contact-details-col">
-              <div class="contact-card card">
-                <div class="card-brand-header">
-                  <app-veliero-ship size="50px"></app-veliero-ship>
-                  <div>
-                    <h2>Ristorante Il Veliero</h2>
-                    <span class="card-brand-sub">Pizza dal Campione del Mondo</span>
+          <div class="contacts-editorial-grid">
+            <!-- Col 1: Recapiti & Indirizzo -->
+            <div class="contact-col">
+              <div class="col-header">
+                <span class="block-kicker">I Nostri Recapiti</span>
+                <h2 class="col-title">Ristorante & Pizzeria Il Veliero</h2>
+              </div>
+
+              <div class="info-items-list">
+                <!-- Indirizzo -->
+                <div class="info-row">
+                  <i class="fa-solid fa-location-dot info-icon"></i>
+                  <div class="info-content">
+                    <span class="info-label">Indirizzo</span>
+                    <p class="info-val-primary">Via G. Fattori, 7</p>
+                    <span class="info-val-secondary">36061 Bassano del Grappa (VI) · Frazione San Michele</span>
                   </div>
                 </div>
 
-                <!-- Address Item -->
-                <div class="info-block">
-                  <div class="info-icon-circle">
-                    <i class="fa-solid fa-location-dot"></i>
-                  </div>
-                  <div class="info-text">
-                    <strong>Indirizzo:</strong>
-                    <p class="info-main-val">Via G. Fattori, 7</p>
-                    <span class="info-sub-val">36061 Bassano del Grappa (VI) — Località San Michele</span>
-                  </div>
-                </div>
-
-                <!-- Landline Phone -->
-                <div class="info-block">
-                  <div class="info-icon-circle">
-                    <i class="fa-solid fa-phone"></i>
-                  </div>
-                  <div class="info-text">
-                    <strong>Telefono Fisso (Prenotazioni):</strong>
-                    <p class="info-main-val">
-                      <a href="tel:0424500200" class="phone-highlight">0424 500 200</a>
+                <!-- Telefono -->
+                <div class="info-row">
+                  <i class="fa-solid fa-phone info-icon"></i>
+                  <div class="info-content">
+                    <span class="info-label">Prenotazioni Telefoniche</span>
+                    <p class="info-val-primary">
+                      <a href="tel:0424500200" class="phone-link">0424 500 200</a>
                     </p>
-                    <span class="info-sub-val">Clicca per avviare la chiamata telefonica</span>
+                    <span class="info-val-secondary">Consigliata la prenotazione per cena e fine settimana</span>
                   </div>
                 </div>
 
-                <!-- Mobile & WhatsApp -->
-                <div class="info-block">
-                  <div class="info-icon-circle whatsapp-circle">
-                    <i class="fa-brands fa-whatsapp"></i>
-                  </div>
-                  <div class="info-text">
-                    <strong>Cellulare & WhatsApp:</strong>
-                    <p class="info-main-val">
-                      <a href="https://wa.me/393346232941" target="_blank" rel="noopener" class="whatsapp-highlight">
-                        334 623 2941
-                      </a>
+                <!-- Email -->
+                <div class="info-row">
+                  <i class="fa-solid fa-envelope info-icon"></i>
+                  <div class="info-content">
+                    <span class="info-label">Email Ufficiale</span>
+                    <p class="info-val-primary">
+                      <a href="mailto:pizzadalcampione@gmail.com" class="email-link">pizzadalcampione&#64;gmail.com</a>
                     </p>
-                    <span class="info-sub-val">Scrivici direttamente per informazioni o prenotazioni rapide</span>
                   </div>
-                </div>
-
-                <!-- Emails -->
-                <div class="info-block">
-                  <div class="info-icon-circle">
-                    <i class="fa-solid fa-envelope"></i>
-                  </div>
-                  <div class="info-text">
-                    <strong>Email Ufficiale:</strong>
-                    <div class="emails-list">
-                      <a href="mailto:pizzadalcampione@gmail.com">pizzadalcampione&#64;gmail.com</a>
-                    </div>
-                  </div>
-                </div>
-
-                <hr class="card-divider">
-
-                <!-- Real Opening Hours Table -->
-                <div class="hours-section-box">
-                  <div class="hours-header-tag">
-                    <i class="fa-solid fa-clock"></i>
-                    <h3>Orari di Apertura Cucina</h3>
-                  </div>
-
-                  <div class="hours-rows-list">
-                    <div class="hours-row">
-                      <span class="day-name">Lunedì:</span>
-                      <span class="day-time">12:00 – 14:00 / 19:00 – 22:00</span>
-                    </div>
-                    <div class="hours-row">
-                      <span class="day-name">Martedì:</span>
-                      <span class="day-time">12:00 – 14:00 / 19:00 – 22:00</span>
-                    </div>
-                    <div class="hours-row closed-row">
-                      <span class="day-name">Mercoledì:</span>
-                      <span class="day-time"><strong>CHIUSO (Riposo Settimanale)</strong></span>
-                    </div>
-                    <div class="hours-row">
-                      <span class="day-name">Giovedì:</span>
-                      <span class="day-time">12:00 – 14:00 / 19:00 – 22:00</span>
-                    </div>
-                    <div class="hours-row">
-                      <span class="day-name">Venerdì:</span>
-                      <span class="day-time">12:00 – 14:00 / 19:00 – 22:00</span>
-                    </div>
-                    <div class="hours-row">
-                      <span class="day-name">Sabato:</span>
-                      <span class="day-time">12:00 – 14:00 / 19:00 – 22:00</span>
-                    </div>
-                    <div class="hours-row">
-                      <span class="day-name">Domenica:</span>
-                      <span class="day-time">12:00 – 14:00 / 19:00 – 22:00</span>
-                    </div>
-                  </div>
-
-                  <p class="hours-note-text">
-                    <i class="fa-solid fa-circle-info"></i> Orari Cucina: Pranzo 12:00-14:00 | Cena 19:00-22:00 (la cucina non fa pasti fuori da questi orari; la pizzeria può aprire leggermente prima o chiudere dopo). Chiuso il Mercoledì.
-                  </p>
                 </div>
               </div>
             </div>
 
-            <!-- Right: Contact / Booking Request Form -->
-            <div class="contact-form-col">
-              <div class="form-container-card card">
-                <div class="form-header-side">
-                  <span class="form-kicker">Scrivici un Messaggio</span>
-                  <h2>Richiedi Informazioni o Prenota</h2>
-                  <p class="form-sub">
-                    Compila il modulo per richieste speciali, serate private, intolleranze o richieste di tavoli numerosi.
-                  </p>
+            <!-- Col 2: Orari Cucina -->
+            <div class="hours-col">
+              <div class="col-header">
+                <span class="block-kicker">Orari di Servizio</span>
+                <h2 class="col-title">Apertura Cucina & Pizzeria</h2>
+              </div>
+
+              <div class="hours-table">
+                <div class="hours-item">
+                  <span class="day-label">Lunedì</span>
+                  <span class="day-schedule">12:00 – 14:00 &nbsp;·&nbsp; 19:00 – 22:00</span>
                 </div>
-
-                <div *ngIf="messageSent()" class="success-message-alert">
-                  <i class="fa-solid fa-circle-check"></i>
-                  <div>
-                    <h4>Messaggio Inviato con Successo!</h4>
-                    <p>Grazie {{ name }}. Ti risponderemo al più presto tramite telefono o email.</p>
-                    <button (click)="resetForm()" class="btn btn-primary btn-sm mt-2">Invia un altro messaggio</button>
-                  </div>
+                <div class="hours-item">
+                  <span class="day-label">Martedì</span>
+                  <span class="day-schedule">12:00 – 14:00 &nbsp;·&nbsp; 19:00 – 22:00</span>
                 </div>
-
-                <form *ngIf="!messageSent()" (ngSubmit)="submitMessage()" class="contact-form-inner">
-                  <div class="form-group">
-                    <label>Nome e Cognome *</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      [(ngModel)]="name"
-                      name="name"
-                      required
-                      placeholder="es. Mario Rossi"
-                    />
-                  </div>
-
-                  <div class="form-row-2">
-                    <div class="form-group">
-                      <label>Email *</label>
-                      <input
-                        type="email"
-                        class="form-control"
-                        [(ngModel)]="email"
-                        name="email"
-                        required
-                        placeholder="mario@example.com"
-                      />
-                    </div>
-                    <div class="form-group">
-                      <label>Telefono / WhatsApp *</label>
-                      <input
-                        type="tel"
-                        class="form-control"
-                        [(ngModel)]="phone"
-                        name="phone"
-                        required
-                        placeholder="333 1234567"
-                      />
-                    </div>
-                  </div>
-
-                  <div class="form-group">
-                    <label>Oggetto</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      [(ngModel)]="subject"
-                      name="subject"
-                      placeholder="es. Prenotazione tavolo per cena di famiglia"
-                    />
-                  </div>
-
-                  <div class="form-group">
-                    <label>Messaggio *</label>
-                    <textarea
-                      class="form-control"
-                      [(ngModel)]="message"
-                      name="message"
-                      rows="5"
-                      required
-                      placeholder="Scrivi qui la tua richiesta..."
-                    ></textarea>
-                  </div>
-
-                  <button
-                    type="submit"
-                    class="btn btn-gold btn-lg w-100"
-                    [disabled]="!name || !email || !phone || !message"
-                  >
-                    <i class="fa-solid fa-paper-plane"></i> Invia Richiesta
-                  </button>
-                </form>
+                <div class="hours-item closed">
+                  <span class="day-label">Mercoledì</span>
+                  <span class="day-schedule day-closed">Chiuso per riposo settimanale</span>
+                </div>
+                <div class="hours-item">
+                  <span class="day-label">Giovedì</span>
+                  <span class="day-schedule">12:00 – 14:00 &nbsp;·&nbsp; 19:00 – 22:00</span>
+                </div>
+                <div class="hours-item">
+                  <span class="day-label">Venerdì</span>
+                  <span class="day-schedule">12:00 – 14:00 &nbsp;·&nbsp; 19:00 – 22:00</span>
+                </div>
+                <div class="hours-item">
+                  <span class="day-label">Sabato</span>
+                  <span class="day-schedule">12:00 – 14:00 &nbsp;·&nbsp; 19:00 – 22:00</span>
+                </div>
+                <div class="hours-item">
+                  <span class="day-label">Domenica</span>
+                  <span class="day-schedule">12:00 – 14:00 &nbsp;·&nbsp; 19:00 – 22:00</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- GOOGLE MAPS INTEGRATION: Focused on Bassano del Grappa -->
-          <div class="map-container-card card">
-            <div class="map-header-bar">
-              <div class="map-title-wrap">
-                <i class="fa-solid fa-map-location-dot"></i>
-                <div>
-                  <h3>Mappa & Indicazioni Stradali</h3>
-                  <span>Via G. Fattori 7, 36061 Bassano del Grappa (VI) — Ampio parcheggio disponibile</span>
-                </div>
+          <!-- MAP SECTION (FRAMELESS) -->
+          <div class="map-editorial-section" id="mappa">
+            <div class="map-bar">
+              <div class="map-meta">
+                <span class="block-kicker">Come Raggiungerci</span>
+                <h3 class="map-title">Posizione & Indicazioni Stradali</h3>
+                <span class="map-sub">Via G. Fattori 7, 36061 Bassano del Grappa (VI) · Ampio parcheggio riservato</span>
               </div>
-              <a
-                href="https://maps.google.com/?q=Via+G.+Fattori+7+36061+Bassano+del+Grappa+VI"
-                target="_blank"
-                rel="noopener"
-                class="btn btn-gold btn-sm"
-              >
-                <i class="fa-solid fa-diamond-turn-right"></i> Apri in Google Maps
-              </a>
+              <div class="map-action">
+                <a
+                  href="https://maps.google.com/?q=Via+G.+Fattori+7+36061+Bassano+del+Grappa+VI"
+                  target="_blank"
+                  rel="noopener"
+                  class="btn btn-gold btn-sm"
+                >
+                  <i class="fa-solid fa-diamond-turn-right"></i> Apri in Google Maps
+                </a>
+              </div>
             </div>
 
-            <div class="map-iframe-wrapper">
+            <div class="map-frame">
               <iframe
                 title="Mappa Ristorante Il Veliero Bassano del Grappa"
                 width="100%"
-                height="450"
-                style="border:0; border-radius: 12px;"
+                height="440"
+                style="border:0;"
                 loading="lazy"
                 allowfullscreen
                 referrerpolicy="no-referrer-when-downgrade"
@@ -293,9 +151,10 @@ import {
 
     /* Hero Header */
     .dove-hero-section {
-      background: linear-gradient(135deg, var(--color-navy-dark, #07192f) 0%, var(--color-navy-primary, #0b2545) 100%);
+      background: var(--bg-navy-dark, #1E293B);
       color: #ffffff;
-      padding: 5.5rem 0 4.5rem;
+      margin-top: -82px;
+      padding: calc(82px + 3rem) 0 3.8rem;
       text-align: center;
       position: relative;
       overflow: hidden;
@@ -303,325 +162,267 @@ import {
       .hero-inner {
         position: relative;
         z-index: 2;
-      }
-
-      .hero-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.75rem;
-        color: var(--color-gold, #dda15e);
-        font-family: var(--font-heading, 'Cinzel', serif);
-        font-size: 0.92rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-bottom: 0.75rem;
+        max-width: 820px;
+        margin: 0 auto;
       }
 
       .hero-title {
-        font-size: 3.5rem;
+        font-family: var(--font-heading, 'Cinzel', serif);
+        font-size: clamp(2.4rem, 4.5vw, 3.4rem);
         letter-spacing: 3px;
         color: #ffffff;
-        margin-bottom: 1rem;
-        font-family: var(--font-heading, 'Cinzel', serif);
+        margin-bottom: 0;
+        line-height: 1.15;
       }
 
       .hero-subtitle {
-        color: var(--color-seafoam, #eef4f8);
-        font-size: 1.15rem;
-        max-width: 680px;
+        color: var(--text-inverse-muted, #CBD5E1);
+        font-size: 1.1rem;
+        font-weight: 300;
+        max-width: 650px;
         margin: 0 auto;
-        line-height: 1.7;
+        line-height: 1.65;
+        font-family: var(--font-serif-primary);
+        font-style: italic;
       }
     }
 
-    /* Contacts Grid */
+    /* Contacts Content Section */
     .contacts-content-section {
-      padding: 5rem 0;
+      padding: 4rem 0 5.5rem;
+    }
 
-      .contacts-grid-layout {
-        display: grid;
-        grid-template-columns: 1.15fr 1fr;
-        gap: 3rem;
-        margin-bottom: 4rem;
+    /* Editorial Grid: Frameless, Clean, Open */
+    .contacts-editorial-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 4.5rem;
+      align-items: start;
+      margin-bottom: 4.5rem;
+    }
 
-        .contact-card, .form-container-card {
-          padding: 2.75rem;
-          border-radius: 20px;
-          box-shadow: var(--shadow-lg, 0 10px 25px rgba(11, 37, 69, 0.12));
-        }
+    .col-header {
+      margin-bottom: 2rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border-subtle, #D4D4D8);
 
-        .contact-card {
-          .card-brand-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1.25rem;
-            border-bottom: 2px solid var(--color-seafoam, #eef4f8);
-
-            h2 {
-              font-family: var(--font-heading, 'Cinzel', serif);
-              font-size: 1.75rem;
-              color: var(--color-navy-dark, #07192f);
-              margin-bottom: 0.35rem;
-              line-height: 1.15;
-            }
-
-            .card-brand-sub {
-              font-family: var(--font-sans);
-              font-size: 0.78rem;
-              color: var(--color-gold-dark, #bc6c25);
-              font-weight: 700;
-              text-transform: uppercase;
-              letter-spacing: 0.12em;
-              display: block;
-            }
-          }
-
-          .info-block {
-            display: flex;
-            gap: 1.25rem;
-            margin-bottom: 1.75rem;
-
-            .info-icon-circle {
-              width: 48px;
-              height: 48px;
-              border-radius: 50%;
-              background: var(--color-seafoam, #eef4f8);
-              color: var(--color-navy-primary, #0b2545);
-              font-size: 1.25rem;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              flex-shrink: 0;
-              border: 1px solid var(--color-border, #e2e8f0);
-
-              &.whatsapp-circle {
-                background: #f0fdf4;
-                color: #16a34a;
-                border-color: #bbf7d0;
-              }
-            }
-
-            .info-text {
-              strong {
-                display: block;
-                font-size: 0.85rem;
-                color: var(--color-text-muted, #64748b);
-                margin-bottom: 0.2rem;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-              }
-
-              .info-main-val {
-                font-size: 1.2rem;
-                font-weight: 700;
-                color: var(--color-navy-dark, #07192f);
-                margin-bottom: 0.2rem;
-              }
-
-              .info-sub-val {
-                font-size: 0.82rem;
-                color: var(--color-text-light, #94a3b8);
-              }
-
-              .phone-highlight {
-                color: var(--color-navy-dark, #07192f);
-                transition: color 0.2s ease;
-
-                &:hover {
-                  color: var(--color-gold-dark, #bc6c25);
-                }
-              }
-
-              .whatsapp-highlight {
-                color: #16a34a;
-                transition: color 0.2s ease;
-
-                &:hover {
-                  color: #15803d;
-                }
-              }
-
-              .emails-list {
-                display: flex;
-                flex-direction: column;
-                gap: 0.3rem;
-                margin-top: 0.25rem;
-
-                a {
-                  color: var(--color-navy-medium, #134074);
-                  font-weight: 600;
-                  font-size: 0.95rem;
-
-                  &:hover {
-                    color: var(--color-gold-dark, #bc6c25);
-                  }
-                }
-              }
-            }
-          }
-
-          .card-divider {
-            border: 0;
-            height: 1px;
-            background: var(--color-border, #e2e8f0);
-            margin: 2rem 0;
-          }
-
-          .hours-section-box {
-            .hours-header-tag {
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-              color: var(--color-gold-dark, #bc6c25);
-              margin-bottom: 1.25rem;
-
-              i { font-size: 1.2rem; }
-              h3 { font-size: 1.3rem; color: var(--color-navy-dark, #07192f); margin-bottom: 0; }
-            }
-
-            .hours-rows-list {
-              display: flex;
-              flex-direction: column;
-              gap: 0.6rem;
-
-              .hours-row {
-                display: flex;
-                justify-content: space-between;
-                font-size: 0.92rem;
-                padding-bottom: 0.4rem;
-                border-bottom: 1px dashed var(--color-border, #e2e8f0);
-
-                .day-name { font-weight: 600; color: var(--color-navy-dark, #07192f); }
-                .day-time { color: var(--color-text-main, #1d2d44); }
-
-                &.closed-row {
-                  background: #fef2f2;
-                  padding: 0.4rem 0.6rem;
-                  border-radius: 6px;
-                  border-bottom: none;
-
-                  .day-name, .day-time { color: #dc2626; }
-                }
-              }
-            }
-
-            .hours-note-text {
-              font-size: 0.84rem;
-              color: var(--color-gold-dark, #bc6c25);
-              margin-top: 1rem;
-              display: flex;
-              align-items: center;
-              gap: 0.4rem;
-              margin-bottom: 0;
-            }
-          }
-        }
-
-        .form-container-card {
-          .form-header-side {
-            margin-bottom: 2rem;
-
-            .form-kicker {
-              font-size: 0.85rem;
-              text-transform: uppercase;
-              letter-spacing: 2px;
-              color: var(--color-gold-dark, #bc6c25);
-              font-weight: 700;
-              display: block;
-              margin-bottom: 0.35rem;
-            }
-
-            h2 {
-              font-size: 2rem;
-              color: var(--color-navy-dark, #07192f);
-              margin-bottom: 0.5rem;
-            }
-
-            .form-sub {
-              font-size: 0.95rem;
-              color: var(--color-text-muted, #64748b);
-              margin-bottom: 0;
-            }
-          }
-
-          .form-row-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-          }
-
-          .success-message-alert {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            padding: 2rem;
-            border-radius: 12px;
-            display: flex;
-            gap: 1.25rem;
-            align-items: flex-start;
-            color: #166534;
-
-            i { font-size: 2.5rem; color: #16a34a; }
-
-            h4 {
-              color: #14532d;
-              font-size: 1.25rem;
-              margin-bottom: 0.5rem;
-            }
-
-            p {
-              font-size: 0.95rem;
-              margin-bottom: 1rem;
-            }
-          }
-        }
+      .block-kicker {
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-eyebrow, 0.16em);
+        color: var(--color-accent-hover, #0284C7);
+        display: block;
+        margin-bottom: 0.35rem;
       }
 
-      .map-container-card {
-        padding: 2rem;
-        border-radius: 20px;
-        box-shadow: var(--shadow-md, 0 4px 12px rgba(11, 37, 69, 0.08));
+      .col-title {
+        font-family: var(--font-serif-primary);
+        font-size: 1.85rem;
+        font-weight: 500;
+        color: var(--text-primary, #1E293B);
+        letter-spacing: 0.01em;
+        margin: 0;
+        line-height: 1.2;
+      }
+    }
 
-        .map-header-bar {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1.5rem;
-          flex-wrap: wrap;
-          gap: 1rem;
+    /* Left Column: Info Items */
+    .info-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
 
-          .map-title-wrap {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
 
-            i { font-size: 2rem; color: var(--color-gold-dark, #bc6c25); }
+      .info-icon {
+        color: var(--color-accent-hover, #0284C7);
+        font-size: 1.15rem;
+        margin-top: 0.35rem;
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+      }
 
-            h3 {
-              font-size: 1.45rem;
-              color: var(--color-navy-dark, #07192f);
-              margin-bottom: 0.15rem;
+      .info-content {
+        display: flex;
+        flex-direction: column;
+
+        .info-label {
+          font-family: var(--font-sans);
+          font-size: 0.72rem;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: var(--tracking-eyebrow, 0.16em);
+          color: var(--text-muted, #64748B);
+          margin-bottom: 0.2rem;
+        }
+
+        .info-val-primary {
+          font-family: var(--font-serif-primary);
+          font-size: 1.35rem;
+          font-weight: 500;
+          color: var(--text-primary, #1E293B);
+          letter-spacing: 0.01em;
+          margin: 0 0 0.2rem 0;
+          line-height: 1.3;
+
+          .phone-link {
+            color: var(--text-primary, #1E293B);
+            letter-spacing: 0.03em;
+            transition: color var(--transition-fast, 0.2s ease);
+
+            &:hover {
+              color: var(--color-accent-hover, #0284C7);
             }
+          }
 
-            span {
-              font-size: 0.88rem;
-              color: var(--color-text-muted, #64748b);
+          .email-link {
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: var(--color-accent-hover, #0284C7);
+            transition: color var(--transition-fast, 0.2s ease);
+
+            &:hover {
+              color: var(--color-accent, #0EA5E9);
             }
           }
         }
 
-        .map-iframe-wrapper {
-          overflow: hidden;
-          border-radius: 12px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        .info-val-secondary {
+          font-family: var(--font-sans);
+          font-size: 0.85rem;
+          font-weight: 400;
+          color: var(--text-stone, #475569);
+          line-height: 1.4;
         }
       }
     }
 
-    @media (max-width: 1024px) {
-      .contacts-content-section .contacts-grid-layout {
+    /* Right Column: Hours */
+    .hours-table {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .hours-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 0.55rem;
+      border-bottom: 1px solid rgba(212, 212, 216, 0.4);
+
+      .day-label {
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text-primary, #1E293B);
+      }
+
+      .day-schedule {
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: var(--text-secondary, #334155);
+
+        &.day-closed {
+          color: var(--status-danger, #DC2626);
+          font-style: italic;
+          font-weight: 400;
+        }
+      }
+
+      &.closed {
+        border-bottom-color: rgba(220, 38, 38, 0.15);
+      }
+    }
+
+    /* Map Section: Frameless, Clean, Direct */
+    .map-editorial-section {
+      border-top: 1px solid var(--border-subtle, #D4D4D8);
+      padding-top: 3.5rem;
+    }
+
+    .map-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+
+      .map-meta {
+        .block-kicker {
+          font-family: var(--font-sans);
+          font-size: 0.72rem;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: var(--tracking-eyebrow, 0.16em);
+          color: var(--color-accent-hover, #0284C7);
+          display: block;
+          margin-bottom: 0.35rem;
+        }
+
+        .map-title {
+          font-family: var(--font-serif-primary);
+          font-size: 1.85rem;
+          font-weight: 500;
+          color: var(--text-primary, #1E293B);
+          letter-spacing: 0.01em;
+          margin: 0 0 0.35rem 0;
+          line-height: 1.2;
+        }
+
+        .map-sub {
+          font-family: var(--font-sans);
+          font-size: 0.88rem;
+          font-weight: 400;
+          color: var(--text-stone, #475569);
+          display: block;
+        }
+      }
+
+      .map-action {
+        flex-shrink: 0;
+
+        .btn {
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          font-size: 0.8rem;
+          padding: 0.65rem 1.4rem;
+        }
+      }
+    }
+
+    .map-frame {
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle, #D4D4D8);
+      line-height: 0;
+
+      iframe {
+        display: block;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .contacts-editorial-grid {
         grid-template-columns: 1fr;
+        gap: 3rem;
+        margin-bottom: 3.5rem;
+      }
+
+      .map-bar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem;
       }
     }
   `],
@@ -629,13 +430,6 @@ import {
 export class DoveSiamoComponent implements OnInit {
   private infoService = inject(InfoService);
   public info = signal<InfoLocale | null>(null);
-
-  public name: string = '';
-  public email: string = '';
-  public phone: string = '';
-  public subject: string = '';
-  public message: string = '';
-  public messageSent = signal<boolean>(false);
 
   ngOnInit(): void {
     this.infoService.getInfoLocale().subscribe({
@@ -645,19 +439,5 @@ export class DoveSiamoComponent implements OnInit {
         }
       },
     });
-  }
-
-  submitMessage(): void {
-    if (!this.name || !this.email || !this.phone || !this.message) return;
-    this.messageSent.set(true);
-  }
-
-  resetForm(): void {
-    this.name = '';
-    this.email = '';
-    this.phone = '';
-    this.subject = '';
-    this.message = '';
-    this.messageSent.set(false);
   }
 }

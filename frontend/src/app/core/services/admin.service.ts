@@ -48,8 +48,24 @@ export class AdminService {
   }
 
   // Blacklist Management
-  public getBlacklistedTokens(params?: { activeOnly?: boolean; search?: string; page?: number; limit?: number }): Observable<{ success: boolean; count: number; total: number; data: BlacklistedToken[] }> {
-    return this.api.get<{ success: boolean; count: number; total: number; data: BlacklistedToken[] }>('/admin/blacklist', params);
+  public getBlacklistedTokens(params?: { activeOnly?: boolean; search?: string; page?: number; limit?: number }): Observable<{
+    success: boolean;
+    count: number;
+    pagination: { total: number; totalPages: number; page: number; limit: number };
+    data: BlacklistedToken[];
+    total?: number;
+    page?: number;
+    totalPages?: number;
+  }> {
+    return this.api.get<{
+      success: boolean;
+      count: number;
+      pagination: { total: number; totalPages: number; page: number; limit: number };
+      data: BlacklistedToken[];
+      total?: number;
+      page?: number;
+      totalPages?: number;
+    }>('/admin/blacklist', params);
   }
 
   public blacklistToken(data: { token: string; reason?: string; expiresAt?: string }): Observable<{ success: boolean; message: string; data: BlacklistedToken }> {

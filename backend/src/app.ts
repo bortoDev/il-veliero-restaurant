@@ -9,6 +9,7 @@ import { env } from './config/environment';
 import { UPLOAD_DIR } from './middleware/upload.middleware';
 import { errorHandler } from './middleware/error.middleware';
 import { auditMiddleware } from './middleware/audit.middleware';
+import { generalApiLimiter } from './middleware/rate-limit.middleware';
 import { NotFoundError } from './utils/errors';
 import apiRouter from './routes';
 
@@ -52,9 +53,9 @@ export const createApp = (): Express => {
     })
   );
 
-  // Request Body Parsers
-  app.use(express.json({ limit: '10mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+  // Request Body Parsers (Restricted to 2MB to protect against body parsing memory exhaustion)
+  app.use(express.json({ limit: '2mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
   // HTTP Request Logger (disabled during automated tests)
   if (env.nodeEnv !== 'test') {
@@ -66,6 +67,9 @@ export const createApp = (): Express => {
 
   // Audit Logging Middleware (records mutations & auth attempts)
   app.use(auditMiddleware);
+
+  // General Rate Limiting for all API routes
+  app.use('/api/v1', generalApiLimiter);
 
   // API v1 Routers
   app.use('/api/v1', apiRouter);

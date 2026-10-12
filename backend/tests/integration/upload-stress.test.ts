@@ -2,10 +2,30 @@ import request from 'supertest';
 import path from 'path';
 import fs from 'fs';
 import { createApp } from '../../src/app';
+import { User } from '../../src/models/User';
+import { jwtService } from '../../src/services/jwt.service';
 import { UPLOAD_DIR, MAX_FILE_SIZE_BYTES } from '../../src/middleware/upload.middleware';
 
 describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
   const app = createApp();
+
+  let gestoreToken: string;
+
+  beforeEach(async () => {
+    const gestore = await User.create({
+      name: 'Gestore Stress Test',
+      email: 'gestore.stress@ilveliero.it',
+      password: 'Password123!',
+      role: 'gestore',
+      isActive: true,
+    });
+    gestoreToken = jwtService.generateToken({
+      id: gestore._id.toString(),
+      email: gestore.email,
+      role: gestore.role,
+      name: gestore.name,
+    });
+  });
 
   // Valid 1x1 base64 transparent PNG buffer
   const validPngBuffer = Buffer.from(
@@ -36,6 +56,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
       const oneMbBuffer = Buffer.alloc(1024 * 1024);
       const res = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', oneMbBuffer, {
           filename: 'valid-1mb.png',
           contentType: 'image/png',
@@ -51,6 +72,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
       const oversizedBuffer = Buffer.alloc(MAX_FILE_SIZE_BYTES + 1);
       const res = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', oversizedBuffer, {
           filename: 'oversized-boundary.png',
           contentType: 'image/png',
@@ -66,6 +88,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
       const massiveBuffer = Buffer.alloc(15 * 1024 * 1024);
       const res = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', massiveBuffer, {
           filename: 'massive-payload.jpg',
           contentType: 'image/jpeg',
@@ -82,6 +105,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
       const exeBuffer = Buffer.from('MZ\x90\x00\x03\x00\x00\x00\x04\x00');
       const res = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', exeBuffer, {
           filename: 'malware.exe',
           contentType: 'application/x-msdownload',
@@ -97,6 +121,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
       const shBuffer = Buffer.from('#!/bin/bash\nrm -rf /');
       const res = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', shBuffer, {
           filename: 'script.sh',
           contentType: 'text/x-sh',
@@ -111,6 +136,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
       const svgBuffer = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>');
       const res = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', svgBuffer, {
           filename: 'xss.svg',
           contentType: 'image/svg+xml',
@@ -126,6 +152,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
       const pdfBuffer = Buffer.from('%PDF-1.4 ...');
       const res = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', pdfBuffer, {
           filename: 'document.pdf',
           contentType: 'application/pdf',
@@ -140,6 +167,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
       const webpBuffer = Buffer.from('RIFF....WEBPVP8 ...');
       const res = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', webpBuffer, {
           filename: 'dish.webp',
           contentType: 'image/webp',
@@ -154,6 +182,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
       const gifBuffer = Buffer.from('GIF89a...');
       const res = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', gifBuffer, {
           filename: 'animation.gif',
           contentType: 'image/gif',
@@ -169,6 +198,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
     it('should reject when wrong form field name is used (e.g. "file" instead of "image")', async () => {
       const res = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('file', validPngBuffer, 'photo.png');
 
       expect(res.status).toBe(400);
@@ -180,6 +210,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
     it('should reject when field name is "avatar"', async () => {
       const res = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('avatar', validPngBuffer, 'avatar.png');
 
       expect(res.status).toBe(400);
@@ -190,6 +221,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
     it('should reject empty POST request without multipart payload', async () => {
       const res = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .send({});
 
       expect(res.status).toBe(400);
@@ -203,6 +235,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
     it('should neutralize directory traversal in original filename (e.g. ../../etc/passwd.png)', async () => {
       const res = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', validPngBuffer, {
           filename: '../../../../etc/passwd.png',
           contentType: 'image/png',
@@ -224,6 +257,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
     it('should handle filenames with spaces and UTF-8 characters safely', async () => {
       const res = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', validPngBuffer, {
           filename: 'pescato del giorno 🐟 & crostacei #1.png',
           contentType: 'image/png',
@@ -238,6 +272,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
     it('should handle filenames without extension safely', async () => {
       const res = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', validPngBuffer, {
           filename: 'noextensionfile',
           contentType: 'image/png',
@@ -253,6 +288,7 @@ describe('Adversarial Upload & Static Serving Stress Test Suite', () => {
     it('should serve uploaded image with correct content-type and cache headers', async () => {
       const uploadRes = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', validPngBuffer, 'serve-test.png');
 
       expect(uploadRes.status).toBe(201);

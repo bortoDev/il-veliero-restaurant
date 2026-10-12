@@ -138,7 +138,16 @@ export const createAvviso = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { title, message, severity = 'info', startDate, endDate, isActive = true } = req.body;
+    const {
+      title,
+      message,
+      severity = 'info',
+      image = '',
+      images = [],
+      startDate,
+      endDate,
+      isActive = true,
+    } = req.body;
 
     if (!title || typeof title !== 'string' || title.trim().length === 0) {
       throw new BadRequestError('Notice title is required');
@@ -171,10 +180,19 @@ export const createAvviso = async (
       parsedEndDate = d;
     }
 
+    const sanitizedImages = Array.isArray(images)
+      ? images.map((img: any) => String(img).trim()).filter(Boolean)
+      : [];
+    const primaryImage = typeof image === 'string' && image.trim()
+      ? image.trim()
+      : (sanitizedImages.length > 0 ? sanitizedImages[0] : '');
+
     const notice = new Avviso({
       title: title.trim(),
       message: message.trim(),
       severity: cleanSeverity,
+      image: primaryImage,
+      images: sanitizedImages,
       startDate: parsedStartDate,
       endDate: parsedEndDate,
       isActive: Boolean(isActive),
@@ -219,7 +237,7 @@ export const updateAvviso = async (
       throw new NotFoundError(`Notice with ID '${id}' not found`);
     }
 
-    const { title, message, severity, startDate, endDate, isActive } = req.body;
+    const { title, message, severity, image, images, startDate, endDate, isActive } = req.body;
 
     if (title !== undefined) {
       if (!title || typeof title !== 'string' || title.trim().length === 0) {
@@ -233,6 +251,17 @@ export const updateAvviso = async (
         throw new BadRequestError('Notice message cannot be empty');
       }
       notice.message = message.trim();
+    }
+
+    if (image !== undefined) {
+      notice.image = String(image).trim();
+    }
+
+    if (images !== undefined && Array.isArray(images)) {
+      notice.images = images.map((img: any) => String(img).trim()).filter(Boolean);
+      if (!notice.image && notice.images.length > 0) {
+        notice.image = notice.images[0];
+      }
     }
 
     if (severity !== undefined) {

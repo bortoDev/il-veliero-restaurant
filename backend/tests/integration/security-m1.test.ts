@@ -325,8 +325,6 @@ describe('Milestone 1 Security, Dual Login, Master Admin & Bassano del Grappa Da
       expect(res.body.data.pIva).toBe('03450720242');
       expect(res.body.data.sdi).toBe('P62QHVQ');
       expect(res.body.data.phone).toBe('0424 500 200');
-      expect(res.body.data.mobile).toBe('334 623 2941');
-      expect(res.body.data.whatsapp).toBe('334 623 2941');
       expect(res.body.data.email).toBe('info@ristorante-ilveliero.it');
       expect(res.body.data.secondaryEmail).toBe('pizzadalcampione@gmail.com');
       expect(res.body.data.openingHours.wednesday.isClosed).toBe(true);
@@ -346,11 +344,11 @@ describe('Milestone 1 Security, Dual Login, Master Admin & Bassano del Grappa Da
         .set('Authorization', `Bearer ${gestoreToken}`)
         .send({
           phone: '0424 500 200',
-          mobile: '334 623 2941',
+          mobile: '0424 500 201',
         });
 
       expect(updateRes.status).toBe(200);
-      expect(updateRes.body.data.mobile).toBe('334 623 2941');
+      expect(updateRes.body.data.mobile).toBe('0424 500 201');
     });
   });
 

@@ -1,102 +1,144 @@
 // ==========================================================================
-// RISTORANTE IL VELIERO — DISHOOM HERITAGE GLOBAL DESIGN SYSTEM
+// RISTORANTE IL VELIERO — HIGH-CLASS EDITORIAL DESIGN SYSTEM
 // ==========================================================================
 
 :root {
-  // --- 1. Backgrounds & Surfaces (Carta Avorio, Écru Lino & Sabbia) ---
-  --dishoom-bg-primary: #FAF7F2;          // Warm ivory / Carta avorio calda (main canvas)
-  --dishoom-bg-surface: #F5EFEB;          // Warm écru linen / Carta calda (cards, panels)
-  --dishoom-bg-surface-alt: #EFE8DF;      // Deeper sand linen (subtle contrast sections)
-  --dishoom-bg-sand: #EDE5D8;             // Sand stone accent
-  --dishoom-bg-sand-light: #F5EFEB;       // Soft écru sand
-  --dishoom-bg-parchment: #FDFBF7;        // Light parchment highlight
-  --dishoom-bg-navy-dark: #07192F;        // Midnight maritime navy (hero, footer, topbar)
-  --dishoom-bg-navy-deep: #0D2033;        // Archive ocean blue (rich dark panels)
-  --dishoom-bg-navy-card: #0B1B2B;        // Deep navy card backing
+  // ==========================================================================
+  // 1. SEMANTIC COLOR TOKENS
+  // ==========================================================================
 
-  // --- 2. Inks & Typography (Inchiostro Carbone & Caffè Tostato) ---
-  --dishoom-ink-charcoal: #1C1917;        // Deep carbon ink / Carbone profondo (headings & primary text)
-  --dishoom-ink-espresso: #292524;        // Roasted coffee / Caffè tostato (body copy)
-  --dishoom-ink-stone: #44403C;           // Medium warm stone (subtitles & strong body)
-  --dishoom-ink-muted: #78716C;           // Muted pencil / Warm stone (secondary copy)
-  --dishoom-ink-light: #A8A29E;           // Light caption & placeholder
-  --dishoom-ink-inverse: #FAF7F2;         // Ivory text on dark navy surfaces
-  --dishoom-ink-inverse-muted: #DDD3C4;   // Soft sand text on dark navy
+  // --- Superfici & Sfondi (Light & Dark) ---
+  --bg-primary: #F1F5F9;               // Slate 100 - Cool Off-White Canvas
+  --bg-surface: #FFFFFF;               // Bianco Puro Editoriale (card piatti, pannelli)
+  --bg-surface-alt: #E2E8F0;           // Slate 200 - Superficie secondaria a contrasto
+  --bg-sand: #E2E8F0;                  // Slate 200
+  --bg-sand-light: #F8FAFC;            // Slate 50
+  --bg-parchment: #FFFFFF;             // Bianco Puro
+  --bg-pastel-sky: #0EA5E9;            // Sky 500 - Azzurro Oceano
+  --bg-navy-dark: #1E293B;             // Slate 800 - Deep Slate Navy
+  --bg-navy-deep: #0F172A;             // Slate 900 - Navy Profondo di supporto
+  --bg-navy-card: #0F172A;             // Slate 900
+  --bg-white: #FFFFFF;
 
-  // --- 3. Metallic Accents & Borders (Ottone Brunito & Filetti Sabbia) ---
-  --dishoom-brass: #C58A3E;               // Burnished brass / Ottone brunito (primary accent)
-  --dishoom-brass-dark: #945C22;          // Antique warm gold / Oro caldo antico (hover & deep accent)
-  --dishoom-brass-light: #EBD8B8;         // Soft champagne brass (subtle outlines & dividers)
-  --dishoom-brass-subtle: rgba(197, 138, 62, 0.25); // Transparent brass glow / hairline
-  --dishoom-border-sand: #E5DDD0;         // Sandstone hairline border (paper & card dividers)
-  --dishoom-border-sand-dark: #D3C7B5;    // Stronger sand border for inputs & active states
-  --dishoom-border-navy-brass: rgba(197, 138, 62, 0.35); // Brass hairline for dark surfaces
+  // --- Veliero Ship Vector Identity ---
+  --veliero-ship-primary: #bc6c25;     // Bordi & Struttura del Veliero (Oro caldo d'accento - Nautical Bronze)
+  --veliero-ship-sail: #FFFFFF;        // Campitura Vele (bianco puro)
+  --veliero-ship-hull: #D4D4D8;        // Scafo / Chiglia (Zinc 300)
+  --veliero-ship-opacity: 1;
+  --veliero-wave-color: #D4D4D8;       // Onde e spuma marina naturale (Zinc 300 - neutro silver)
 
-  // --- 4. Functional / Culinary Status Tones ---
-  --dishoom-status-success: #2A7B4C;      // Forest sea emerald (available, fresh catch)
-  --dishoom-status-warning: #C07018;      // Warm amber spice (special, notice)
-  --dishoom-status-danger: #B91C1C;       // Venetian crimson (sold out, alert)
-  --dishoom-status-info: #1A5276;         // Archival blue note
+  // --- Inchiostri & Tipografia ---
+  --text-primary: #1E293B;             // Slate 800 (Titoli e testi principali)
+  --text-secondary: #334155;           // Slate 700 (Corpo paragrafi ad alto contrasto)
+  --text-stone: #475569;               // Slate 600 (Sottotitoli essenziali)
+  --text-muted: #64748B;               // Slate 500 (Didascalie e meta info)
+  --text-light: #94A3B8;               // Slate 400 (Placeholder e note secondarie)
+  --text-inverse: #F1F5F9;             // Slate 100 (Superfici scure)
+  --text-inverse-muted: #CBD5E1;       // Slate 300 (Sottotitoli su fondo scuro)
 
-  // --- 5. Typography Font Stacks ---
+  // --- Accenti Sartoriali & Metalli ---
+  --color-accent: #0EA5E9;             // Sky 500 - Azzurro Oceano Primario
+  --color-accent-hover: #0284C7;       // Sky 600 - Azzurro Intenso Hover
+  --color-accent-light: #BAE6FD;       // Sky 200 - Azzurro Cielo Chiaro
+  --color-accent-subtle: rgba(14, 165, 233, 0.12);
+  --color-gold: #EAB308;               // Yellow 500 - Oro Caldo / Campione del Mondo
+  --color-gold-dark: #CA8A04;          // Yellow 600 - Oro Intenso
+  --color-gold-subtle: rgba(234, 179, 8, 0.15);
+
+  // --- Bordi & Separatori ---
+  --border-subtle: #D4D4D8;            // Zinc 300 - Filetto neutro standard
+  --border-medium: #A1A1AA;            // Zinc 400 - Bordo rinforzato
+  --border-accent: rgba(14, 165, 233, 0.35); // Bordo azzurro nobile
+  --border-gold: rgba(234, 179, 8, 0.4);
+
+  // --- Stati di Servizio & Gastronomia ---
+  --status-success: #16A34A;           // Verde Smeraldo (Disponibile / Pescato fresco)
+  --status-warning: #EAB308;           // Yellow 500 - Oro Sole (Specialità chef)
+  --status-danger: #DC2626;            // Rosso Cremisi (Esaurito / Allergeni)
+  --status-info: #0EA5E9;              // Sky 500 - Azzurro Oceano
+
+  // --- Skeleton Loaders Sartoriali (Cool Zinc Shimmer) ---
+  --color-skeleton-base: #E2E8F0;
+  --color-skeleton-shimmer: #F1F5F9;
+
+  // ==========================================================================
+  // 2. TYPOGRAPHY STACKS
+  // ==========================================================================
   --font-serif-primary: 'Cormorant Garamond', Garamond, 'Times New Roman', serif;
   --font-serif-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-heading-editorial: var(--font-serif-primary);
   --font-heading-display: var(--font-serif-display);
-  --font-body-editorial: 'Plus Jakarta Sans', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body-editorial: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-sans: var(--font-body-editorial);
-  --font-serif-italic: var(--font-serif-primary);
-  --font-mono: 'JetBrains Mono', Consolas, Monaco, monospace;
-
   --font-heading: var(--font-heading-editorial);
   --font-display: var(--font-serif-display);
   --font-body: var(--font-body-editorial);
+  --font-mono: 'JetBrains Mono', Consolas, Monaco, monospace;
 
-  // --- 6. Letter Spacing (Tracking) ---
+  // Tracking
   --tracking-tight: -0.015em;
   --tracking-normal: 0em;
   --tracking-wide: 0.04em;
   --tracking-wider: 0.08em;
   --tracking-small-caps: 0.12em;
-  --tracking-eyebrow: 0.15em;
+  --tracking-eyebrow: 0.16em;
 
-  // --- 7. Shadows (Refined Organic Elevation, No Harsh Halos) ---
-  --dishoom-shadow-subtle: 0 1px 3px rgba(28, 25, 23, 0.04), 0 1px 2px rgba(28, 25, 23, 0.02);
-  --dishoom-shadow-card: 0 4px 16px -2px rgba(28, 25, 23, 0.05), 0 2px 6px -1px rgba(28, 25, 23, 0.02);
-  --dishoom-shadow-hover: 0 12px 28px -4px rgba(28, 25, 23, 0.08), 0 4px 12px -2px rgba(28, 25, 23, 0.03);
-  --dishoom-shadow-frame: inset 0 0 0 1px var(--dishoom-border-sand), 0 4px 16px rgba(28, 25, 23, 0.04);
+  // Elevation & Shadows (Sottili, Sartoriali, Slate Tone)
+  --shadow-subtle: 0 1px 3px rgba(30, 41, 59, 0.05), 0 1px 2px rgba(30, 41, 59, 0.03);
+  --shadow-card: 0 4px 16px -2px rgba(30, 41, 59, 0.08), 0 2px 6px -1px rgba(30, 41, 59, 0.04);
+  --shadow-hover: 0 12px 28px -4px rgba(30, 41, 59, 0.12), 0 4px 12px -2px rgba(30, 41, 59, 0.06);
 
-  // --- 8. Transitions ---
+  // Transitions
   --transition-fast: 0.2s ease;
   --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  // --- 9. Backward Compatibility Mapping (Aliases) ---
-  --color-bg-main: var(--dishoom-bg-primary);
-  --color-surface-white: var(--dishoom-bg-surface);
-  --color-surface-translucent: rgba(245, 239, 235, 0.92);
-  --color-border: var(--dishoom-border-sand);
-  --color-text-main: var(--dishoom-ink-charcoal);
-  --color-text-muted: var(--dishoom-ink-muted);
-  --color-text-light: var(--dishoom-ink-light);
-  --color-navy-dark: var(--dishoom-bg-navy-dark);
-  --color-navy-primary: var(--dishoom-bg-navy-deep);
-  --color-navy-medium: #134074;
-  --color-ocean-blue: var(--dishoom-bg-navy-deep);
-  --color-adriatic-cyan: #B8C7D9;
-  --color-seafoam: var(--dishoom-bg-surface);
-  --color-gold: var(--dishoom-brass);
-  --color-gold-dark: var(--dishoom-brass-dark);
-  --color-gold-light: var(--dishoom-brass-light);
-  --color-amber: #D97706;
-  --color-success: var(--dishoom-status-success);
-  --color-warning: var(--dishoom-status-warning);
-  --color-danger: var(--dishoom-status-danger);
-  --color-info: var(--dishoom-status-info);
-  --shadow-sm: var(--dishoom-shadow-subtle);
-  --shadow-md: var(--dishoom-shadow-card);
-  --shadow-lg: var(--dishoom-shadow-hover);
-  --shadow-hover: var(--dishoom-shadow-hover);
+  // ==========================================================================
+  // 3. BACKWARD COMPATIBILITY ALIASES
+  // ==========================================================================
+  --dishoom-bg-primary: var(--bg-primary);
+  --dishoom-bg-surface: var(--bg-surface);
+  --dishoom-bg-surface-alt: var(--bg-surface-alt);
+  --dishoom-bg-sand: var(--bg-sand);
+  --dishoom-bg-navy-dark: var(--bg-navy-dark);
+  --dishoom-bg-navy-deep: var(--bg-navy-deep);
+  --dishoom-ink-charcoal: var(--text-primary);
+  --dishoom-ink-espresso: var(--text-secondary);
+  --dishoom-ink-stone: var(--text-stone);
+  --dishoom-ink-muted: var(--text-muted);
+  --dishoom-ink-light: var(--text-light);
+  --dishoom-ink-inverse: var(--text-inverse);
+  --dishoom-ink-inverse-muted: var(--text-inverse-muted);
+  --dishoom-brass: var(--color-accent);
+  --dishoom-brass-dark: var(--color-accent-hover);
+  --dishoom-brass-light: var(--color-accent-light);
+  --dishoom-brass-subtle: var(--color-accent-subtle);
+  --dishoom-border-sand: var(--border-subtle);
+  --dishoom-border-sand-dark: var(--border-medium);
+  --dishoom-border-navy-brass: var(--border-accent);
+  --dishoom-status-success: var(--status-success);
+  --dishoom-status-warning: var(--status-warning);
+  --dishoom-status-danger: var(--status-danger);
+  --dishoom-status-info: var(--status-info);
+  --dishoom-shadow-subtle: var(--shadow-subtle);
+  --dishoom-shadow-card: var(--shadow-card);
+  --dishoom-shadow-hover: var(--shadow-hover);
+  --color-bg-main: var(--bg-primary);
+  --color-surface-white: var(--bg-surface);
+  --color-border: var(--border-subtle);
+  --color-text-main: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-navy-dark: var(--bg-navy-dark);
+  --color-navy-primary: var(--bg-navy-deep);
+  --color-gold: var(--color-gold);
+  --color-gold-dark: var(--color-gold-dark);
+  --color-seafoam: var(--bg-surface);
+  --color-success: var(--status-success);
+  --color-warning: var(--status-warning);
+  --color-danger: var(--status-danger);
+  --color-info: var(--status-info);
+  --shadow-sm: var(--shadow-subtle);
+  --shadow-md: var(--shadow-card);
+  --shadow-lg: var(--shadow-hover);
 }
 
 // ==========================================================================
@@ -112,13 +154,13 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
-  background-color: var(--dishoom-bg-primary, #FAF7F2);
+  background-color: var(--bg-primary);
 }
 
 body {
   font-family: var(--font-body);
-  color: var(--dishoom-ink-charcoal);
-  background-color: var(--dishoom-bg-primary, #FAF7F2);
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
   line-height: 1.65;
   font-size: 1rem;
   font-weight: 400;
@@ -129,43 +171,42 @@ body {
 }
 
 // ==========================================================================
-// BASE TYPOGRAPHY (NOBLE SERIF & EDITORIAL HIERARCHY)
+// TYPOGRAPHY (EDITORIAL NOBILITY & CRISP HIERARCHY)
 // ==========================================================================
 
-h1, h2, h3, h4, h5, h6,
-.dishoom-heading {
+h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  color: var(--dishoom-ink-charcoal);
+  color: var(--text-primary);
   letter-spacing: var(--tracking-wide);
-  line-height: 1.25;
+  line-height: 1.22;
   font-weight: 600;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.65rem;
   font-feature-settings: 'lnum' 1, 'kern' 1;
 }
 
 h1 {
   font-family: var(--font-display);
-  font-size: clamp(2.4rem, 5vw, 3.75rem);
+  font-size: clamp(2.3rem, 5vw, 3.6rem);
   font-weight: 700;
   letter-spacing: 0.03em;
   line-height: 1.12;
 }
 
 h2 {
-  font-size: clamp(1.85rem, 3.5vw, 2.5rem);
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
   font-weight: 600;
   letter-spacing: var(--tracking-wide);
   line-height: 1.2;
 }
 
 h3 {
-  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
   font-weight: 600;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
 }
 
 h4 {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 600;
   letter-spacing: 0.02em;
 }
@@ -181,17 +222,17 @@ h6 {
 }
 
 p {
-  margin-bottom: 1rem;
-  color: var(--dishoom-ink-espresso);
+  margin-bottom: 0.85rem;
+  color: var(--text-secondary);
 }
 
 a {
-  color: var(--dishoom-brass-dark);
+  color: var(--color-accent-hover);
   text-decoration: none;
   transition: color var(--transition-fast);
 
   &:hover {
-    color: var(--dishoom-brass);
+    color: var(--color-accent);
   }
 }
 
@@ -201,135 +242,27 @@ img {
   display: block;
 }
 
-// ==========================================================================
-// TYPOGRAPHY UTILITY CLASSES (DISHOOM HERITAGE SPECIFICATION)
-// ==========================================================================
-
-// 1. Font Family Classes
-.font-display {
-  font-family: var(--font-serif-display) !important;
-}
-
-.font-serif {
-  font-family: var(--font-serif-primary) !important;
-}
-
-.font-sans {
-  font-family: var(--font-sans) !important;
-}
-
-.heading-display {
-  font-family: var(--font-serif-display);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 1.15;
-}
-
-.heading-editorial {
-  font-family: var(--font-serif-primary);
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: capitalize;
-}
-
-// 2. Subtitles & Dish Descriptions (Noble Italic Serif)
-.font-italic-serif,
-.dish-desc-italic,
-.subtitle-italic,
-.dishoom-italic,
-.culinary-note {
-  font-family: var(--font-serif-primary);
-  font-style: italic;
-  font-weight: 400;
-  font-size: 1.02rem;
-  line-height: 1.55;
-  color: var(--dishoom-ink-stone);
-}
-
-.story-quote-serif {
-  font-family: var(--font-serif-primary);
-  font-style: italic;
-  font-size: 1.35rem;
-  line-height: 1.6;
-  color: var(--dishoom-bg-navy-dark);
-  letter-spacing: 0.02em;
-}
-
-.dish-subtitle {
-  font-family: var(--font-serif-primary);
-  font-style: italic;
-  font-size: 0.95rem;
-  color: var(--dishoom-brass-dark);
-}
-
-// 3. Selectors, Categories & Micro-Copy (Spaced Small-Caps)
-.font-small-caps,
-.text-small-caps,
-.dishoom-smallcaps {
-  font-family: var(--font-sans);
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-small-caps);
-}
-
-.category-selector,
-.category-tab-label {
-  font-family: var(--font-sans);
-  font-size: 0.82rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-small-caps);
-  color: var(--dishoom-ink-charcoal);
-  transition: all var(--transition-fast);
-}
-
-.micro-copy {
-  font-family: var(--font-sans);
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-eyebrow);
-  color: var(--dishoom-ink-muted);
-}
-
-.nav-link-caps {
-  font-family: var(--font-sans);
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-small-caps);
-}
-
+// Micro-caps, Eyebrows and Tags
 .eyebrow-caps,
-.dishoom-kicker {
+.kicker-caps {
   font-family: var(--font-sans);
-  font-size: 0.75rem;
+  font-size: 0.76rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: var(--tracking-eyebrow);
-  color: var(--dishoom-brass-dark);
+  color: var(--color-accent-hover);
   display: inline-block;
   margin-bottom: 0.5rem;
 }
 
-.badge-caps {
-  font-family: var(--font-sans);
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+.font-serif-italic {
+  font-family: var(--font-serif-primary);
+  font-style: italic;
+  font-weight: 400;
 }
 
-// 4. Tracking Modifiers
-.tracking-tight { letter-spacing: var(--tracking-tight); }
-.tracking-wide { letter-spacing: var(--tracking-wide); }
-.tracking-wider { letter-spacing: var(--tracking-wider); }
-.tracking-widest { letter-spacing: var(--tracking-small-caps); }
-.tracking-caps { letter-spacing: var(--tracking-eyebrow); }
-
 // ==========================================================================
-// CONTAINER & SECTION LAYOUT
+// CONTAINER & SECTION LAYOUT (CLEAN & UNCLUTTERED)
 // ==========================================================================
 
 .container {
@@ -340,81 +273,60 @@ img {
 }
 
 .section {
-  padding: 5rem 0;
+  padding: 4.5rem 0;
   position: relative;
 }
 
 .section-header {
   text-align: center;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2.75rem;
   display: flex;
   flex-direction: column;
   align-items: center;
 
   .subtitle,
   .section-subtitle,
-  .eyebrow-caps,
-  .dishoom-kicker {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+  .eyebrow-caps {
+    display: inline-block;
     font-family: var(--font-sans);
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: var(--tracking-eyebrow, 0.15em);
-    color: var(--dishoom-brass-dark);
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-accent-hover);
     font-weight: 700;
-    margin-bottom: 0.85rem;
-    padding: 0.3rem 0.9rem;
-    border-radius: 4px;
-    background: rgba(197, 138, 62, 0.08);
-    border: 1px solid rgba(197, 138, 62, 0.25);
-    max-width: fit-content;
+    margin-bottom: 0.5rem;
+    background: transparent;
+    border: none;
+    padding: 0;
   }
 
   h1, h2, h3, .section-title {
     display: block;
     width: 100%;
-    margin: 0 0 1rem 0;
+    margin: 0;
     font-family: var(--font-heading);
-    color: var(--dishoom-ink-charcoal);
+    color: var(--text-primary);
     position: relative;
-    padding-bottom: 0.85rem;
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--dishoom-brass), transparent);
-    }
+    padding-bottom: 0.25rem;
   }
 
+  // Decluttering: no redundant 2-sentence clutter paragraphs
   .description {
-    max-width: 680px;
-    margin: 0.75rem auto 0;
-    color: var(--dishoom-ink-muted);
-    font-family: var(--font-serif-primary);
-    font-style: italic;
-    font-size: 1.1rem;
-    line-height: 1.7;
+    display: none;
   }
 }
 
-// Global Hero Sections Hierarchy (Dishoom Heritage Dark Midnight Style)
+// Global Hero Sections Hierarchy (Pure Editorial Dark Style)
 .page-hero,
 .storia-hero-section,
 .menu-hero-section,
 .dove-hero-section,
 .diario-hero-section,
 .eventi-hero-section {
-  background: linear-gradient(135deg, var(--dishoom-bg-navy-dark, #07192F) 0%, var(--dishoom-bg-navy-deep, #0D2033) 100%);
+  margin-top: -82px;
+  padding: calc(82px + 2.75rem) 0 3.5rem;
+  background: var(--bg-navy-dark);
   color: #FFFFFF;
-  padding: 5.5rem 0 4.5rem;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -436,176 +348,170 @@ img {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
-    color: var(--dishoom-brass, #C58A3E);
-    font-family: var(--font-body-editorial, 'Plus Jakarta Sans', sans-serif);
-    font-size: 0.82rem;
+    gap: 0.65rem;
+    color: var(--color-gold);
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: var(--tracking-eyebrow, 0.15em);
-    margin-bottom: 1rem;
-    padding: 0.35rem 1rem;
-    border-radius: 4px;
-    background: rgba(197, 138, 62, 0.12);
-    border: 1px solid rgba(197, 138, 62, 0.35);
+    letter-spacing: var(--tracking-eyebrow);
+    margin-bottom: 0.85rem;
+    padding: 0;
+    background: transparent;
+    border: none;
   }
 
   h1,
   .hero-title,
   .hero-diario-title {
-    font-family: var(--font-heading-display, var(--font-serif-display));
-    font-size: clamp(2.5rem, 5.5vw, 3.8rem);
-    letter-spacing: 0.05em;
+    font-family: var(--font-heading, 'Cinzel', serif);
+    font-size: clamp(2.4rem, 4.5vw, 3.4rem);
+    letter-spacing: 3px;
     color: #FFFFFF;
-    margin: 0 0 1.25rem 0;
-    line-height: 1.1;
+    margin: 0;
+    line-height: 1.15;
     display: block;
     width: 100%;
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   }
 
   p,
   .hero-subtitle,
   .hero-diario-sub {
-    color: var(--dishoom-ink-inverse-muted, #DDD3C4);
-    font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
+    color: var(--text-inverse-muted);
+    font-family: var(--font-serif-primary);
     font-style: italic;
-    font-size: 1.2rem;
+    font-size: 1.18rem;
     max-width: 720px;
     margin: 0 auto;
-    line-height: 1.75;
+    line-height: 1.7;
     display: block;
   }
 }
 
 // ==========================================================================
-// CARDS & FRAMES (DISHOOM ARCHIVE SPECIFICATION)
+// CARDS & FRAMES
 // ==========================================================================
 
-.card,
-.dishoom-card,
-.archive-frame {
-  background: var(--dishoom-bg-surface);
+.card {
+  background: var(--bg-surface);
   border-radius: 4px;
-  border: 1px solid var(--dishoom-border-sand);
-  outline: 1px solid var(--dishoom-brass-subtle);
-  outline-offset: -4px;
-  box-shadow: var(--dishoom-shadow-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
   padding: 1.75rem;
   position: relative;
   transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-fast);
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--dishoom-shadow-hover);
-    border-color: var(--dishoom-brass);
-    outline-color: rgba(197, 138, 62, 0.45);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--color-accent);
   }
 }
 
 // ==========================================================================
-// BUTTONS SYSTEM (DISHOOM METALLIC & NAVY HERITAGE)
+// SARTORIAL BUTTONS (NO PILL SHAPES — REFINED MICRO-RADIUS 3PX)
 // ==========================================================================
 
-.btn,
-.dishoom-btn {
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.65rem;
-  font-family: var(--font-body);
-  font-size: 0.88rem;
+  padding: 0.72rem 1.6rem;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  border-radius: 3px;
+  border-radius: 3px; // STRICT SARTORIAL MICRO-RADIUS (NO PILL)
   border: 1px solid transparent;
   cursor: pointer;
   transition: all var(--transition-smooth);
   text-align: center;
-  box-shadow: var(--dishoom-shadow-subtle);
+  box-shadow: var(--shadow-subtle);
   text-decoration: none;
+  line-height: 1.2;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--dishoom-shadow-card);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-card);
   }
 
   &:active {
     transform: translateY(0);
   }
 
-  // Brass / Gold Heritage Button
-  &.btn-brass,
-  &.btn-gold {
-    background-color: var(--dishoom-brass);
-    color: #FAF7F2;
-    border-color: var(--dishoom-brass-dark);
+  // Accent Blue / Laguna Button
+  &.btn-accent,
+  &.btn-gold,
+  &.btn-brass {
+    background-color: var(--color-accent);
+    color: #FFFFFF;
+    border-color: var(--color-accent-hover);
 
     &:hover {
-      background-color: var(--dishoom-brass-dark);
-      border-color: #78481A;
+      background-color: var(--color-accent-hover);
+      border-color: #0369a1;
       color: #FFFFFF;
     }
   }
 
-  // Deep Navy Solid Button
+  // Deep Navy Button
   &.btn-navy,
   &.btn-primary {
-    background-color: var(--dishoom-bg-navy-deep);
-    color: #FAF7F2;
-    border-color: var(--dishoom-brass);
+    background-color: var(--bg-navy-deep);
+    color: #FFFFFF;
+    border-color: var(--color-accent);
 
     &:hover {
-      background-color: var(--dishoom-bg-navy-dark);
-      border-color: var(--dishoom-brass-light);
+      background-color: var(--bg-navy-dark);
+      border-color: var(--color-accent-light);
       color: #FFFFFF;
     }
   }
 
-  // Outlined Heritage Button (Light / Écru Surfaces)
+  // Outlined Button (Light Surfaces)
   &.btn-outline {
     background-color: transparent;
-    color: var(--dishoom-ink-charcoal);
-    border-color: var(--dishoom-brass);
+    color: var(--text-primary);
+    border-color: var(--color-accent);
 
     &:hover {
-      background-color: var(--dishoom-brass);
-      color: #FAF7F2;
-      border-color: var(--dishoom-brass-dark);
+      background-color: var(--color-accent);
+      color: #FFFFFF;
+      border-color: var(--color-accent-hover);
     }
   }
 
-  // Outlined Button for Dark Navy Surfaces
+  // Outlined Button for Dark Surfaces
   &.btn-outline-white,
   &.btn-outline-navy {
     background-color: transparent;
-    color: var(--dishoom-bg-primary);
-    border-color: rgba(229, 221, 208, 0.6);
+    color: var(--bg-primary);
+    border-color: rgba(241, 245, 249, 0.65);
 
     &:hover {
-      background-color: var(--dishoom-bg-primary);
-      color: var(--dishoom-bg-navy-dark);
-      border-color: var(--dishoom-bg-primary);
+      background-color: var(--bg-primary);
+      color: var(--bg-navy-dark);
+      border-color: var(--bg-primary);
     }
   }
 
   &.btn-sm {
-    padding: 0.45rem 1rem;
-    font-size: 0.8rem;
+    padding: 0.42rem 0.95rem;
+    font-size: 0.78rem;
     letter-spacing: 0.06em;
   }
 
   &.btn-lg {
-    padding: 0.95rem 2.25rem;
-    font-size: 0.95rem;
-    letter-spacing: 0.1em;
+    padding: 0.92rem 2.15rem;
+    font-size: 0.92rem;
+    letter-spacing: 0.09em;
   }
 
   &.btn-danger {
-    background-color: var(--dishoom-status-danger);
-    color: #FAF7F2;
+    background-color: var(--status-danger);
+    color: #FFFFFF;
     border-color: #991B1B;
 
     &:hover {
@@ -614,8 +520,8 @@ img {
   }
 
   &.btn-success {
-    background-color: var(--dishoom-status-success);
-    color: #FAF7F2;
+    background-color: var(--status-success);
+    color: #FFFFFF;
     border-color: #1E5C38;
 
     &:hover {
@@ -625,69 +531,43 @@ img {
 }
 
 // ==========================================================================
-// DOT LEADERS & PRINTED DINING CARD MENU UTILITIES
+// SKELETON LOADERS (WARM ÉCRU SHIMMER — ZERO PERCEIVED LATENCY)
 // ==========================================================================
 
-.dot-leader-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-skeleton-base) 25%,
+    var(--color-skeleton-shimmer) 50%,
+    var(--color-skeleton-base) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+  border-radius: 3px;
+}
+
+.skeleton-line {
+  height: 14px;
+  margin-bottom: 8px;
+  border-radius: 2px;
+}
+
+.skeleton-box {
   width: 100%;
-  margin-bottom: 0.35rem;
-
-  .dish-title {
-    font-family: var(--font-heading-editorial);
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--dishoom-ink-charcoal);
-    white-space: nowrap;
-  }
-
-  .dot-leader {
-    flex: 1;
-    border-bottom: 1px dotted var(--dishoom-border-sand-dark);
-    margin: 0 0.65rem;
-    transform: translateY(-4px);
-  }
-
-  .dish-price {
-    font-family: var(--font-heading-editorial);
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--dishoom-brass-dark);
-    white-space: nowrap;
-  }
+  border-radius: 4px;
 }
 
 // ==========================================================================
-// ORNAMENTAL DIVIDERS
-// ==========================================================================
-
-.dishoom-divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin: 2.5rem auto;
-  max-width: 320px;
-
-  &::before,
-  &::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--dishoom-border-sand-dark), transparent);
-  }
-
-  .divider-symbol {
-    color: var(--dishoom-brass);
-    font-size: 0.9rem;
-    opacity: 0.85;
-  }
-}
-
-// ==========================================================================
-// BADGES (SUBDUED EDITORIAL CLASSIFICATIONS)
+// BADGES (SARTORIAL CLASSIFICATIONS)
 // ==========================================================================
 
 .badge {
@@ -701,47 +581,35 @@ img {
   text-transform: uppercase;
   letter-spacing: 0.08em;
 
-  &.badge-brass,
+  &.badge-accent,
   &.badge-gold {
-    background-color: rgba(197, 138, 62, 0.12);
-    border: 1px solid rgba(197, 138, 62, 0.4);
-    color: var(--dishoom-brass-dark);
+    background-color: var(--color-accent-subtle);
+    border: 1px solid var(--border-accent);
+    color: var(--color-accent-hover);
   }
 
   &.badge-navy {
-    background-color: rgba(13, 32, 51, 0.08);
-    border: 1px solid rgba(13, 32, 51, 0.25);
-    color: var(--dishoom-bg-navy-deep);
+    background-color: rgba(30, 41, 59, 0.08);
+    border: 1px solid rgba(30, 41, 59, 0.25);
+    color: var(--bg-navy-deep);
   }
 
   &.badge-ecru {
-    background-color: var(--dishoom-bg-surface);
-    border: 1px solid var(--dishoom-border-sand);
-    color: var(--dishoom-ink-stone);
-  }
-
-  &.badge-info {
-    background-color: rgba(26, 82, 118, 0.1);
-    border: 1px solid rgba(26, 82, 118, 0.3);
-    color: var(--dishoom-status-info);
-  }
-
-  &.badge-warning {
-    background-color: rgba(192, 112, 24, 0.1);
-    border: 1px solid rgba(192, 112, 24, 0.3);
-    color: var(--dishoom-status-warning);
-  }
-
-  &.badge-danger {
-    background-color: rgba(185, 28, 28, 0.08);
-    border: 1px solid rgba(185, 28, 28, 0.25);
-    color: var(--dishoom-status-danger);
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-stone);
   }
 
   &.badge-success {
     background-color: rgba(42, 123, 76, 0.08);
     border: 1px solid rgba(42, 123, 76, 0.25);
-    color: var(--dishoom-status-success);
+    color: var(--status-success);
+  }
+
+  &.badge-danger {
+    background-color: rgba(185, 28, 28, 0.08);
+    border: 1px solid rgba(185, 28, 28, 0.25);
+    color: var(--status-danger);
   }
 }
 
@@ -754,34 +622,34 @@ img {
 
   label {
     display: block;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: var(--tracking-small-caps);
-    color: var(--dishoom-ink-charcoal);
+    color: var(--text-primary);
     margin-bottom: 0.4rem;
   }
 
   .form-control {
     width: 100%;
-    padding: 0.75rem 1rem;
+    padding: 0.72rem 0.95rem;
     font-family: var(--font-body);
     font-size: 0.95rem;
-    color: var(--dishoom-ink-charcoal);
-    background-color: var(--dishoom-bg-surface);
-    border: 1px solid var(--dishoom-border-sand);
+    color: var(--text-primary);
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
     border-radius: 3px;
     transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 
     &:focus {
       outline: none;
-      border-color: var(--dishoom-brass);
-      box-shadow: 0 0 0 3px rgba(197, 138, 62, 0.18);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px var(--color-accent-subtle);
       background-color: #FFFFFF;
     }
 
     &::placeholder {
-      color: var(--dishoom-ink-light);
+      color: var(--text-light);
     }
   }
 
@@ -792,20 +660,9 @@ img {
 
   .form-error {
     font-size: 0.8rem;
-    color: var(--dishoom-status-danger);
+    color: var(--status-danger);
     margin-top: 0.35rem;
   }
-}
-
-// ==========================================================================
-// FLOATING GSAP DECORATOR BASE
-// ==========================================================================
-
-.nautical-float {
-  position: absolute;
-  pointer-events: none;
-  opacity: 0.15;
-  z-index: 0;
 }
 
 // ==========================================================================

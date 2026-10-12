@@ -16,9 +16,9 @@ export const VIDEO_ASSETS = {
   hero: {
     id: 'hero-ocean',
     title: 'Mare Adriatico e Veliero',
-    mp4: 'assets/videos/hero-ocean-loop.mp4',
-    webm: 'assets/videos/hero-ocean-loop.webm',
-    poster: 'assets/videos/hero-poster.svg',
+    mp4: 'assets/videos/Temp_home_Sito_IlVeliero_desktop.mp4',
+    webm: 'assets/videos/Temp_home_Sito_IlVeliero_desktop.webm',
+    poster: 'assets/videos/hero-poster.jpg',
     description: 'Video loop panoramico del mare e del veliero per hero video wall',
   },
   menu: {

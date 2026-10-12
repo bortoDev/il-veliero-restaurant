@@ -1,10 +1,108 @@
 import request from 'supertest';
 import { createApp } from '../../src/app';
+import { User } from '../../src/models/User';
+import { jwtService } from '../../src/services/jwt.service';
 
 describe('Media Upload & Static Serving Integration Tests', () => {
   const app = createApp();
 
-  describe('POST /api/v1/uploads', () => {
+  let gestoreToken: string;
+  let adminToken: string;
+  let clientToken: string;
+
+  beforeEach(async () => {
+    const gestore = await User.create({
+      name: 'Gestore Upload',
+      email: 'gestore.upload@ilveliero.it',
+      password: 'Password123!',
+      role: 'gestore',
+      isActive: true,
+    });
+    gestoreToken = jwtService.generateToken({
+      id: gestore._id.toString(),
+      email: gestore.email,
+      role: gestore.role,
+      name: gestore.name,
+    });
+
+    const admin = await User.create({
+      name: 'Admin Upload',
+      email: 'admin.upload@ilveliero.it',
+      password: 'Password123!',
+      role: 'admin',
+      isActive: true,
+    });
+    adminToken = jwtService.generateToken({
+      id: admin._id.toString(),
+      email: admin.email,
+      role: admin.role,
+      name: admin.name,
+    });
+
+    const client = await User.create({
+      name: 'Client User',
+      email: 'client.upload@ilveliero.it',
+      password: 'Password123!',
+      role: 'client',
+      isActive: true,
+    });
+    clientToken = jwtService.generateToken({
+      id: client._id.toString(),
+      email: client.email,
+      role: client.role,
+      name: client.name,
+    });
+  });
+
+  describe('POST /api/v1/uploads Authentication & Authorization', () => {
+    const pngBuffer = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+      'base64'
+    );
+
+    it('should reject anonymous upload requests with 401 Unauthorized', async () => {
+      const response = await request(app)
+        .post('/api/v1/uploads')
+        .attach('image', pngBuffer, 'test-dish.png');
+
+      expect(response.status).toBe(401);
+      expect(response.body).toHaveProperty('success', false);
+    });
+
+    it('should reject client role upload requests with 403 Forbidden', async () => {
+      const response = await request(app)
+        .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${clientToken}`)
+        .attach('image', pngBuffer, 'test-dish.png');
+
+      expect(response.status).toBe(403);
+      expect(response.body).toHaveProperty('success', false);
+    });
+
+    it('should allow gestore role to upload media files', async () => {
+      const response = await request(app)
+        .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
+        .attach('image', pngBuffer, 'test-gestore.png');
+
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveProperty('success', true);
+      expect(response.body.url).toMatch(/^\/uploads\/media-\d+-[a-f0-9]+\.png$/);
+    });
+
+    it('should allow admin role to upload media files', async () => {
+      const response = await request(app)
+        .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .attach('image', pngBuffer, 'test-admin.png');
+
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveProperty('success', true);
+      expect(response.body.url).toMatch(/^\/uploads\/media-\d+-[a-f0-9]+\.png$/);
+    });
+  });
+
+  describe('POST /api/v1/uploads Validation', () => {
     it('should successfully upload a valid PNG image and return static URL', async () => {
       // 1x1 transparent PNG buffer
       const pngBuffer = Buffer.from(
@@ -14,6 +112,7 @@ describe('Media Upload & Static Serving Integration Tests', () => {
 
       const response = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', pngBuffer, 'test-dish.png');
 
       expect(response.status).toBe(201);
@@ -29,7 +128,9 @@ describe('Media Upload & Static Serving Integration Tests', () => {
     });
 
     it('should reject upload when no file is attached in image field', async () => {
-      const response = await request(app).post('/api/v1/uploads');
+      const response = await request(app)
+        .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`);
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('success', false);
@@ -42,6 +143,7 @@ describe('Media Upload & Static Serving Integration Tests', () => {
 
       const response = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', textBuffer, 'script.txt');
 
       expect(response.status).toBe(400);
@@ -56,6 +158,7 @@ describe('Media Upload & Static Serving Integration Tests', () => {
 
       const response = await request(app)
         .post('/api/v1/uploads')
+        .set('Authorization', `Bearer ${gestoreToken}`)
         .attach('image', largeBuffer, {
           filename: 'oversized.png',
           contentType: 'image/png',

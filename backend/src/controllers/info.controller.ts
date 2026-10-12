@@ -12,8 +12,8 @@ const DEFAULT_INFO = {
   province: 'VI',
   postalCode: '36061',
   phone: '0424 500 200',
-  mobile: '334 623 2941',
-  whatsapp: '334 623 2941',
+  mobile: '',
+  whatsapp: '',
   email: 'pizzadalcampione@gmail.com',
   secondaryEmail: '',
   historyStory:
@@ -64,7 +64,7 @@ const DEFAULT_INFO = {
   socialLinks: {
     facebook: 'https://facebook.com/ilvelierobassano',
     instagram: 'https://www.instagram.com/ilvelierotrattoria',
-    whatsapp: 'https://wa.me/393346232941',
+    whatsapp: '',
     tripadvisor: '',
   },
 };

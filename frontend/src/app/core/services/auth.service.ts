@@ -30,7 +30,7 @@ export class AuthService {
     // Validate session on bootstrap if token exists
     if (this.getToken()) {
       this.fetchCurrentUser().subscribe({
-        error: () => this.clearSession(),
+        error: () => this.clearSession(false),
       });
     }
   }
@@ -101,9 +101,9 @@ export class AuthService {
 
   public logout(): Observable<any> {
     return this.api.post('/auth/logout', {}).pipe(
-      tap(() => this.clearSession()),
+      tap(() => this.clearSession(true)),
       catchError(() => {
-        this.clearSession();
+        this.clearSession(true);
         return of(null);
       })
     );
@@ -111,9 +111,9 @@ export class AuthService {
 
   public logoutAll(): Observable<any> {
     return this.api.post('/auth/logout-all', {}).pipe(
-      tap(() => this.clearSession()),
+      tap(() => this.clearSession(true)),
       catchError(() => {
-        this.clearSession();
+        this.clearSession(true);
         return of(null);
       })
     );
@@ -140,11 +140,17 @@ export class AuthService {
     );
   }
 
-  public clearSession(): void {
+  public clearSession(forceRedirect?: boolean): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     this.currentUserSignal.set(null);
-    this.router.navigate(['/login']);
+
+    const currentUrl = this.router.url || '';
+    const isProtectedRoute = currentUrl.startsWith('/admin') || currentUrl.startsWith('/gestore');
+
+    if (forceRedirect === true || (forceRedirect !== false && isProtectedRoute)) {
+      this.router.navigate(['/login']);
+    }
   }
 
   public hasRole(role: UserRole): boolean {

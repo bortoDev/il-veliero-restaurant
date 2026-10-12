@@ -1,19 +1,30 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
+import { LogoScrittaIconComponent } from '../svg-icons';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, LogoScrittaIconComponent],
   template: `
-    <header class="site-header">
+    <header 
+      class="site-header" 
+      [class.is-scrolled]="isScrolled()"
+      [class.is-home]="isHome()" 
+      [class.is-home-hero]="isHomeHero()" 
+      [class.is-menu-page]="isMenuPage()"
+      [class.theme-light]="isLightTheme()" 
+      [class.theme-dark]="!isLightTheme()" 
+      [class.menu-open]="isMobileOpen()"
+    >
       <nav class="main-nav">
         <div class="container nav-container">
-          <!-- Cursive Logo matching authentic style requested by user -->
-          <a routerLink="/" class="brand-logo" (click)="closeMobileMenu()">
-            <span class="brand-title-cursive">Il Veliero</span>
+          <!-- Official Vector Logo with Dynamic Color Control -->
+          <a routerLink="/" class="brand-logo" (click)="closeMobileMenu()" aria-label="Il Veliero Homepage">
+            <app-logo-scritta [height]="'66px'"></app-logo-scritta>
           </a>
 
           <!-- Mobile Toggle Button -->
@@ -26,7 +37,7 @@ import { AuthService } from '../../../core/services/auth.service';
             <i class="fa-solid" [ngClass]="isMobileOpen() ? 'fa-xmark' : 'fa-bars'"></i>
           </button>
 
-          <!-- Minimalist Navigation Links: menu, pescato, storia, eventi, dovesiamo -->
+          <!-- Minimalist Navigation Links: MENÙ, PESCATO, EVENTI, DOVE SIAMO -->
           <div class="nav-menu" [class.open]="isMobileOpen()">
             <a
               routerLink="/menu"
@@ -43,14 +54,6 @@ import { AuthService } from '../../../core/services/auth.service';
               class="nav-link"
             >
               PESCATO
-            </a>
-            <a
-              routerLink="/storia"
-              routerLinkActive="active"
-              (click)="closeMobileMenu()"
-              class="nav-link"
-            >
-              STORIA
             </a>
             <a
               routerLink="/eventi"
@@ -70,9 +73,9 @@ import { AuthService } from '../../../core/services/auth.service';
               DOVE SIAMO
             </a>
 
-            <!-- Right Actions: Auth & Reservation -->
+            <!-- Right Actions: Logged User Badge & Reservation Button -->
             <div class="nav-actions">
-              <ng-container *ngIf="authService.currentUser() as user; else guestNav">
+              <ng-container *ngIf="authService.currentUser() as user">
                 <span class="user-badge">
                   <i class="fa-solid fa-user-shield"></i> {{ user.name || user.username }}
                 </span>
@@ -86,12 +89,6 @@ import { AuthService } from '../../../core/services/auth.service';
                   <i class="fa-solid fa-right-from-bracket"></i>
                 </button>
               </ng-container>
-              <ng-template #guestNav>
-                <a routerLink="/login" (click)="closeMobileMenu()" class="login-subtle-link" title="Area Riservata">
-                  <i class="fa-solid fa-lock"></i>
-                  <span>Area Riservata</span>
-                </a>
-              </ng-template>
 
               <!-- Quick Reservation Button -->
               <a
@@ -114,14 +111,237 @@ import { AuthService } from '../../../core/services/auth.service';
       left: 0;
       right: 0;
       width: 100%;
-      height: 68px;
+      height: 82px;
       z-index: 1000;
-      background: #07192F;
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: none;
-      border-bottom: none;
-      box-shadow: none;
+      border: none !important;
+      border-bottom: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* =========================================================================
+         BACKGROUND COLOR LOGIC:
+         1. HOME - Over video hero: Invisible (transparent)
+         2. HOME - Below video hero: Solid matching background (#F1F5F9)
+         3. SUBPAGES: Always solid matching background
+         4. NO effects under the navbar (zero shadow, zero border, zero blur)
+         ========================================================================= */
+
+      /* Home - Over video hero */
+      &.is-home.is-home-hero {
+        background-color: transparent !important;
+        background: transparent !important;
+        pointer-events: none;
+
+        .nav-container,
+        .brand-logo,
+        .nav-link,
+        .btn-prenota,
+        .mobile-toggle,
+        .action-link,
+        .btn-logout {
+          pointer-events: auto;
+        }
+      }
+
+      /* Home - Below video hero: solid matching canvas */
+      &.is-home:not(.is-home-hero) {
+        background-color: var(--bg-primary, #F1F5F9) !important;
+        background: var(--bg-primary, #F1F5F9) !important;
+        pointer-events: auto;
+
+        &.theme-dark {
+          background-color: var(--bg-navy-dark, #0B2545) !important;
+          background: var(--bg-navy-dark, #0B2545) !important;
+        }
+      }
+
+      /* Non-Home pages: always solid matching background */
+      &:not(.is-home) {
+        pointer-events: auto;
+
+        &.theme-dark {
+          background-color: var(--bg-navy-dark, #0B2545) !important;
+          background: var(--bg-navy-dark, #0B2545) !important;
+        }
+
+        &.theme-light {
+          background-color: var(--bg-primary, #F1F5F9) !important;
+          background: var(--bg-primary, #F1F5F9) !important;
+
+          &.is-menu-page {
+            background-color: var(--dishoom-bg-primary, #FAF7F2) !important;
+            background: var(--dishoom-bg-primary, #FAF7F2) !important;
+          }
+        }
+      }
+
+      /* Mobile menu open: solid background */
+      &.menu-open {
+        pointer-events: auto;
+        &.theme-dark {
+          background-color: var(--bg-navy-dark, #0B2545) !important;
+        }
+        &.theme-light {
+          background-color: var(--bg-primary, #F1F5F9) !important;
+          &.is-menu-page {
+            background-color: var(--dishoom-bg-primary, #FAF7F2) !important;
+          }
+        }
+      }
+
+      /* =========================================================================
+         THEME DARK — Active when over dark background sections (Hero / Footer)
+         NO effects under text: text-shadow none, filter none, underline none
+         ========================================================================= */
+      &.theme-dark {
+        box-shadow: none !important;
+        border: none !important;
+        border-bottom: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+
+        .brand-logo {
+          color: #FFFFFF;
+          filter: none !important;
+
+          &:hover {
+            color: var(--color-gold, #EAB308);
+            filter: none !important;
+          }
+        }
+
+        .mobile-toggle {
+          color: #FFFFFF;
+          filter: none !important;
+        }
+
+        .nav-link {
+          color: #FFFFFF;
+          text-shadow: none !important;
+          filter: none !important;
+
+          &::after {
+            display: none !important;
+          }
+
+          &:hover, &.active {
+            color: var(--color-gold, #EAB308);
+          }
+        }
+
+        .nav-actions {
+          .user-badge {
+            color: var(--color-accent-light, #BAE6FD);
+            text-shadow: none !important;
+            filter: none !important;
+          }
+
+          .action-link {
+            color: var(--text-inverse-muted, #CBD5E1);
+            text-shadow: none !important;
+            filter: none !important;
+
+            &:hover {
+              color: #FFFFFF;
+            }
+          }
+
+          .btn-prenota {
+            background: transparent !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            color: var(--color-gold, #EAB308) !important;
+            border: 1px solid rgba(234, 179, 8, 0.6);
+            border-radius: 4px;
+            box-shadow: none !important;
+            filter: none !important;
+
+            &:hover {
+              background: var(--color-gold, #EAB308) !important;
+              color: var(--bg-navy-dark, #0B2545) !important;
+            }
+          }
+        }
+      }
+
+      /* =========================================================================
+         THEME LIGHT — Active when over light background sections
+         NO effects under text: text-shadow none, filter none, underline none
+         ========================================================================= */
+      &.theme-light {
+        box-shadow: none !important;
+        border: none !important;
+        border-bottom: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+
+        .brand-logo {
+          color: var(--bg-navy-dark, #0B2545);
+          filter: none !important;
+
+          &:hover {
+            color: var(--color-gold-dark, #A16207);
+            filter: none !important;
+          }
+        }
+
+        .mobile-toggle {
+          color: var(--bg-navy-dark, #0B2545);
+          filter: none !important;
+        }
+
+        .nav-link {
+          color: var(--bg-navy-dark, #0B2545);
+          text-shadow: none !important;
+          filter: none !important;
+
+          &::after {
+            display: none !important;
+          }
+
+          &:hover, &.active {
+            color: var(--color-gold-dark, #A16207);
+          }
+        }
+
+        .nav-actions {
+          .user-badge {
+            color: var(--bg-navy-dark, #0B2545);
+            text-shadow: none !important;
+            filter: none !important;
+          }
+
+          .action-link {
+            color: var(--text-primary, #1E293B);
+            text-shadow: none !important;
+            filter: none !important;
+
+            &:hover {
+              color: var(--color-gold-dark, #A16207);
+            }
+          }
+
+          .btn-prenota {
+            background: rgba(11, 37, 69, 0.03) !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            color: var(--bg-navy-dark, #0B2545) !important;
+            border: 1px solid rgba(11, 37, 69, 0.22) !important;
+            border-radius: 4px;
+            box-shadow: none !important;
+            filter: none !important;
+
+            &:hover {
+              background: var(--bg-navy-dark, #0B2545) !important;
+              border-color: var(--bg-navy-dark, #0B2545) !important;
+              color: #FFFFFF !important;
+            }
+          }
+        }
+      }
     }
 
     .main-nav {
@@ -140,22 +360,13 @@ import { AuthService } from '../../../core/services/auth.service';
         text-decoration: none;
         display: flex;
         align-items: center;
-        transition: transform var(--transition-smooth, 0.35s ease);
+        justify-content: center;
+        height: 100%;
+        margin-top: 0;
+        transition: transform var(--transition-smooth, 0.35s ease), color 0.35s ease, filter 0.35s ease;
 
         &:hover {
-          transform: translateY(-1px);
-        }
-
-        .brand-title-cursive {
-          font-family: 'Great Vibes', 'Alex Brush', 'Playfair Display', cursive;
-          font-size: clamp(1.85rem, 5vw, 2.35rem);
-          color: #FAF7F2;
-          letter-spacing: 0.02em;
-          line-height: 1;
-          text-shadow: 0 0 14px rgba(197, 138, 62, 0.45);
-          font-weight: 400;
-          white-space: nowrap;
-          user-select: none;
+          transform: translateY(-2px);
         }
       }
 
@@ -163,46 +374,30 @@ import { AuthService } from '../../../core/services/auth.service';
         display: none;
         background: transparent;
         border: none;
-        color: #FAF7F2;
         font-size: 1.6rem;
         cursor: pointer;
         padding: 0.4rem;
+        transition: color 0.35s ease;
       }
 
       .nav-menu {
         display: flex;
         align-items: center;
-        gap: 1.65rem;
+        gap: 2rem;
 
         .nav-link {
           font-family: var(--font-body-editorial, 'Plus Jakarta Sans', sans-serif);
-          color: #FAF7F2;
-          font-weight: 600;
-          font-size: 0.88rem;
-          letter-spacing: 0.14em;
+          font-weight: 700;
+          font-size: 0.84rem;
+          letter-spacing: 0.15em;
           text-transform: uppercase;
-          padding: 0.4rem 0.15rem;
+          padding: 0.4rem 0.2rem;
           position: relative;
           text-decoration: none;
-          transition: color var(--transition-fast, 0.2s ease);
+          transition: color 0.35s ease;
 
           &::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--dishoom-brass, #C58A3E);
-            transition: width var(--transition-fast, 0.2s ease);
-          }
-
-          &:hover, &.active {
-            color: var(--dishoom-brass, #C58A3E);
-
-            &::after {
-              width: 100%;
-            }
+            display: none !important;
           }
         }
 
@@ -210,19 +405,18 @@ import { AuthService } from '../../../core/services/auth.service';
           display: flex;
           align-items: center;
           gap: 1rem;
-          margin-left: 0.5rem;
+          margin-left: 0.75rem;
 
           .user-badge {
-            color: var(--dishoom-brass, #C58A3E);
             font-size: 0.82rem;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
             gap: 0.35rem;
+            transition: color 0.35s ease;
           }
 
-          .action-link, .login-subtle-link {
-            color: var(--dishoom-ink-inverse-muted, #DDD3C4);
+          .action-link {
             font-size: 0.82rem;
             font-weight: 600;
             text-transform: uppercase;
@@ -231,11 +425,7 @@ import { AuthService } from '../../../core/services/auth.service';
             align-items: center;
             gap: 0.4rem;
             text-decoration: none;
-            transition: color var(--transition-fast, 0.2s ease);
-
-            &:hover {
-              color: var(--dishoom-brass, #C58A3E);
-            }
+            transition: color 0.35s ease;
           }
 
           .btn-logout {
@@ -249,29 +439,27 @@ import { AuthService } from '../../../core/services/auth.service';
           }
 
           .btn-prenota {
-            background: transparent;
-            color: var(--dishoom-brass, #C58A3E) !important;
-            border: 1px solid var(--dishoom-brass, #C58A3E);
-            padding: 0.45rem 1.15rem;
-            border-radius: 3px;
+            padding: 0.32rem 1.1rem;
+            border-radius: 4px;
             font-family: var(--font-body-editorial, 'Plus Jakarta Sans', sans-serif);
-            font-weight: 700;
-            font-size: 0.82rem;
-            letter-spacing: 0.08em;
+            font-weight: 500;
+            font-size: 0.74rem;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
             display: inline-flex;
             align-items: center;
             gap: 0.45rem;
             text-decoration: none;
-            transition: all var(--transition-smooth, 0.35s ease);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+            i {
+              font-size: 0.68rem;
+            }
 
             &::after { display: none; }
 
             &:hover {
               transform: translateY(-1px);
-              box-shadow: 0 4px 14px rgba(197, 138, 62, 0.3);
-              background: var(--dishoom-brass, #C58A3E);
-              color: var(--dishoom-bg-navy-dark, #07192F) !important;
             }
           }
         }
@@ -289,18 +477,15 @@ import { AuthService } from '../../../core/services/auth.service';
           top: 100%;
           left: 0;
           right: 0;
-          background: rgba(7, 25, 47, 0.98);
-          backdrop-filter: blur(14px);
           flex-direction: column;
           align-items: flex-start;
           padding: 1.5rem 2rem;
           gap: 1.25rem;
           display: none;
-          max-height: calc(100vh - 68px);
+          max-height: calc(100vh - 82px);
           overflow-y: auto;
           -webkit-overflow-scrolling: touch;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-          border-top: 1px solid rgba(197, 138, 62, 0.25);
+          border-top: none;
 
           &.open {
             display: flex;
@@ -319,7 +504,6 @@ import { AuthService } from '../../../core/services/auth.service';
             gap: 1rem;
             margin-left: 0;
             padding-top: 0.75rem;
-            border-top: 1px solid rgba(197, 138, 62, 0.25);
 
             .btn-prenota {
               width: 100%;
@@ -329,12 +513,131 @@ import { AuthService } from '../../../core/services/auth.service';
           }
         }
       }
+
+      .site-header.theme-dark .nav-menu {
+        background: var(--bg-navy-dark, #0B2545);
+        box-shadow: none !important;
+        border-top: none !important;
+        .nav-actions { border-top: 1px solid rgba(255, 255, 255, 0.1); }
+      }
+
+      .site-header.theme-light .nav-menu {
+        background: var(--bg-primary, #F1F5F9);
+        box-shadow: none !important;
+        border-top: none !important;
+        .nav-actions { border-top: 1px solid var(--border-subtle, #D4D4D8); }
+      }
+
+      .site-header.theme-light.is-menu-page .nav-menu {
+        background: var(--dishoom-bg-primary, #FAF7F2);
+        box-shadow: none !important;
+        border-top: none !important;
+        .nav-actions { border-top: 1px solid var(--border-subtle, #D4D4D8); }
+      }
     }
   `],
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   public authService = inject(AuthService);
+  private router = inject(Router);
+
   public isMobileOpen = signal(false);
+  public isScrolled = signal(false);
+  public isHome = signal(true);
+  public isHomeHero = signal(true);
+  public isMenuPage = signal(false);
+  public isLightTheme = signal(false);
+  public currentNavbarBg = signal<string>('var(--bg-navy-dark, #0B2545)');
+
+  ngOnInit(): void {
+    this.updateIsHome(this.router.url);
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        this.updateIsHome(event.urlAfterRedirects || event.url);
+        this.checkNavbarTheme();
+        requestAnimationFrame(() => this.checkNavbarTheme());
+        setTimeout(() => this.checkNavbarTheme(), 60);
+        setTimeout(() => this.checkNavbarTheme(), 200);
+      });
+    this.checkNavbarTheme();
+    requestAnimationFrame(() => this.checkNavbarTheme());
+    setTimeout(() => this.checkNavbarTheme(), 60);
+  }
+
+  @HostListener('window:scroll')
+  @HostListener('window:resize')
+  onWindowScroll(): void {
+    this.checkNavbarTheme();
+  }
+
+  private checkNavbarTheme(): void {
+    if (typeof window === 'undefined') return;
+
+    const navbarHeight = 82;
+    const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+    this.isScrolled.set(scrollY > 20);
+
+    // If scrolled to the bottom over the dark site footer, switch back to white text & dark bg
+    const footerEl = document.querySelector('.site-footer');
+    if (footerEl) {
+      const footerRect = footerEl.getBoundingClientRect();
+      if (footerRect.top <= navbarHeight) {
+        this.isLightTheme.set(false);
+        this.isHomeHero.set(false);
+        return;
+      }
+    }
+
+    if (this.isHome()) {
+      const nextLightSection = document.querySelector('.chef-intro-section');
+      if (nextLightSection) {
+        const lightRect = nextLightSection.getBoundingClientRect();
+        // If the first light section reached or passed navbar line:
+        if (lightRect.top <= navbarHeight) {
+          this.isLightTheme.set(true);
+          this.isHomeHero.set(false);
+          return;
+        } else {
+          // While over the hero: ALWAYS dark theme & invisible!
+          this.isLightTheme.set(false);
+          this.isHomeHero.set(true);
+          return;
+        }
+      } else {
+        const heroHeight = (document.querySelector('.hero-morph-wrapper') as HTMLElement)?.offsetHeight || 700;
+        const isOverHero = scrollY < heroHeight - navbarHeight;
+        this.isLightTheme.set(!isOverHero);
+        this.isHomeHero.set(isOverHero);
+        return;
+      }
+    }
+
+    // If scrolled past the page hero:
+    const heroEl = document.querySelector(
+      '.page-hero, .menu-hero-section, .diario-hero-section, .storia-hero-section, .eventi-hero-section, .dove-hero-section, .login-page, .not-found-hero'
+    );
+    if (heroEl) {
+      const heroRect = heroEl.getBoundingClientRect();
+      if (heroRect.bottom <= navbarHeight) {
+        this.isLightTheme.set(true);
+        this.isHomeHero.set(false);
+      } else {
+        this.isLightTheme.set(false);
+        this.isHomeHero.set(false);
+      }
+    } else {
+      // Pages without a dark hero are light theme by default
+      this.isLightTheme.set(true);
+      this.isHomeHero.set(false);
+    }
+  }
+
+  private updateIsHome(url: string): void {
+    const cleanUrl = url.split('?')[0].split('#')[0];
+    this.isHome.set(cleanUrl === '/' || cleanUrl === '');
+    this.isMenuPage.set(cleanUrl.startsWith('/menu'));
+  }
 
   toggleMobileMenu(): void {
     this.isMobileOpen.update((v) => !v);

@@ -14,7 +14,6 @@ import { InfoService } from '../../../core/services/info.service';
 import { AnimationService } from '../../../core/services/animation.service';
 import { InfoLocale } from '../../../core/models';
 import {
-  AnchorChainComponent,
   VelieroShipComponent,
   NauticalStarComponent,
 } from '../svg-icons';
@@ -25,40 +24,20 @@ import {
   imports: [
     CommonModule,
     RouterModule,
-    AnchorChainComponent,
     VelieroShipComponent,
     NauticalStarComponent,
   ],
   template: `
     <footer class="site-footer" #footerSection>
-      <!-- Top Architectural Brass Hairline Divider -->
-      <div class="footer-top-rule" aria-hidden="true">
-        <div class="rule-line"></div>
-        <div class="rule-center-ornament">
-          <app-nautical-star size="22px"></app-nautical-star>
-        </div>
-        <div class="rule-line"></div>
-      </div>
-
-      <!-- Animated Nautical Anchor & Chain Column on Background (GSAP ScrollTrigger) -->
-      <div class="anchor-drop-container" #chainContainer aria-hidden="true">
-        <div class="floating-surface-ship">
-          <app-veliero-ship mode="gold" size="90px"></app-veliero-ship>
-        </div>
-        <div class="chain-assembly" #anchorEl>
-          <app-anchor-chain width="105px" height="420px"></app-anchor-chain>
-        </div>
-      </div>
-
       <div class="container footer-content">
         <div class="footer-grid">
-          <!-- Col 1: Identity, Authentic Engraving & Corporate Brand -->
+          <!-- Col 1: Identity & Corporate Brand -->
           <div class="footer-col col-identity">
             <div class="footer-brand">
               <div class="brand-ship-wrap">
                 <app-veliero-ship
                   mode="ivory"
-                  size="105px"
+                  size="90px"
                   alt="Incisione autentica del galeone Il Veliero"
                 ></app-veliero-ship>
               </div>
@@ -99,16 +78,6 @@ import {
               >
                 <i class="fa-brands fa-facebook-f"></i>
               </a>
-              <a
-                href="https://wa.me/393346232941"
-                target="_blank"
-                rel="noopener"
-                aria-label="WhatsApp Il Veliero"
-                class="social-btn whatsapp"
-                title="Scrivici su WhatsApp"
-              >
-                <i class="fa-brands fa-whatsapp"></i>
-              </a>
             </div>
           </div>
 
@@ -123,12 +92,7 @@ import {
               </li>
               <li>
                 <a routerLink="/pescato">
-                  <i class="fa-solid fa-angle-right"></i> Diario di Bordo (Pescato)
-                </a>
-              </li>
-              <li>
-                <a routerLink="/storia">
-                  <i class="fa-solid fa-angle-right"></i> La Nostra Storia
+                  <i class="fa-solid fa-angle-right"></i> Diario di Bordo
                 </a>
               </li>
               <li>
@@ -185,13 +149,12 @@ import {
             <p class="hours-notes">
               <i class="fa-solid fa-circle-info"></i>
               <span>
-                <strong>Orari Cucina:</strong> Pranzo 12:00–14:00 · Cena 19:00–22:00. Chiuso il Mercoledì.
-                La cucina osserva rigorosamente questi orari; la pizzeria può effettuare aperture dedicate.
+                Pranzo 12:00–14:00, Cena 19:00–22:00. Chiuso il Mercoledì.
               </span>
             </p>
           </div>
 
-          <!-- Col 4: Real Contacts & Direct Reservations -->
+          <!-- Col 4: Contacts & Reservations -->
           <div class="footer-col col-contacts">
             <h4 class="col-title">Contatti & Prenotazioni</h4>
             <ul class="contact-list">
@@ -199,29 +162,14 @@ import {
                 <i class="fa-solid fa-location-dot"></i>
                 <div class="contact-text-wrap">
                   <span class="street-line">Via G. Fattori, 7</span>
-                  <span class="city-line">36061 Bassano del Grappa (VI)</span>
-                  <small class="locality-badge">Località San Michele</small>
+                  <span class="city-line">36061 Bassano del Grappa (VI), San Michele</span>
                 </div>
               </li>
               <li>
                 <i class="fa-solid fa-phone"></i>
                 <div class="contact-text-wrap">
                   <a href="tel:0424500200" class="contact-val">0424 500 200</a>
-                  <small class="contact-sub">Telefono Fisso Locale</small>
-                </div>
-              </li>
-              <li>
-                <i class="fa-brands fa-whatsapp whatsapp-icon"></i>
-                <div class="contact-text-wrap">
-                  <a
-                    href="https://wa.me/393346232941"
-                    target="_blank"
-                    rel="noopener"
-                    class="contact-val whatsapp-val"
-                  >
-                    334 623 2941
-                  </a>
-                  <small class="contact-sub">Cellulare & WhatsApp</small>
+                  <small class="contact-sub">Telefono Fisso</small>
                 </div>
               </li>
               <li>
@@ -230,33 +178,37 @@ import {
                   <a href="mailto:pizzadalcampione@gmail.com" class="email-link">
                     pizzadalcampione&#64;gmail.com
                   </a>
-                  <a href="mailto:info@ristorante-ilveliero.it" class="email-link secondary-email">
-                    info&#64;ristorante-ilveliero.it
-                  </a>
                 </div>
               </li>
             </ul>
 
             <div class="footer-cta-wrap">
-              <a href="tel:0424500200" class="btn-footer-call">
+              <a href="tel:0424500200" class="btn btn-accent btn-sm w-100" style="width: 100%;">
                 <i class="fa-solid fa-phone"></i> Chiama per Prenotare
               </a>
             </div>
           </div>
         </div>
 
-        <!-- Footer Bottom Bar: Legal Copyright & Editorial Signature -->
+        <!-- Footer Bottom Bar -->
         <div class="footer-bottom">
           <div class="bottom-copy">
             <p>
-              &copy; {{ currentYear }} <strong>Pizza dal Campione del Mondo s.n.c.</strong> — P.IVA 03450720242 — Cod. SDI P62QHVQ. Tutti i diritti riservati.
+              &copy; {{ currentYear }} <strong>Pizza dal Campione del Mondo s.n.c.</strong>, P.IVA 03450720242, Cod. SDI P62QHVQ. Tutti i diritti riservati.
             </p>
             <p class="legal-address">
-              Via G. Fattori 7 - Località San Michele, 36061 Bassano del Grappa (VI)
+              Via G. Fattori 7, Località San Michele, 36061 Bassano del Grappa (VI)
             </p>
           </div>
+
+          <div class="bottom-center-access">
+            <a routerLink="/login" class="footer-staff-login" title="Accesso Riservato Gestione & Staff">
+              <i class="fa-solid fa-shield-halved"></i> Area Riservata
+            </a>
+          </div>
+
           <div class="bottom-signature">
-            <app-nautical-star size="18px"></app-nautical-star>
+            <app-nautical-star size="16px"></app-nautical-star>
             <span class="signature-text">Cucina di Mare & Pizzeria dal Campione del Mondo</span>
           </div>
         </div>
@@ -265,14 +217,13 @@ import {
   `,
   styles: [`
     .site-footer {
-      background: linear-gradient(180deg, var(--dishoom-bg-navy-dark, #07192F) 0%, var(--dishoom-bg-navy-deep, #0D2033) 100%);
-      color: var(--dishoom-ink-inverse, #FAF7F2);
+      background: linear-gradient(180deg, var(--bg-navy-dark, #1E293B) 0%, var(--bg-navy-deep, #0F172A) 100%);
+      color: var(--text-inverse, #F1F5F9);
       position: relative;
       padding-bottom: 2.5rem;
       overflow: hidden;
-      border-top: 1px solid var(--dishoom-border-navy-brass, rgba(197, 138, 62, 0.35));
+      border-top: 1px solid var(--border-accent, rgba(14, 165, 233, 0.35));
 
-      /* Top Architectural Brass Divider */
       .footer-top-rule {
         display: flex;
         align-items: center;
@@ -284,30 +235,29 @@ import {
         .rule-line {
           flex: 1;
           height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(197, 138, 62, 0.45), transparent);
+          background: linear-gradient(90deg, transparent, var(--border-accent, rgba(14, 165, 233, 0.35)), transparent);
         }
 
         .rule-center-ornament {
-          color: var(--dishoom-brass, #C58A3E);
+          color: var(--color-accent-light, #BAE6FD);
           opacity: 0.85;
           display: flex;
           align-items: center;
         }
       }
 
-      /* GSAP Anchor & Chain Drop Component */
       .anchor-drop-container {
         position: absolute;
-        top: 40px;
+        top: 35px;
         right: 4%;
-        width: 120px;
+        width: 110px;
         pointer-events: none;
         z-index: 2;
-        opacity: 0.55;
+        opacity: 0.45;
 
         .floating-surface-ship {
           margin-bottom: -15px;
-          margin-left: 10px;
+          margin-left: 8px;
         }
 
         .chain-assembly {
@@ -330,33 +280,32 @@ import {
 
       .footer-col {
         .col-title {
-          color: var(--dishoom-brass, #C58A3E);
-          font-family: var(--font-heading-editorial, 'Cormorant Garamond', serif);
-          font-size: 1.25rem;
+          color: var(--color-accent-light, #BAE6FD);
+          font-family: var(--font-heading);
+          font-size: 1.2rem;
           font-weight: 700;
           text-transform: uppercase;
-          letter-spacing: var(--tracking-small-caps, 0.12em);
-          margin-bottom: 1.35rem;
+          letter-spacing: var(--tracking-small-caps);
+          margin-bottom: 1.25rem;
           position: relative;
-          padding-bottom: 0.5rem;
+          padding-bottom: 0.45rem;
 
           &::after {
             content: '';
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 36px;
+            width: 32px;
             height: 1.5px;
-            background: var(--dishoom-brass, #C58A3E);
+            background: var(--color-accent, #0EA5E9);
           }
         }
 
-        /* Col 1 Brand Header */
         .footer-brand {
           display: flex;
           align-items: center;
-          gap: 1rem;
-          margin-bottom: 1.25rem;
+          gap: 0.85rem;
+          margin-bottom: 1rem;
 
           .brand-ship-wrap {
             flex-shrink: 0;
@@ -369,32 +318,32 @@ import {
           }
 
           .footer-brand-title {
-            color: var(--dishoom-ink-inverse, #FAF7F2);
-            font-family: var(--font-heading-editorial, 'Cormorant Garamond', serif);
-            font-size: 1.55rem;
+            color: var(--text-inverse, #F1F5F9);
+            font-family: var(--font-heading);
+            font-size: 1.45rem;
             font-weight: 700;
-            letter-spacing: 0.12em;
-            margin-bottom: 0.2rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.15rem;
             line-height: 1.15;
           }
 
           .footer-brand-tag {
-            font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+            font-family: var(--font-sans);
             font-size: 0.68rem;
             text-transform: uppercase;
-            color: var(--dishoom-brass, #C58A3E);
-            letter-spacing: 0.12em;
+            color: var(--color-accent-light, #BDE0FE);
+            letter-spacing: 0.1em;
             font-weight: 600;
             line-height: 1.3;
           }
         }
 
         .corporate-name {
-          font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
-          font-size: 0.86rem;
-          color: var(--dishoom-ink-inverse-muted, #DDD3C4);
-          line-height: 1.55;
-          margin-bottom: 0.85rem;
+          font-family: var(--font-sans);
+          font-size: 0.84rem;
+          color: var(--text-inverse-muted, #DDD3C4);
+          line-height: 1.5;
+          margin-bottom: 0.75rem;
 
           strong {
             color: #FFFFFF;
@@ -404,172 +353,150 @@ import {
 
         .corporate-fiscal {
           display: flex;
-          gap: 1.25rem;
-          font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
-          font-size: 0.82rem;
-          color: var(--dishoom-ink-inverse-muted, #DDD3C4);
-          margin-bottom: 1.5rem;
-          padding: 0.45rem 0;
-          border-top: 1px dashed rgba(197, 138, 62, 0.25);
-          border-bottom: 1px dashed rgba(197, 138, 62, 0.25);
+          gap: 1rem;
+          font-family: var(--font-sans);
+          font-size: 0.8rem;
+          color: var(--text-inverse-muted, #DDD3C4);
+          margin-bottom: 1.25rem;
+          padding: 0.4rem 0;
+          border-top: 1px dashed rgba(255, 255, 255, 0.12);
+          border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
 
           strong {
-            color: var(--dishoom-brass, #C58A3E);
+            color: var(--color-accent-light, #BDE0FE);
           }
         }
 
         .social-links {
           display: flex;
-          gap: 0.75rem;
+          gap: 0.65rem;
 
           .social-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            border-radius: 3px;
             background: rgba(255, 255, 255, 0.06);
-            color: var(--dishoom-ink-inverse, #FAF7F2);
-            font-size: 1.05rem;
-            transition: all var(--transition-fast, 0.2s ease);
-            border: 1px solid rgba(197, 138, 62, 0.3);
+            color: var(--text-inverse, #F1F5F9);
+            font-size: 1rem;
+            transition: all var(--transition-fast);
+            border: 1px solid var(--border-accent, rgba(14, 165, 233, 0.3));
 
             &:hover {
-              background: var(--dishoom-brass, #C58A3E);
-              color: var(--dishoom-bg-navy-dark, #07192F);
-              border-color: var(--dishoom-brass, #C58A3E);
-              transform: translateY(-2px);
-              box-shadow: 0 4px 12px rgba(197, 138, 62, 0.35);
-            }
-
-            &.whatsapp:hover {
-              background: #25d366;
+              background: var(--color-accent, #0EA5E9);
               color: #FFFFFF;
-              border-color: #25d366;
+              border-color: var(--color-accent, #0EA5E9);
+              transform: translateY(-1px);
             }
           }
         }
 
-        /* Nav links */
         .footer-links {
           list-style: none;
-          font-size: 0.9rem;
-          font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+          font-size: 0.88rem;
+          font-family: var(--font-sans);
 
           li {
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.65rem;
           }
 
           a {
-            color: var(--dishoom-ink-inverse, #FAF7F2);
+            color: var(--text-inverse, #F1F5F9);
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            transition: all var(--transition-fast, 0.2s ease);
+            gap: 0.45rem;
+            transition: all var(--transition-fast);
 
             i {
-              font-size: 0.7rem;
-              color: var(--dishoom-brass, #C58A3E);
-              transition: transform var(--transition-fast, 0.2s ease);
+              font-size: 0.65rem;
+              color: var(--color-accent, #0EA5E9);
             }
 
             &:hover {
-              color: var(--dishoom-brass, #C58A3E);
-              transform: translateX(4px);
-
-              i {
-                transform: translateX(2px);
-              }
+              color: var(--color-accent-light, #BAE6FD);
+              transform: translateX(3px);
             }
 
             &.reserved-link {
-              color: var(--dishoom-brass-light, #EBD8B8);
-              font-weight: 500;
+              color: var(--color-accent-light, #BAE6FD);
             }
           }
         }
 
-        /* Hours List */
         .hours-list {
           list-style: none;
-          font-size: 0.88rem;
-          font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+          font-size: 0.86rem;
+          font-family: var(--font-sans);
 
           li {
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
-            padding-bottom: 0.4rem;
-            margin-bottom: 0.55rem;
+            padding-bottom: 0.35rem;
+            margin-bottom: 0.5rem;
 
             .day-label {
-              color: var(--dishoom-ink-inverse-muted, #DDD3C4);
+              color: var(--text-inverse-muted, #CBD5E1);
             }
 
             .day-val {
               color: #FFFFFF;
               font-weight: 500;
-              font-feature-settings: 'lnum' 1;
             }
 
             &.closed-day {
               .closed-tag {
                 color: #f87171;
                 font-weight: 700;
-                letter-spacing: 0.08em;
               }
             }
           }
         }
 
         .hours-notes {
-          font-family: var(--font-serif-primary, 'Cormorant Garamond', serif);
+          font-family: var(--font-serif-primary);
           font-style: italic;
-          font-size: 0.88rem;
-          line-height: 1.5;
-          color: var(--dishoom-brass-light, #EBD8B8);
-          margin-top: 1rem;
+          font-size: 0.85rem;
+          line-height: 1.45;
+          color: var(--color-accent-light, #BAE6FD);
+          margin-top: 0.85rem;
           display: flex;
           align-items: flex-start;
-          gap: 0.5rem;
+          gap: 0.45rem;
 
           i {
-            margin-top: 0.2rem;
-            font-size: 0.85rem;
-            color: var(--dishoom-brass, #C58A3E);
+            margin-top: 0.15rem;
+            font-size: 0.8rem;
+            color: var(--color-accent, #0EA5E9);
           }
         }
 
-        /* Contacts List */
         .contact-list {
           list-style: none;
-          font-size: 0.88rem;
-          font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+          font-size: 0.86rem;
+          font-family: var(--font-sans);
 
           li {
             display: flex;
             align-items: flex-start;
-            gap: 0.75rem;
-            margin-bottom: 0.85rem;
-            color: var(--dishoom-ink-inverse, #FAF7F2);
+            gap: 0.65rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-inverse, #F1F5F9);
 
             i {
-              color: var(--dishoom-brass, #C58A3E);
-              margin-top: 0.25rem;
-              font-size: 0.95rem;
-              min-width: 18px;
-            }
-
-            .whatsapp-icon {
-              color: #4ade80;
+              color: var(--color-accent, #0EA5E9);
+              margin-top: 0.2rem;
+              font-size: 0.9rem;
+              min-width: 16px;
             }
 
             .contact-text-wrap {
               display: flex;
               flex-direction: column;
-              gap: 0.15rem;
+              gap: 0.1rem;
 
               .street-line {
                 font-weight: 600;
@@ -577,55 +504,34 @@ import {
               }
 
               .city-line {
-                color: var(--dishoom-ink-inverse-muted, #DDD3C4);
-                font-size: 0.82rem;
-              }
-
-              .locality-badge {
-                color: var(--dishoom-brass, #C58A3E);
-                font-size: 0.75rem;
-                letter-spacing: 0.04em;
+                color: var(--text-inverse-muted, #CBD5E1);
+                font-size: 0.8rem;
               }
 
               .contact-val {
                 color: #FFFFFF;
                 font-weight: 600;
-                font-size: 0.96rem;
-                letter-spacing: 0.04em;
-                transition: color var(--transition-fast, 0.2s ease);
+                font-size: 0.92rem;
+                transition: color var(--transition-fast);
 
                 &:hover {
-                  color: var(--dishoom-brass, #C58A3E);
-                }
-
-                &.whatsapp-val {
-                  color: #4ade80;
-                  &:hover {
-                    color: #86efac;
-                  }
+                  color: var(--color-accent-light, #BAE6FD);
                 }
               }
 
               .contact-sub {
-                font-size: 0.75rem;
-                color: var(--dishoom-ink-inverse-muted, #DDD3C4);
+                font-size: 0.72rem;
+                color: var(--text-inverse-muted, #CBD5E1);
               }
 
               &.emails-wrap {
-                gap: 0.25rem;
-
                 .email-link {
-                  color: var(--dishoom-ink-inverse, #FAF7F2);
-                  font-size: 0.84rem;
-                  transition: color var(--transition-fast, 0.2s ease);
+                  color: var(--text-inverse, #F1F5F9);
+                  font-size: 0.82rem;
+                  transition: color var(--transition-fast);
 
                   &:hover {
-                    color: var(--dishoom-brass, #C58A3E);
-                  }
-
-                  &.secondary-email {
-                    color: var(--dishoom-ink-inverse-muted, #DDD3C4);
-                    font-size: 0.8rem;
+                    color: var(--color-accent-light, #BAE6FD);
                   }
                 }
               }
@@ -634,74 +540,61 @@ import {
         }
 
         .footer-cta-wrap {
-          margin-top: 1.25rem;
-
-          .btn-footer-call {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            width: 100%;
-            padding: 0.6rem 1rem;
-            background: transparent;
-            color: var(--dishoom-brass, #C58A3E);
-            border: 1px solid var(--dishoom-brass, #C58A3E);
-            border-radius: 3px;
-            font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
-            font-size: 0.82rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: var(--tracking-small-caps, 0.12em);
-            text-decoration: none;
-            transition: all var(--transition-smooth, 0.35s ease);
-
-            &:hover {
-              background: var(--dishoom-brass, #C58A3E);
-              color: var(--dishoom-bg-navy-dark, #07192F);
-              box-shadow: 0 4px 14px rgba(197, 138, 62, 0.25);
-              transform: translateY(-1px);
-            }
-          }
+          margin-top: 1rem;
         }
       }
 
-      /* Bottom bar */
       .footer-bottom {
-        border-top: 1px solid rgba(197, 138, 62, 0.2);
-        padding-top: 1.75rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 1.5rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
         gap: 1rem;
-        font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
-        font-size: 0.82rem;
-        color: var(--dishoom-ink-inverse-muted, #DDD3C4);
+        font-family: var(--font-sans);
+        font-size: 0.8rem;
+        color: var(--text-inverse-muted, #CBD5E1);
 
         .bottom-copy {
-          p {
-            margin-bottom: 0.2rem;
-          }
+          p { margin-bottom: 0.15rem; }
+          strong { color: #FFFFFF; }
+          .legal-address { color: var(--color-accent-light, #BAE6FD); font-size: 0.76rem; }
+        }
 
-          strong {
-            color: #FFFFFF;
-          }
+        .bottom-center-access {
+          .footer-staff-login {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--color-accent-light, #BAE6FD);
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            text-decoration: none;
+            padding: 0.3rem 0.75rem;
+            border-radius: 3px;
+            border: 1px solid var(--border-accent, rgba(14, 165, 233, 0.35));
+            background: rgba(14, 165, 233, 0.08);
+            transition: all var(--transition-fast);
 
-          .legal-address {
-            color: var(--dishoom-brass-light, #EBD8B8);
-            font-size: 0.78rem;
+            i { font-size: 0.75rem; }
+
+            &:hover {
+              color: #FFFFFF;
+              background: var(--color-accent, #0EA5E9);
+            }
           }
         }
 
         .bottom-signature {
           display: flex;
           align-items: center;
-          gap: 0.6rem;
-          color: var(--dishoom-brass, #C58A3E);
-          font-family: var(--font-heading-editorial, 'Cormorant Garamond', serif);
-          font-size: 0.95rem;
+          gap: 0.5rem;
+          color: var(--color-accent-light, #BAE6FD);
+          font-family: var(--font-serif-primary);
+          font-size: 0.92rem;
           font-weight: 600;
-          letter-spacing: 0.08em;
         }
       }
     }
@@ -735,18 +628,11 @@ import {
     }
   `],
 })
-export class FooterComponent implements OnInit, AfterViewInit, OnDestroy {
+export class FooterComponent implements OnInit {
   private infoService = inject(InfoService);
-  private animService = inject(AnimationService);
 
   public info = signal<InfoLocale | null>(null);
   public currentYear = new Date().getFullYear();
-
-  @ViewChild('footerSection') footerSectionRef!: ElementRef;
-  @ViewChild('chainContainer') chainContainerRef!: ElementRef;
-  @ViewChild('anchorEl') anchorRef!: ElementRef;
-
-  private anchorTimeline: gsap.core.Timeline | null = null;
 
   ngOnInit(): void {
     this.infoService.getInfoLocale().subscribe({
@@ -756,26 +642,5 @@ export class FooterComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       },
     });
-  }
-
-  ngAfterViewInit(): void {
-    if (
-      this.footerSectionRef?.nativeElement &&
-      this.chainContainerRef?.nativeElement
-    ) {
-      this.anchorTimeline = this.animService.initFooterAnchorDrop(
-        this.chainContainerRef.nativeElement,
-        this.anchorRef?.nativeElement,
-        this.footerSectionRef.nativeElement
-      );
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.anchorTimeline) {
-      this.anchorTimeline.scrollTrigger?.kill();
-      this.anchorTimeline.kill();
-      this.anchorTimeline = null;
-    }
   }
 }

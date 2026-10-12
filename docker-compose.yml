@@ -6,14 +6,16 @@ services:
     image: mongo:7.0
     container_name: ilveliero-database
     restart: unless-stopped
-    ports:
-      - "27017:27017"
+    # ports:                  # ← RIMOSSO: MongoDB NON deve essere esposto sull'host.
+    #   - "27017:27017"       #   Il backend si connette via rete Docker interna (database:27017).
     environment:
       - MONGO_INITDB_DATABASE=ilveliero
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER:?MONGO_ROOT_USER is required}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:?MONGO_ROOT_PASSWORD is required}
     volumes:
       - mongo_data:/data/db
     networks:
-      - veliero-network
+      - db-backend-net
     healthcheck:
       test: ["CMD-SHELL", "mongosh --eval \"db.adminCommand('ping')\" || exit 1"]
       interval: 10s
@@ -38,24 +40,27 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV:-production}
       - PORT=${PORT:-5000}
-      - MONGODB_URI=${MONGODB_URI:-mongodb://database:27017/ilveliero}
-      - CLIENT_ORIGIN=${CLIENT_ORIGIN:-*}
-      - AUTO_SEED_IF_EMPTY=${AUTO_SEED_IF_EMPTY:-true}
-      - JWT_SECRET=${JWT_SECRET:-il_veliero_default_jwt_secret_change_in_production}
-      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-7d}
+      - MONGODB_URI=${MONGODB_URI:?MONGODB_URI is required}
+      - CLIENT_ORIGIN=${CLIENT_ORIGIN:-http://localhost:4200}
+      - AUTO_SEED_IF_EMPTY=${AUTO_SEED_IF_EMPTY:-false}
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET is required}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-15m}
+      - JWT_REFRESH_EXPIRES_IN=${JWT_REFRESH_EXPIRES_IN:-7d}
+      - MASTER_EMERGENCY_KEY=${MASTER_EMERGENCY_KEY:?MASTER_EMERGENCY_KEY is required}
       - UPLOAD_DIR=${UPLOAD_DIR:-/app/uploads}
       - MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB:-5}
       - MASTER_ADMIN_EMAILS=${MASTER_ADMIN_EMAILS:-admin@ilveliero.it}
-      - ADMIN_DEFAULT_EMAIL=${ADMIN_DEFAULT_EMAIL:-admin@ilveliero.it}
-      - ADMIN_DEFAULT_PASSWORD=${ADMIN_DEFAULT_PASSWORD:-AdminSecurePassword123!}
-      - GESTORE_DEFAULT_EMAIL=${GESTORE_DEFAULT_EMAIL:-gestore@ilveliero.it}
-      - GESTORE_DEFAULT_PASSWORD=${GESTORE_DEFAULT_PASSWORD:-GestoreSecurePassword123!}
-      - CLIENT_DEFAULT_EMAIL=${CLIENT_DEFAULT_EMAIL:-cliente@ilveliero.it}
-      - CLIENT_DEFAULT_PASSWORD=${CLIENT_DEFAULT_PASSWORD:-ClientSecurePassword123!}
+      - ADMIN_DEFAULT_EMAIL=${ADMIN_DEFAULT_EMAIL}
+      - ADMIN_DEFAULT_PASSWORD=${ADMIN_DEFAULT_PASSWORD}
+      - GESTORE_DEFAULT_EMAIL=${GESTORE_DEFAULT_EMAIL}
+      - GESTORE_DEFAULT_PASSWORD=${GESTORE_DEFAULT_PASSWORD}
+      - CLIENT_DEFAULT_EMAIL=${CLIENT_DEFAULT_EMAIL}
+      - CLIENT_DEFAULT_PASSWORD=${CLIENT_DEFAULT_PASSWORD}
     volumes:
       - uploads_data:/app/uploads
     networks:
-      - veliero-network
+      - db-backend-net
+      - web-net
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:5000/api/v1/health || exit 1"]
       interval: 10s
@@ -79,7 +84,7 @@ services:
       - "4200:80"
       - "8081:80"
     networks:
-      - veliero-network
+      - web-net
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:80/ || exit 1"]
       interval: 10s
@@ -97,5 +102,10 @@ volumes:
     driver: local
 
 networks:
-  veliero-network:
+  # Internal isolated network between database and backend only
+  db-backend-net:
+    driver: bridge
+    internal: true
+  # Web network between frontend and backend
+  web-net:
     driver: bridge

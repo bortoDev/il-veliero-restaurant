@@ -11,31 +11,31 @@ import { AllergenBadgeComponent } from '../allergen-badge/allergen-badge.compone
     <article
       class="dishoom-item"
       [class.unavailable]="!dish.isAvailable"
+      [class.compact]="!isExpanded"
+      [class.expanded]="isExpanded"
     >
       <div class="item-header">
         <div class="item-title-col">
           <h3 class="item-title">{{ dish.title }}</h3>
-          <span *ngIf="dish.isChefSpecial" class="special-badge">
-            <i class="fa-solid fa-trophy"></i> Campione del Mondo
-          </span>
         </div>
         <span class="dot-leader" aria-hidden="true"></span>
         <div class="item-price">€ {{ dish.price.toFixed(2) }}</div>
       </div>
 
-      <p class="item-desc">{{ dish.description }}</p>
+      <div class="item-body-drawer" [class.open]="isExpanded">
+        <div class="drawer-inner">
+          <p class="item-desc" *ngIf="dish.description">{{ dish.description }}</p>
 
-      <div class="item-footer">
-        <div class="allergens-wrap" *ngIf="dish.allergens && dish.allergens.length > 0">
-          <span class="allergens-label">Allergeni:</span>
-          <div class="allergens-chips">
-            <app-allergen-badge *ngFor="let a of dish.allergens" [allergen]="a"></app-allergen-badge>
+          <div class="item-footer">
+            <div class="allergens-chips" *ngIf="dish.allergens && dish.allergens.length > 0">
+              <app-allergen-badge *ngFor="let a of dish.allergens" [allergen]="a"></app-allergen-badge>
+            </div>
+
+            <span *ngIf="!dish.isAvailable" class="unavailable-tag">
+              <i class="fa-solid fa-clock-rotate-left"></i> Esaurito per oggi
+            </span>
           </div>
         </div>
-
-        <span *ngIf="!dish.isAvailable" class="unavailable-tag">
-          <i class="fa-solid fa-clock-rotate-left"></i> Esaurito per oggi
-        </span>
       </div>
     </article>
   `,
@@ -47,8 +47,21 @@ import { AllergenBadgeComponent } from '../allergen-badge/allergen-badge.compone
     .dishoom-item {
       padding: 1.15rem 0;
       border-bottom: 1px dashed var(--dishoom-border-sand, #E5DDD0);
-      transition: background 0.2s ease;
       background: transparent;
+      transition: padding 0.25s ease;
+
+      &.compact {
+        padding: 0.6rem 0;
+        cursor: pointer;
+
+        .item-header {
+          margin-bottom: 0;
+        }
+      }
+
+      &.expanded {
+        padding: 1.15rem 0;
+      }
 
       &.unavailable {
         opacity: 0.6;
@@ -60,6 +73,7 @@ import { AllergenBadgeComponent } from '../allergen-badge/allergen-badge.compone
         justify-content: space-between;
         gap: 0.75rem;
         margin-bottom: 0.35rem;
+        transition: margin-bottom 0.25s ease;
 
         .item-title-col {
           display: flex;
@@ -75,22 +89,7 @@ import { AllergenBadgeComponent } from '../allergen-badge/allergen-badge.compone
             margin: 0;
             line-height: 1.25;
             letter-spacing: 0.015em;
-          }
-
-          .special-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.68rem;
-            font-weight: 700;
-            font-family: var(--font-body-editorial, sans-serif);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--dishoom-brass-dark, #945C22);
-            background: rgba(197, 138, 62, 0.12);
-            border: 1px solid rgba(197, 138, 62, 0.35);
-            padding: 0.15rem 0.5rem;
-            border-radius: 3px;
+            transition: color 0.2s ease, font-size 0.2s ease;
           }
         }
 
@@ -109,6 +108,26 @@ import { AllergenBadgeComponent } from '../allergen-badge/allergen-badge.compone
           color: var(--dishoom-brass-dark, #945C22);
           white-space: nowrap;
           letter-spacing: 0.02em;
+          transition: font-size 0.2s ease;
+        }
+      }
+
+      .item-body-drawer {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+        opacity: 0;
+        overflow: hidden;
+
+        &.open {
+          grid-template-rows: 1fr;
+          opacity: 1;
+        }
+
+        .drawer-inner {
+          min-height: 0;
+          overflow: hidden;
+          padding-top: 0.35rem;
         }
       }
 
@@ -128,26 +147,11 @@ import { AllergenBadgeComponent } from '../allergen-badge/allergen-badge.compone
         gap: 1rem;
         flex-wrap: wrap;
 
-        .allergens-wrap {
+        .allergens-chips {
           display: flex;
           align-items: center;
-          gap: 0.4rem;
+          gap: 0.35rem;
           flex-wrap: wrap;
-
-          .allergens-label {
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--dishoom-ink-muted, #78716C);
-            font-weight: 600;
-          }
-
-          .allergens-chips {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            flex-wrap: wrap;
-          }
         }
 
         .unavailable-tag {
@@ -171,4 +175,5 @@ import { AllergenBadgeComponent } from '../allergen-badge/allergen-badge.compone
 })
 export class DishCardComponent {
   @Input({ required: true }) dish!: MenuItem;
+  @Input() isExpanded: boolean = true;
 }

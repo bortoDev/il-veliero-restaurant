@@ -16,6 +16,7 @@ export interface EnvironmentConfig {
   jwt: {
     secret: string;
     expiresIn: string;
+    refreshExpiresIn: string;
   };
   masterEmergencyKey: string;
   masterAdminEmails: string[];
@@ -53,6 +54,41 @@ const parseBoolean = (value: string | undefined, defaultValue: boolean): boolean
 const nodeEnv = (process.env.NODE_ENV || 'development') as 'development' | 'production' | 'test';
 const maxFileSizeMb = parseNumber(process.env.MAX_FILE_SIZE_MB, 5);
 
+const getRequiredSecret = (
+  key: string,
+  envVal: string | undefined,
+  minLength = 32
+): string => {
+  const trimmed = envVal?.trim();
+  const knownInsecure = [
+    'il_veliero_secret_jwt_key_2026_change_in_production',
+    'il_veliero_default_jwt_secret_change_in_production',
+    'your-super-secret-jwt-key-change-in-production',
+    'your_super_secret_jwt_key_here_change_in_production',
+    'EMERGENCY_KEY_VELIERO_2026_MASTER_OVERRIDE_BASSANO',
+    'your_emergency_override_key_here',
+  ];
+
+  if (!trimmed) {
+    if (nodeEnv === 'production') {
+      throw new Error(`[CRITICAL SECURITY CONFIG] Variable ${key} is required and must be defined in environment.`);
+    }
+    console.warn(`[SECURITY WARNING] ${key} is not set. Using temporary local dev key.`);
+    return `dev_fallback_${key.toLowerCase()}_not_for_production_min32chars_test`;
+  }
+
+  if (nodeEnv === 'production') {
+    if (trimmed.length < minLength) {
+      throw new Error(`[CRITICAL SECURITY CONFIG] ${key} must be at least ${minLength} characters long (got ${trimmed.length}).`);
+    }
+    if (knownInsecure.includes(trimmed)) {
+      throw new Error(`[CRITICAL SECURITY CONFIG] ${key} is set to a public insecure default! Please set a unique private secret in .env.`);
+    }
+  }
+
+  return trimmed;
+};
+
 const defaultMasterAdminEmails = [
   'admin@ilveliero.it',
 ];
@@ -69,23 +105,25 @@ export const env: EnvironmentConfig = {
   mongodb: {
     uri: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/ilveliero',
     connectTimeoutMs: parseNumber(process.env.MONGODB_CONNECT_TIMEOUT_MS, 2500),
-    autoMemoryFallback: parseBoolean(process.env.MONGODB_AUTO_MEMORY_FALLBACK, true),
+    autoMemoryFallback: parseBoolean(process.env.MONGODB_AUTO_MEMORY_FALLBACK, nodeEnv !== 'production'),
   },
   jwt: {
-    secret: process.env.JWT_SECRET || 'il_veliero_secret_jwt_key_2026_change_in_production',
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    secret: getRequiredSecret('JWT_SECRET', process.env.JWT_SECRET, 32),
+    expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+    refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   },
-  masterEmergencyKey:
-    process.env.MASTER_EMERGENCY_KEY ||
-    process.env.EMERGENCY_RECOVERY_KEY ||
-    'EMERGENCY_KEY_VELIERO_2026_MASTER_OVERRIDE_BASSANO',
+  masterEmergencyKey: getRequiredSecret(
+    'MASTER_EMERGENCY_KEY',
+    process.env.MASTER_EMERGENCY_KEY || process.env.EMERGENCY_RECOVERY_KEY,
+    32
+  ),
   masterAdminEmails:
     parsedMasterAdminEmails.length > 0 ? parsedMasterAdminEmails : defaultMasterAdminEmails,
   upload: {
     dir: process.env.UPLOAD_DIR || 'uploads',
     maxFileSizeBytes: maxFileSizeMb * 1024 * 1024,
   },
-  autoSeedIfEmpty: parseBoolean(process.env.AUTO_SEED_IF_EMPTY, true),
+  autoSeedIfEmpty: parseBoolean(process.env.AUTO_SEED_IF_EMPTY, nodeEnv !== 'production'),
   adminDefaults: {
     email: process.env.ADMIN_DEFAULT_EMAIL || 'admin@ilveliero.it',
     password: process.env.ADMIN_DEFAULT_PASSWORD || 'AdminPass123!',

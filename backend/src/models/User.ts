@@ -14,6 +14,8 @@ export interface IUser extends Document {
   tokenVersion: number;
   isActive: boolean;
   lastLogin?: Date;
+  failedLoginAttempts?: number;
+  lockUntil?: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
   createdAt: Date;
   updatedAt: Date;
@@ -49,7 +51,7 @@ const UserSchema = new Schema<IUser>(
     password: {
       type: String,
       required: [true, 'Password is required'],
-      minlength: [6, 'Password must be at least 6 characters long'],
+      minlength: [8, 'Password must be at least 8 characters long'],
       select: false,
     },
     role: {
@@ -77,6 +79,13 @@ const UserSchema = new Schema<IUser>(
       index: true,
     },
     lastLogin: {
+      type: Date,
+    },
+    failedLoginAttempts: {
+      type: Number,
+      default: 0,
+    },
+    lockUntil: {
       type: Date,
     },
   },
@@ -120,7 +129,7 @@ UserSchema.pre<IUser>('save', async function (next) {
   }
 
   try {
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (error: any) {

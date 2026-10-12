@@ -126,8 +126,17 @@ import { ModalComponent } from '../../../shared/components/modal/modal.component
           </div>
 
           <div class="form-group">
-            <label>URL Immagine Locandina</label>
-            <input type="text" class="form-control" [(ngModel)]="formData.image" name="image" placeholder="/uploads/eventi/locandina.jpg">
+            <label>Foto dell'Evento (una o più immagini)</label>
+            <textarea
+              class="form-control"
+              [(ngModel)]="imagesText"
+              name="imagesText"
+              rows="2"
+              placeholder="/uploads/eventi/foto1.jpg&#10;/uploads/eventi/foto2.jpg"
+            ></textarea>
+            <small style="display: block; margin-top: 0.35rem; color: var(--color-text-muted); font-size: 0.78rem;">
+              Inserisci uno o più URL (uno per riga o separati da virgola). Il banner si adatterà automaticamente mostrando un frame singolo, dittico o griglia.
+            </small>
           </div>
 
           <div class="form-group" style="margin: 1.5rem 0;">
@@ -254,6 +263,7 @@ export class EventiManagementComponent implements OnInit {
   public feedbackMsg = signal<string>('');
   public isError = signal<boolean>(false);
   public dateString: string = '';
+  public imagesText: string = '';
 
   public formData: Partial<Evento> = {
     title: '',
@@ -286,6 +296,7 @@ export class EventiManagementComponent implements OnInit {
       image: '',
       isActive: true,
     };
+    this.imagesText = '';
     const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     this.dateString = nextWeek.toISOString().slice(0, 16);
     this.isModalOpen.set(true);
@@ -302,6 +313,13 @@ export class EventiManagementComponent implements OnInit {
       image: ev.image,
       isActive: ev.isActive,
     };
+    if (ev.images && ev.images.length > 0) {
+      this.imagesText = ev.images.join('\n');
+    } else if (ev.image) {
+      this.imagesText = ev.image;
+    } else {
+      this.imagesText = '';
+    }
     this.dateString = ev.eventDate ? new Date(ev.eventDate).toISOString().slice(0, 16) : '';
     this.isModalOpen.set(true);
   }
@@ -313,6 +331,14 @@ export class EventiManagementComponent implements OnInit {
   saveEvent(): void {
     const payload: any = { ...this.formData };
     if (this.dateString) payload.eventDate = new Date(this.dateString).toISOString();
+
+    const parsedImages = this.imagesText
+      ? this.imagesText.split(/[\n,]+/).map(s => s.trim()).filter(Boolean)
+      : [];
+    payload.images = parsedImages;
+    if (parsedImages.length > 0) {
+      payload.image = parsedImages[0];
+    }
 
     const id = this.editingId();
     if (id) {

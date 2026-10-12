@@ -152,7 +152,7 @@ describe('Seed Data Completeness & Idempotency Stress Test Suite', () => {
       expect(pizzeSubcats.has('della_casa')).toBe(true);
       expect(pizzeSubcats.has('speciali')).toBe(true);
       expect(pizzeSubcats.has('bianche')).toBe(true);
-      expect(pizzeSubcats.has('verdure')).toBe(true);
+      expect(pizzeSubcats.has('vegetariane') || pizzeSubcats.has('verdure')).toBe(true);
 
       // Verify Finferli pizzas count is exactly 11 (#70 to #80)
       const finferliPizze = pizzeDishes.filter((p) => p.subcategory === 'stagionali');

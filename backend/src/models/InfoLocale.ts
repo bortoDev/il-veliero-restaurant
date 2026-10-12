@@ -138,12 +138,12 @@ const InfoLocaleSchema = new Schema<IInfoLocale>(
     },
     mobile: {
       type: String,
-      default: '334 623 2941',
+      default: '',
       trim: true,
     },
     whatsapp: {
       type: String,
-      default: '334 623 2941',
+      default: '',
       trim: true,
     },
     email: {
@@ -207,7 +207,7 @@ const InfoLocaleSchema = new Schema<IInfoLocale>(
     socialLinks: {
       facebook: { type: String, default: 'https://facebook.com/ilvelierobassano' },
       instagram: { type: String, default: 'https://www.instagram.com/ilvelierotrattoria' },
-      whatsapp: { type: String, default: 'https://wa.me/393346232941' },
+      whatsapp: { type: String, default: '' },
       tripadvisor: { type: String, default: '' },
     },
   },

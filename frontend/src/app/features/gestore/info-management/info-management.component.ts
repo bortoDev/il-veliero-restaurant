@@ -98,7 +98,7 @@ import { InfoLocale, OpeningHours, DaySchedule } from '../../../core/models';
                     <label>Cellulare / WhatsApp</label>
                     <div class="input-icon-wrap">
                       <i class="fa-brands fa-whatsapp"></i>
-                      <input type="tel" class="form-control" [(ngModel)]="infoData.whatsapp" name="whatsapp" placeholder="334 623 2941">
+                      <input type="tel" class="form-control" [(ngModel)]="infoData.whatsapp" name="whatsapp" placeholder="es. 333 1234567">
                     </div>
                   </div>
                 </div>
@@ -440,7 +440,7 @@ export class InfoManagementComponent implements OnInit {
             socialLinks: {
               facebook: 'https://facebook.com/ilvelierobassano',
               instagram: 'https://www.instagram.com/ilvelierotrattoria',
-              whatsapp: 'https://wa.me/393346232941',
+              whatsapp: '',
               ...(raw.socialLinks || {}),
             },
             openingHours: this.normalizeOpeningHours(raw.openingHours),

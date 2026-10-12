@@ -22,13 +22,13 @@ import { FooterComponent } from './shared/components/footer/footer.component';
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      background-color: var(--dishoom-bg-navy-dark, #07192F);
+      background-color: var(--bg-primary, #F1F5F9);
     }
 
     .main-wrapper {
       flex: 1;
-      padding-top: 68px;
-      background-color: var(--dishoom-bg-navy-dark, #07192F);
+      padding-top: 82px;
+      background-color: var(--bg-primary, #F1F5F9);
     }
   `],
 })
