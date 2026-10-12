@@ -134,8 +134,9 @@ export interface ShowcaseCardItem {
             <div class="editorial-col-left">
               <div class="editorial-photo-frame">
                 <img
-                  src="assets/images/WhatsApp Image 2026-08-30 at 18.02.57.jpeg"
-                  alt="Federico Bortolato e Sabina Mazzeracca a Il Veliero"
+                  src="assets/images/locale/premiazione-campione.jpg"
+                  alt="La premiazione del Campionato del Mondo della Pizza"
+                  loading="lazy"
                   class="editorial-main-img"
                   (error)="onChampionLogoError($event)"
                 />
@@ -156,8 +157,9 @@ export interface ShowcaseCardItem {
               <div class="editorial-side-photo-wrap">
                 <div class="editorial-photo-frame side-frame">
                   <img
-                    src="assets/images/WhatsApp Image 2026-08-30 at 18.02.57 (1).jpeg"
-                    alt="La pizza del Campione del Mondo cotta a legna"
+                    src="assets/images/locale/sala-principale.jpg"
+                    alt="La sala del ristorante Il Veliero apparecchiata"
+                    loading="lazy"
                     class="editorial-side-img"
                     (error)="onChampionLogoError($event)"
                   />
@@ -574,8 +576,10 @@ export interface ShowcaseCardItem {
 
             .editorial-main-img {
               width: 100%;
-              max-height: 480px;
+              aspect-ratio: 4 / 5;
+              max-height: 520px;
               object-fit: cover;
+              object-position: center 30%;
               border-radius: 4px;
               display: block;
               margin-bottom: 0;
@@ -622,8 +626,8 @@ export interface ShowcaseCardItem {
 
               .editorial-side-img {
                 width: 100%;
-                max-width: 320px;
-                max-height: 180px;
+                max-width: 360px;
+                aspect-ratio: 4 / 3;
                 object-fit: cover;
                 border-radius: 4px;
                 display: block;

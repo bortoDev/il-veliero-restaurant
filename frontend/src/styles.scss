@@ -8,16 +8,16 @@
   // ==========================================================================
 
   // --- Superfici & Sfondi (Light & Dark) ---
-  --bg-primary: #F1F5F9;               // Slate 100 - Cool Off-White Canvas
+  --bg-primary: #F3F6F9;               // Spuma di mare - canvas chiaro freddo
   --bg-surface: #FFFFFF;               // Bianco Puro Editoriale (card piatti, pannelli)
-  --bg-surface-alt: #E2E8F0;           // Slate 200 - Superficie secondaria a contrasto
-  --bg-sand: #E2E8F0;                  // Slate 200
+  --bg-surface-alt: #E6EDF4;           // Laguna chiara - superficie secondaria
+  --bg-sand: #E6EDF4;                  // Laguna chiara
   --bg-sand-light: #F8FAFC;            // Slate 50
   --bg-parchment: #FFFFFF;             // Bianco Puro
-  --bg-pastel-sky: #0EA5E9;            // Sky 500 - Azzurro Oceano
-  --bg-navy-dark: #1E293B;             // Slate 800 - Deep Slate Navy
-  --bg-navy-deep: #0F172A;             // Slate 900 - Navy Profondo di supporto
-  --bg-navy-card: #0F172A;             // Slate 900
+  --bg-pastel-sky: #0369A1;            // Blu oceano (accento)
+  --bg-navy-dark: #12283F;             // Blu marina profondo (hero, footer)
+  --bg-navy-deep: #0B1C2E;             // Abisso - navy più scuro
+  --bg-navy-card: #0B1C2E;             // Abisso
   --bg-white: #FFFFFF;
 
   // --- Veliero Ship Vector Identity ---
@@ -28,44 +28,47 @@
   --veliero-wave-color: #D4D4D8;       // Onde e spuma marina naturale (Zinc 300 - neutro silver)
 
   // --- Inchiostri & Tipografia ---
-  --text-primary: #1E293B;             // Slate 800 (Titoli e testi principali)
+  --text-primary: #132A40;             // Inchiostro marina (titoli e testi principali)
   --text-secondary: #334155;           // Slate 700 (Corpo paragrafi ad alto contrasto)
   --text-stone: #475569;               // Slate 600 (Sottotitoli essenziali)
   --text-muted: #64748B;               // Slate 500 (Didascalie e meta info)
   --text-light: #94A3B8;               // Slate 400 (Placeholder e note secondarie)
-  --text-inverse: #F1F5F9;             // Slate 100 (Superfici scure)
+  --text-inverse: #F3F6F9;             // Spuma (testo su superfici scure)
   --text-inverse-muted: #CBD5E1;       // Slate 300 (Sottotitoli su fondo scuro)
 
   // --- Accenti Sartoriali & Metalli ---
-  --color-accent: #0EA5E9;             // Sky 500 - Azzurro Oceano Primario
-  --color-accent-hover: #0284C7;       // Sky 600 - Azzurro Intenso Hover
-  --color-accent-light: #BAE6FD;       // Sky 200 - Azzurro Cielo Chiaro
-  --color-accent-subtle: rgba(14, 165, 233, 0.12);
-  --color-gold: #EAB308;               // Yellow 500 - Oro Caldo / Campione del Mondo
-  --color-gold-dark: #CA8A04;          // Yellow 600 - Oro Intenso
-  --color-gold-subtle: rgba(234, 179, 8, 0.15);
+  // Un solo accento d'azione: il blu oceano. Bianco su #0369A1 = 5.9:1 (WCAG AA).
+  --color-accent: #0369A1;             // Blu oceano - pulsanti, link, etichette
+  --color-accent-hover: #075985;       // Blu oceano profondo - hover e testo su chiaro
+  --color-accent-light: #BAE6FD;       // Azzurro cielo - dettagli su fondo scuro
+  --color-accent-on-dark: #7DD3FC;     // Azzurro per testo/filetti su navy (8:1)
+  --color-accent-subtle: rgba(3, 105, 161, 0.10);
+  // L'oro è riservato al marchio (veliero, "Campione del Mondo"), mai ai pulsanti.
+  --color-gold: #E0B341;               // Ottone marino - solo su fondo scuro
+  --color-gold-dark: #9A6B0A;          // Ottone scuro - testo su fondo chiaro (4.9:1)
+  --color-gold-subtle: rgba(224, 179, 65, 0.15);
 
   // --- Bordi & Separatori ---
-  --border-subtle: #D4D4D8;            // Zinc 300 - Filetto neutro standard
-  --border-medium: #A1A1AA;            // Zinc 400 - Bordo rinforzato
-  --border-accent: rgba(14, 165, 233, 0.35); // Bordo azzurro nobile
-  --border-gold: rgba(234, 179, 8, 0.4);
+  --border-subtle: #D5DEE8;            // Filetto marino chiaro
+  --border-medium: #9FB0C3;            // Filetto marino rinforzato
+  --border-accent: rgba(3, 105, 161, 0.35); // Bordo blu oceano
+  --border-gold: rgba(224, 179, 65, 0.45);
 
   // --- Stati di Servizio & Gastronomia ---
   --status-success: #16A34A;           // Verde Smeraldo (Disponibile / Pescato fresco)
-  --status-warning: #EAB308;           // Yellow 500 - Oro Sole (Specialità chef)
+  --status-warning: #B45309;           // Ambra (avvisi)
   --status-danger: #DC2626;            // Rosso Cremisi (Esaurito / Allergeni)
-  --status-info: #0EA5E9;              // Sky 500 - Azzurro Oceano
+  --status-info: #0369A1;              // Blu oceano
 
   // --- Skeleton Loaders Sartoriali (Cool Zinc Shimmer) ---
-  --color-skeleton-base: #E2E8F0;
-  --color-skeleton-shimmer: #F1F5F9;
+  --color-skeleton-base: #E6EDF4;
+  --color-skeleton-shimmer: #F3F6F9;
 
   // ==========================================================================
   // 2. TYPOGRAPHY STACKS
   // ==========================================================================
   --font-serif-primary: 'Cormorant Garamond', Garamond, 'Times New Roman', serif;
-  --font-serif-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-serif-display: 'Cormorant Garamond', Garamond, Georgia, serif; // un solo serif in tutto il sito
   --font-heading-editorial: var(--font-serif-primary);
   --font-heading-display: var(--font-serif-display);
   --font-body-editorial: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -84,9 +87,9 @@
   --tracking-eyebrow: 0.16em;
 
   // Elevation & Shadows (Sottili, Sartoriali, Slate Tone)
-  --shadow-subtle: 0 1px 3px rgba(30, 41, 59, 0.05), 0 1px 2px rgba(30, 41, 59, 0.03);
-  --shadow-card: 0 4px 16px -2px rgba(30, 41, 59, 0.08), 0 2px 6px -1px rgba(30, 41, 59, 0.04);
-  --shadow-hover: 0 12px 28px -4px rgba(30, 41, 59, 0.12), 0 4px 12px -2px rgba(30, 41, 59, 0.06);
+  --shadow-subtle: 0 1px 3px rgba(19, 42, 64, 0.05), 0 1px 2px rgba(19, 42, 64, 0.03);
+  --shadow-card: 0 4px 16px -2px rgba(19, 42, 64, 0.08), 0 2px 6px -1px rgba(19, 42, 64, 0.04);
+  --shadow-hover: 0 12px 28px -4px rgba(19, 42, 64, 0.12), 0 4px 12px -2px rgba(19, 42, 64, 0.06);
 
   // Transitions
   --transition-fast: 0.2s ease;
@@ -364,7 +367,7 @@ img {
   h1,
   .hero-title,
   .hero-diario-title {
-    font-family: var(--font-heading, 'Cinzel', serif);
+    font-family: var(--font-heading);
     font-size: clamp(2.4rem, 4.5vw, 3.4rem);
     letter-spacing: 3px;
     color: #FFFFFF;
@@ -451,7 +454,7 @@ img {
 
     &:hover {
       background-color: var(--color-accent-hover);
-      border-color: #0369a1;
+      border-color: #0C4A6E;
       color: #FFFFFF;
     }
   }
@@ -589,8 +592,8 @@ img {
   }
 
   &.badge-navy {
-    background-color: rgba(30, 41, 59, 0.08);
-    border: 1px solid rgba(30, 41, 59, 0.25);
+    background-color: rgba(19, 42, 64, 0.08);
+    border: 1px solid rgba(19, 42, 64, 0.25);
     color: var(--bg-navy-deep);
   }
 

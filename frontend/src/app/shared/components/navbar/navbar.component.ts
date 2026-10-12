@@ -34,7 +34,10 @@ import { LogoScrittaIconComponent } from '../svg-icons';
             [attr.aria-expanded]="isMobileOpen()"
             aria-label="Apri menu di navigazione"
           >
-            <i class="fa-solid" [ngClass]="isMobileOpen() ? 'fa-xmark' : 'fa-bars'"></i>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path *ngIf="!isMobileOpen()" d="M3 6h18M3 12h18M3 18h18" />
+              <path *ngIf="isMobileOpen()" d="M5 5l14 14M19 5L5 19" />
+            </svg>
           </button>
 
           <!-- Minimalist Navigation Links: MENÙ, PESCATO, EVENTI, DOVE SIAMO -->
@@ -208,7 +211,7 @@ import { LogoScrittaIconComponent } from '../svg-icons';
           filter: none !important;
 
           &:hover {
-            color: var(--color-gold, #EAB308);
+            color: var(--color-accent-on-dark, #7DD3FC);
             filter: none !important;
           }
         }
@@ -228,7 +231,7 @@ import { LogoScrittaIconComponent } from '../svg-icons';
           }
 
           &:hover, &.active {
-            color: var(--color-gold, #EAB308);
+            color: var(--color-accent-on-dark, #7DD3FC);
           }
         }
 
@@ -253,15 +256,15 @@ import { LogoScrittaIconComponent } from '../svg-icons';
             background: transparent !important;
             backdrop-filter: none !important;
             -webkit-backdrop-filter: none !important;
-            color: var(--color-gold, #EAB308) !important;
-            border: 1px solid rgba(234, 179, 8, 0.6);
+            color: #FFFFFF !important;
+            border: 1px solid rgba(255, 255, 255, 0.55);
             border-radius: 4px;
             box-shadow: none !important;
             filter: none !important;
 
             &:hover {
-              background: var(--color-gold, #EAB308) !important;
-              color: var(--bg-navy-dark, #0B2545) !important;
+              background: #FFFFFF !important;
+              color: var(--bg-navy-dark, #12283F) !important;
             }
           }
         }
@@ -283,7 +286,7 @@ import { LogoScrittaIconComponent } from '../svg-icons';
           filter: none !important;
 
           &:hover {
-            color: var(--color-gold-dark, #A16207);
+            color: var(--color-accent-hover, #075985);
             filter: none !important;
           }
         }
@@ -303,7 +306,7 @@ import { LogoScrittaIconComponent } from '../svg-icons';
           }
 
           &:hover, &.active {
-            color: var(--color-gold-dark, #A16207);
+            color: var(--color-accent-hover, #075985);
           }
         }
 
@@ -320,7 +323,7 @@ import { LogoScrittaIconComponent } from '../svg-icons';
             filter: none !important;
 
             &:hover {
-              color: var(--color-gold-dark, #A16207);
+              color: var(--color-accent-hover, #075985);
             }
           }
 

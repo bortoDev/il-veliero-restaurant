@@ -118,40 +118,19 @@ import {
             <h4 class="col-title">Orari di Apertura</h4>
             <ul class="hours-list">
               <li>
-                <span class="day-label">Lunedì:</span>
-                <strong class="day-val">12:00–14:00 / 19:00–22:00</strong>
+                <span class="day-label">Pranzo</span>
+                <strong class="day-val">12:00–14:00</strong>
               </li>
               <li>
-                <span class="day-label">Martedì:</span>
-                <strong class="day-val">12:00–14:00 / 19:00–22:00</strong>
+                <span class="day-label">Cena</span>
+                <strong class="day-val">19:00–22:00</strong>
               </li>
               <li class="closed-day">
-                <span class="day-label">Mercoledì:</span>
+                <span class="day-label">Mercoledì</span>
                 <strong class="closed-tag">CHIUSO</strong>
               </li>
-              <li>
-                <span class="day-label">Giovedì:</span>
-                <strong class="day-val">12:00–14:00 / 19:00–22:00</strong>
-              </li>
-              <li>
-                <span class="day-label">Venerdì:</span>
-                <strong class="day-val">12:00–14:00 / 19:00–22:00</strong>
-              </li>
-              <li>
-                <span class="day-label">Sabato:</span>
-                <strong class="day-val">12:00–14:00 / 19:00–22:00</strong>
-              </li>
-              <li>
-                <span class="day-label">Domenica:</span>
-                <strong class="day-val">12:00–14:00 / 19:00–22:00</strong>
-              </li>
             </ul>
-            <p class="hours-notes">
-              <i class="fa-solid fa-circle-info"></i>
-              <span>
-                Pranzo 12:00–14:00, Cena 19:00–22:00. Chiuso il Mercoledì.
-              </span>
-            </p>
+            <p class="hours-notes"><span>Aperti tutti gli altri giorni, a pranzo e a cena.</span></p>
           </div>
 
           <!-- Col 4: Contacts & Reservations -->
@@ -297,7 +276,7 @@ import {
             left: 0;
             width: 32px;
             height: 1.5px;
-            background: var(--color-accent, #0EA5E9);
+            background: var(--color-accent-on-dark, #7DD3FC);
           }
         }
 
@@ -387,7 +366,7 @@ import {
             &:hover {
               background: var(--color-accent, #0EA5E9);
               color: #FFFFFF;
-              border-color: var(--color-accent, #0EA5E9);
+              border-color: var(--color-accent-on-dark, #7DD3FC);
               transform: translateY(-1px);
             }
           }
@@ -411,7 +390,7 @@ import {
 
             i {
               font-size: 0.65rem;
-              color: var(--color-accent, #0EA5E9);
+              color: var(--color-accent-on-dark, #7DD3FC);
             }
 
             &:hover {
@@ -470,7 +449,7 @@ import {
           i {
             margin-top: 0.15rem;
             font-size: 0.8rem;
-            color: var(--color-accent, #0EA5E9);
+            color: var(--color-accent-on-dark, #7DD3FC);
           }
         }
 
@@ -487,7 +466,7 @@ import {
             color: var(--text-inverse, #F1F5F9);
 
             i {
-              color: var(--color-accent, #0EA5E9);
+              color: var(--color-accent-on-dark, #7DD3FC);
               margin-top: 0.2rem;
               font-size: 0.9rem;
               min-width: 16px;
@@ -557,7 +536,7 @@ import {
         color: var(--text-inverse-muted, #CBD5E1);
 
         .bottom-copy {
-          p { margin-bottom: 0.15rem; }
+          p { margin-bottom: 0.15rem; color: inherit; }
           strong { color: #FFFFFF; }
           .legal-address { color: var(--color-accent-light, #BAE6FD); font-size: 0.76rem; }
         }
