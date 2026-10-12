@@ -1,283 +1,285 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
 import { MenuService } from '../../../core/services/menu.service';
 import { PescatoService } from '../../../core/services/pescato.service';
 import { AvvisoService } from '../../../core/services/avviso.service';
 import { EventoService } from '../../../core/services/evento.service';
+import { Avviso, Evento, MenuItem, PescatoItem } from '../../../core/models';
+import { BoIconComponent } from '../shared/bo-icon.component';
+import { formatDateTimeLabel, isSameDay } from '../shared/bo-utils';
+
+const EMPTY = { success: false, count: 0, data: [] as any[] };
 
 @Component({
   selector: 'app-gestore-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, BoIconComponent],
   template: `
-    <div class="gestore-dashboard-page">
-      <div class="container dashboard-container">
-        <div class="dashboard-header">
-          <div>
-            <span class="role-pill"><i class="fa-solid fa-utensils"></i> Area Gestore</span>
-            <h1>Pannello di Controllo Ristorante</h1>
-            <p>Benvenuto, <strong>{{ authService.currentUser()?.name }}</strong>. Gestisci il menù, il pescato, gli avvisi e le informazioni.</p>
-          </div>
+    <div class="bo-page">
+      <header class="bo-header">
+        <div>
+          <h1>{{ greeting }}{{ firstName() ? ', ' + firstName() : '' }}</h1>
+          <p class="today">{{ todayLabel }}</p>
         </div>
+      </header>
 
-        <!-- Quick Summary Stats -->
-        <div class="metrics-grid">
-          <div class="metric-card card">
-            <div class="metric-icon icon-blue"><i class="fa-solid fa-book-open"></i></div>
-            <div class="metric-data">
-              <span class="metric-value">{{ totalDishes() }}</span>
-              <span class="metric-label">Piatti in Menù</span>
-            </div>
-            <a routerLink="/gestore/menu" class="metric-link">Gestisci Menù <i class="fa-solid fa-arrow-right"></i></a>
+      <!-- Azioni rapide: le tre cose che si fanno più spesso -->
+      <section class="quick">
+        <a routerLink="/gestore/pescato" [queryParams]="{ nuovo: 1 }" class="quick-card primary">
+          <bo-icon name="camera" [size]="26"></bo-icon>
+          <span class="q-title">Pubblica il pescato</span>
+          <span class="q-sub">Foto e descrizione degli arrivi di oggi</span>
+        </a>
+        <a routerLink="/gestore/eventi" [queryParams]="{ nuovo: 1 }" class="quick-card">
+          <bo-icon name="calendar" [size]="26"></bo-icon>
+          <span class="q-title">Nuovo evento</span>
+          <span class="q-sub">Serata a tema o degustazione</span>
+        </a>
+        <a routerLink="/gestore/avvisi" [queryParams]="{ nuovo: 1 }" class="quick-card">
+          <bo-icon name="bell" [size]="26"></bo-icon>
+          <span class="q-title">Nuovo avviso</span>
+          <span class="q-sub">Chiusure, ferie, comunicazioni</span>
+        </a>
+      </section>
+
+      <div class="status-grid" *ngIf="!isLoading()">
+        <!-- Pescato -->
+        <section class="bo-panel">
+          <div class="bo-panel-head">
+            <h2>Pescato del giorno</h2>
+            <a routerLink="/gestore/pescato" class="bo-btn ghost small">Gestisci</a>
           </div>
-
-          <div class="metric-card card">
-            <div class="metric-icon icon-teal"><i class="fa-solid fa-fish"></i></div>
-            <div class="metric-data">
-              <span class="metric-value">{{ activeCatches() }}</span>
-              <span class="metric-label">Pescato del Giorno</span>
-            </div>
-            <a routerLink="/gestore/pescato" class="metric-link">Aggiorna Pescato <i class="fa-solid fa-arrow-right"></i></a>
+          <div class="bo-panel-body">
+            <ng-container *ngIf="todayCatches().length > 0; else noCatch">
+              <span class="bo-chip ok">Pubblicato oggi</span>
+              <ul class="mini-list">
+                <li *ngFor="let c of todayCatches()">{{ c.title }}</li>
+              </ul>
+            </ng-container>
+            <ng-template #noCatch>
+              <span class="bo-chip warn">Non ancora pubblicato oggi</span>
+              <p class="panel-note" *ngIf="lastCatch() as last">Ultimo: «{{ last.title }}», {{ dayLabel(last.catchDate) }}</p>
+            </ng-template>
           </div>
+        </section>
 
-          <div class="metric-card card">
-            <div class="metric-icon icon-amber"><i class="fa-solid fa-bell"></i></div>
-            <div class="metric-data">
-              <span class="metric-value">{{ activeNotices() }}</span>
-              <span class="metric-label">Avvisi Attivi</span>
-            </div>
-            <a routerLink="/gestore/avvisi" class="metric-link">Gestisci Avvisi <i class="fa-solid fa-arrow-right"></i></a>
+        <!-- Prossimo evento -->
+        <section class="bo-panel">
+          <div class="bo-panel-head">
+            <h2>Prossimo evento</h2>
+            <a routerLink="/gestore/eventi" class="bo-btn ghost small">Gestisci</a>
           </div>
-
-          <div class="metric-card card">
-            <div class="metric-icon icon-purple"><i class="fa-solid fa-calendar-check"></i></div>
-            <div class="metric-data">
-              <span class="metric-value">{{ upcomingEvents() }}</span>
-              <span class="metric-label">Eventi in Programma</span>
-            </div>
-            <a routerLink="/gestore/eventi" class="metric-link">Gestisci Eventi <i class="fa-solid fa-arrow-right"></i></a>
-          </div>
-        </div>
-
-        <!-- Fast Actions Hub -->
-        <div class="actions-section">
-          <h2>Azioni Rapide</h2>
-          <div class="actions-grid">
-            <a routerLink="/gestore/menu" class="action-tile card">
-              <i class="fa-solid fa-circle-plus action-icon"></i>
-              <div>
-                <h3>Aggiungi o Modifica Piatti</h3>
-                <p>Aggiorna prezzi, descrizioni, categorie, 14-EU allergeni e foto dei piatti.</p>
+          <div class="bo-panel-body">
+            <ng-container *ngIf="nextEvent() as ev; else noEvent">
+              <p class="big-title">{{ ev.title }}</p>
+              <p class="panel-note">{{ dateTimeLabel(ev.eventDate) }}</p>
+              <div class="seats" *ngIf="ev.maxSeats">
+                <div class="seats-bar"><span [style.width.%]="seatPercent(ev)"></span></div>
+                <span class="seats-text">{{ ev.reservedSeats || 0 }} prenotati su {{ ev.maxSeats }}</span>
               </div>
-            </a>
-
-            <a routerLink="/gestore/pescato" class="action-tile card">
-              <i class="fa-solid fa-scale-balanced action-icon"></i>
-              <div>
-                <h3>Registra Pescato Mattutino</h3>
-                <p>Inserisci il pescato del giorno dal mercato di Chioggia e aggiorna i kg disponibili.</p>
-              </div>
-            </a>
-
-            <a routerLink="/gestore/avvisi" class="action-tile card">
-              <i class="fa-solid fa-triangle-exclamation action-icon"></i>
-              <div>
-                <h3>Pubblica Avviso o Chiusura</h3>
-                <p>Crea banner dinamici per chiusure straordinarie, ferie o avvisi in home page.</p>
-              </div>
-            </a>
-
-            <a routerLink="/gestore/info" class="action-tile card">
-              <i class="fa-solid fa-clock action-icon"></i>
-              <div>
-                <h3>Orari & Recapiti Locale</h3>
-                <p>Modifica gli orari di apertura, i recapiti telefonici e la storia del ristorante.</p>
-              </div>
-            </a>
+            </ng-container>
+            <ng-template #noEvent>
+              <span class="bo-chip off">Nessun evento in programma</span>
+            </ng-template>
           </div>
-        </div>
+        </section>
+
+        <!-- Avvisi -->
+        <section class="bo-panel">
+          <div class="bo-panel-head">
+            <h2>Avvisi visibili sul sito</h2>
+            <a routerLink="/gestore/avvisi" class="bo-btn ghost small">Gestisci</a>
+          </div>
+          <div class="bo-panel-body">
+            <ul class="mini-list" *ngIf="activeNotices().length > 0; else noNotice">
+              <li *ngFor="let a of activeNotices()">{{ a.title }}</li>
+            </ul>
+            <ng-template #noNotice>
+              <span class="bo-chip off">Nessun avviso attivo</span>
+            </ng-template>
+          </div>
+        </section>
+
+        <!-- Menù -->
+        <section class="bo-panel">
+          <div class="bo-panel-head">
+            <h2>Menù</h2>
+            <a routerLink="/gestore/menu" class="bo-btn ghost small">Gestisci</a>
+          </div>
+          <div class="bo-panel-body">
+            <p class="big-title">{{ dishes().length }} voci in carta</p>
+            <span class="bo-chip" [ngClass]="unavailableCount() ? 'warn' : 'ok'">
+              {{ unavailableCount() ? unavailableCount() + ' segnate come non disponibili' : 'Tutto disponibile' }}
+            </span>
+          </div>
+        </section>
       </div>
     </div>
   `,
   styles: [`
-    .gestore-dashboard-page {
-      padding: 3.5rem 0 5rem;
-      background: var(--color-bg-main);
-      min-height: 80vh;
-    }
+    .today { text-transform: capitalize; }
 
-    .dashboard-header {
-      margin-bottom: 2.5rem;
-
-      .role-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: var(--color-navy-dark);
-        background: rgba(19, 64, 116, 0.12);
-        padding: 0.3rem 0.75rem;
-        border-radius: 20px;
-        margin-bottom: 0.75rem;
-      }
-
-      h1 {
-        font-size: 2.3rem;
-        color: var(--color-navy-dark);
-        margin-bottom: 0.35rem;
-      }
-
-      p {
-        color: var(--color-text-muted);
-        font-size: 1.05rem;
-      }
-    }
-
-    .metrics-grid {
+    .quick {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 3.5rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
 
-      .metric-card {
-        padding: 1.75rem;
-        display: flex;
-        flex-direction: column;
+    .quick-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      padding: 1.25rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      color: var(--color-accent-hover);
+      text-decoration: none;
+      transition: border-color var(--transition-fast), transform var(--transition-fast);
 
-        .metric-icon {
-          width: 50px;
-          height: 50px;
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 1.5rem;
-          margin-bottom: 1.25rem;
+      &:hover { border-color: var(--color-accent); transform: translateY(-1px); }
 
-          &.icon-blue { background: rgba(2, 132, 199, 0.15); color: #0284c7; }
-          &.icon-teal { background: rgba(42, 157, 143, 0.15); color: #2a9d8f; }
-          &.icon-amber { background: rgba(247, 127, 0, 0.15); color: #f77f00; }
-          &.icon-purple { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
-        }
+      .q-title {
+        margin-top: 0.4rem;
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
 
-        .metric-data {
-          margin-bottom: 1.25rem;
+      .q-sub { font-size: 0.85rem; color: var(--text-muted); }
 
-          .metric-value {
-            font-family: var(--font-heading);
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--color-navy-dark);
-            display: block;
-            line-height: 1;
-            margin-bottom: 0.35rem;
-          }
+      &.primary {
+        background: var(--bg-navy-dark);
+        border-color: var(--bg-navy-dark);
+        color: var(--color-accent-on-dark);
 
-          .metric-label {
-            font-size: 0.85rem;
-            color: var(--color-text-muted);
-            text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-          }
-        }
-
-        .metric-link {
-          font-size: 0.85rem;
-          font-weight: 600;
-          color: var(--color-navy-medium);
-          display: inline-flex;
-          align-items: center;
-          gap: 0.4rem;
-          margin-top: auto;
-
-          &:hover {
-            color: var(--color-gold-dark);
-            padding-left: 3px;
-          }
-        }
+        .q-title { color: #FFFFFF; }
+        .q-sub { color: var(--text-inverse-muted); }
       }
     }
 
-    .actions-section {
-      h2 {
-        font-size: 1.6rem;
-        margin-bottom: 1.5rem;
-        color: var(--color-navy-dark);
-      }
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
 
-      .actions-grid {
+      .bo-panel + .bo-panel { margin-top: 0; }
+    }
+
+    .mini-list {
+      list-style: none;
+      margin: 0.75rem 0 0;
+      padding: 0;
+
+      li {
+        padding: 0.4rem 0;
+        border-bottom: 1px solid var(--border-subtle);
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+
+        &:last-child { border-bottom: none; }
+      }
+    }
+
+    .big-title {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 0.25rem;
+      line-height: 1.25;
+    }
+
+    .panel-note { font-size: 0.88rem; color: var(--text-muted); margin: 0.5rem 0 0; text-transform: none; }
+
+    .seats { margin-top: 0.9rem; }
+
+    .seats-bar {
+      height: 8px;
+      border-radius: 999px;
+      background: var(--bg-surface-alt);
+      overflow: hidden;
+
+      span { display: block; height: 100%; background: var(--color-accent); border-radius: 999px; }
+    }
+
+    .seats-text { display: block; margin-top: 0.35rem; font-size: 0.85rem; color: var(--text-stone); }
+
+    @media (max-width: 760px) {
+      .quick { grid-template-columns: 1fr; gap: 0.6rem; }
+
+      .quick-card {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: auto 1fr;
+        column-gap: 0.9rem;
+        align-items: center;
 
-        .action-tile {
-          display: flex;
-          align-items: flex-start;
-          gap: 1.25rem;
-          padding: 1.75rem;
-          color: inherit;
-          transition: transform var(--transition-fast), border-color var(--transition-fast);
-
-          .action-icon {
-            font-size: 2rem;
-            color: var(--color-gold-dark);
-            margin-top: 0.2rem;
-          }
-
-          h3 {
-            font-size: 1.15rem;
-            margin-bottom: 0.4rem;
-            color: var(--color-navy-dark);
-          }
-
-          p {
-            font-size: 0.88rem;
-            color: var(--color-text-muted);
-            margin-bottom: 0;
-            line-height: 1.5;
-          }
-
-          &:hover {
-            transform: translateY(-3px);
-            border-color: var(--color-gold);
-          }
-        }
+        bo-icon { grid-row: span 2; }
+        .q-title { margin-top: 0; }
       }
+
+      .status-grid { grid-template-columns: 1fr; }
     }
   `],
 })
 export class GestoreDashboardComponent implements OnInit {
-  public authService = inject(AuthService);
+  private auth = inject(AuthService);
   private menuService = inject(MenuService);
   private pescatoService = inject(PescatoService);
   private avvisoService = inject(AvvisoService);
   private eventoService = inject(EventoService);
 
-  public totalDishes = signal<number>(0);
-  public activeCatches = signal<number>(0);
-  public activeNotices = signal<number>(0);
-  public upcomingEvents = signal<number>(0);
+  readonly greeting = new Date().getHours() < 13 ? 'Buongiorno' : new Date().getHours() < 18 ? 'Buon pomeriggio' : 'Buonasera';
+  readonly todayLabel = new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
+
+  isLoading = signal(true);
+  dishes = signal<MenuItem[]>([]);
+  catches = signal<PescatoItem[]>([]);
+  events = signal<Evento[]>([]);
+  activeNotices = signal<Avviso[]>([]);
+
+  firstName = computed(() => (this.auth.currentUser()?.name || '').split(/\s|—/)[0]);
+  unavailableCount = computed(() => this.dishes().filter((d) => !d.isAvailable).length);
+  todayCatches = computed(() => this.catches().filter((c) => isSameDay(new Date(c.catchDate), new Date())));
+  lastCatch = computed(() =>
+    [...this.catches()].sort((a, b) => +new Date(b.catchDate) - +new Date(a.catchDate))[0] ?? null
+  );
+  nextEvent = computed(() =>
+    this.events()
+      .filter((e) => e.isActive && +new Date(e.eventDate) >= Date.now())
+      .sort((a, b) => +new Date(a.eventDate) - +new Date(b.eventDate))[0] ?? null
+  );
 
   ngOnInit(): void {
-    this.menuService.getMenuItems().subscribe({
-      next: (res) => { if (res.success) this.totalDishes.set(res.count); },
+    forkJoin({
+      menu: this.menuService.getMenuItems().pipe(catchError(() => of(EMPTY))),
+      pescato: this.pescatoService.getPescatoList({ all: true }).pipe(catchError(() => of(EMPTY))),
+      eventi: this.eventoService.getAllEventi().pipe(catchError(() => of(EMPTY))),
+      avvisi: this.avvisoService.getActiveAvvisi().pipe(catchError(() => of(EMPTY))),
+    }).subscribe(({ menu, pescato, eventi, avvisi }) => {
+      this.dishes.set(menu.data || []);
+      this.catches.set(pescato.data || []);
+      this.events.set(eventi.data || []);
+      this.activeNotices.set(avvisi.data || []);
+      this.isLoading.set(false);
     });
+  }
 
-    this.pescatoService.getPescatoList({ available: true }).subscribe({
-      next: (res) => { if (res.success) this.activeCatches.set(res.count); },
-    });
+  seatPercent(ev: Evento): number {
+    return ev.maxSeats ? Math.min(100, ((ev.reservedSeats || 0) / ev.maxSeats) * 100) : 0;
+  }
 
-    this.avvisoService.getActiveAvvisi().subscribe({
-      next: (res) => { if (res.success) this.activeNotices.set(res.count); },
-    });
+  dayLabel(d: string): string {
+    return new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(d));
+  }
 
-    this.eventoService.getUpcomingEventi().subscribe({
-      next: (res) => { if (res.success) this.upcomingEvents.set(res.count); },
-    });
+  dateTimeLabel(d: string): string {
+    return formatDateTimeLabel(d);
   }
 }

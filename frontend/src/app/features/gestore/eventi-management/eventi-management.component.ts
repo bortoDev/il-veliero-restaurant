@@ -1,392 +1,400 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { EventoService } from '../../../core/services/evento.service';
 import { Evento } from '../../../core/models';
-import { ModalComponent } from '../../../shared/components/modal/modal.component';
+import { BoIconComponent } from '../shared/bo-icon.component';
+import { BoSheetComponent } from '../shared/bo-sheet.component';
+import { PhotoPickerComponent } from '../shared/photo-picker.component';
+import { entityId, formatDateTimeLabel, toLocalDateTimeInput } from '../shared/bo-utils';
+
+interface EventoForm {
+  title: string;
+  description: string;
+  eventDate: string;
+  price: number | null;
+  maxSeats: number | null;
+  reservedSeats: number;
+  isActive: boolean;
+  images: string[];
+}
 
 @Component({
   selector: 'app-eventi-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ModalComponent],
+  imports: [CommonModule, FormsModule, RouterModule, BoIconComponent, BoSheetComponent, PhotoPickerComponent],
   template: `
-    <div class="management-page">
-      <div class="container">
-        <div class="page-top-nav">
-          <a routerLink="/gestore/dashboard" class="back-link">
-            <i class="fa-solid fa-arrow-left"></i> Torna alla Dashboard
-          </a>
+    <div class="bo-page">
+      <header class="bo-header">
+        <div>
+          <h1>Eventi</h1>
+          <p>Le serate visibili nella pagina Eventi del sito. Le prenotazioni arrivano per telefono o WhatsApp: segnale qui con + e −.</p>
         </div>
+        <button type="button" class="bo-btn primary" (click)="openCreate()">
+          <bo-icon name="plus"></bo-icon> Nuovo evento
+        </button>
+      </header>
 
-        <div class="management-header">
-          <div>
-            <h1>Gestione Eventi Culinari</h1>
-            <p>Pianifica serate a tema, degustazioni guidate e monitora le prenotazioni dei posti a sedere.</p>
-          </div>
-          <button (click)="openCreateModal()" class="btn btn-gold">
-            <i class="fa-solid fa-plus"></i> Nuovo Evento
-          </button>
-        </div>
-
-        <div *ngIf="feedbackMsg()" class="alert-box" [ngClass]="isError() ? 'alert-error' : 'alert-success'">
-          <i class="fa-solid" [ngClass]="isError() ? 'fa-circle-xmark' : 'fa-circle-check'"></i>
-          <span>{{ feedbackMsg() }}</span>
-        </div>
-
-        <div class="table-card card">
-          <div class="table-responsive">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Evento</th>
-                  <th>Data & Ora</th>
-                  <th>Prezzo / Ospite</th>
-                  <th>Posti Occupati</th>
-                  <th>Stato</th>
-                  <th style="text-align: right;">Azioni</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let ev of events()">
-                  <td>
-                    <strong>{{ ev.title }}</strong>
-                    <p class="sub-desc">{{ ev.description }}</p>
-                  </td>
-                  <td>{{ ev.eventDate | date:'dd/MM/yyyy HH:mm' }}</td>
-                  <td><strong>€ {{ ev.price.toFixed(2) }}</strong></td>
-                  <td>
-                    <span *ngIf="ev.maxSeats">{{ ev.reservedSeats }} / {{ ev.maxSeats }}</span>
-                    <span *ngIf="!ev.maxSeats">{{ ev.reservedSeats }} prenotati</span>
-                  </td>
-                  <td>
-                    <button
-                      (click)="toggleActive(ev)"
-                      class="badge"
-                      [ngClass]="ev.isActive ? 'badge-success' : 'badge-danger'"
-                      style="cursor: pointer; border: none;"
-                    >
-                      {{ ev.isActive ? 'Attivo' : 'Chiuso' }}
-                    </button>
-                  </td>
-                  <td style="text-align: right;">
-                    <div class="action-btns">
-                      <button (click)="openEditModal(ev)" class="btn-action edit" title="Modifica">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                      </button>
-                      <button (click)="deleteEvent(ev)" class="btn-action delete" title="Elimina">
-                        <i class="fa-solid fa-trash-can"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Create / Edit Modal -->
-      <app-modal
-        *ngIf="isModalOpen()"
-        [title]="editingId() ? 'Modifica Evento' : 'Programma Nuovo Evento'"
-        (closed)="closeModal()"
-      >
-        <form (ngSubmit)="saveEvent()">
-          <div class="form-group">
-            <label>Titolo Evento *</label>
-            <input type="text" class="form-control" [(ngModel)]="formData.title" name="title" required placeholder="Galà del Crudo Adriatico">
-          </div>
-
-          <div class="form-group">
-            <label>Descrizione & Menu della Serata *</label>
-            <textarea class="form-control" [(ngModel)]="formData.description" name="description" rows="3" required placeholder="Portate previste, abbinamento vini e dettagli..."></textarea>
-          </div>
-
-          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-            <div class="form-group">
-              <label>Data & Ora Evento *</label>
-              <input type="datetime-local" class="form-control" [(ngModel)]="dateString" name="eventDate" required>
+      <h2 class="bo-section-label">In programma</h2>
+      <section class="bo-panel">
+        <ul class="bo-list" *ngIf="upcoming().length > 0; else noUpcoming">
+          <li class="bo-row event-row" *ngFor="let ev of upcoming()" [class.is-muted]="!ev.isActive">
+            <div class="date-box">
+              <span class="d-day">{{ day(ev) }}</span>
+              <span class="d-month">{{ month(ev) }}</span>
             </div>
-            <div class="form-group">
-              <label>Prezzo a Persona (€) *</label>
-              <input type="number" step="1" class="form-control" [(ngModel)]="formData.price" name="price" min="0" required>
+            <div class="bo-row-main">
+              <div class="bo-row-title">{{ ev.title }}</div>
+              <div class="bo-row-sub">
+                {{ when(ev) }}
+                <ng-container *ngIf="ev.price"> · {{ ev.price | currency:'EUR':'symbol':'1.0-2':'it' }} a persona</ng-container>
+              </div>
+              <div class="status-line">
+                <span class="bo-chip" [ngClass]="ev.isActive ? 'ok' : 'off'">{{ ev.isActive ? 'Visibile sul sito' : 'Nascosto' }}</span>
+                <span class="bo-chip danger" *ngIf="ev.maxSeats && seatsLeft(ev) === 0">Esaurito</span>
+              </div>
             </div>
-          </div>
 
-          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-            <div class="form-group">
-              <label>Posti Massimi (Capienza)</label>
-              <input type="number" class="form-control" [(ngModel)]="formData.maxSeats" name="maxSeats" min="1" placeholder="es. 50">
+            <div class="seat-counter" *ngIf="ev.maxSeats">
+              <button type="button" (click)="changeSeats(ev, -1)" [disabled]="!ev.reservedSeats" aria-label="Togli un posto prenotato">
+                <bo-icon name="minus" [size]="18"></bo-icon>
+              </button>
+              <div class="seat-value">
+                <strong>{{ ev.reservedSeats || 0 }}</strong><span>/{{ ev.maxSeats }}</span>
+                <small>prenotati</small>
+              </div>
+              <button type="button" (click)="changeSeats(ev, 1)" [disabled]="seatsLeft(ev) === 0" aria-label="Aggiungi un posto prenotato">
+                <bo-icon name="plus" [size]="18"></bo-icon>
+              </button>
             </div>
-            <div class="form-group">
-              <label>Posti Attualmente Riservati</label>
-              <input type="number" class="form-control" [(ngModel)]="formData.reservedSeats" name="reservedSeats" min="0">
+
+            <div class="bo-row-actions">
+              <button type="button" class="bo-btn small" (click)="openEdit(ev)">
+                <bo-icon name="edit" [size]="16"></bo-icon> Modifica
+              </button>
+              <button type="button" class="bo-btn small danger-ghost" (click)="remove(ev)" [attr.aria-label]="'Elimina ' + ev.title">
+                <bo-icon name="trash" [size]="16"></bo-icon>
+              </button>
             </div>
+          </li>
+        </ul>
+        <ng-template #noUpcoming>
+          <div class="bo-empty">
+            <strong>Nessun evento in programma</strong>
+            <p>Quando non ci sono eventi, la pagina del sito mostra la sezione per le cene private.</p>
+            <button type="button" class="bo-btn primary" (click)="openCreate()">Crea un evento</button>
           </div>
+        </ng-template>
+      </section>
 
-          <div class="form-group">
-            <label>Foto dell'Evento (una o più immagini)</label>
-            <textarea
-              class="form-control"
-              [(ngModel)]="imagesText"
-              name="imagesText"
-              rows="2"
-              placeholder="/uploads/eventi/foto1.jpg&#10;/uploads/eventi/foto2.jpg"
-            ></textarea>
-            <small style="display: block; margin-top: 0.35rem; color: var(--color-text-muted); font-size: 0.78rem;">
-              Inserisci uno o più URL (uno per riga o separati da virgola). Il banner si adatterà automaticamente mostrando un frame singolo, dittico o griglia.
-            </small>
-          </div>
-
-          <div class="form-group" style="margin: 1.5rem 0;">
-            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-              <input type="checkbox" [(ngModel)]="formData.isActive" name="isActive">
-              <strong>Evento visibile nel calendario pubblico</strong>
-            </label>
-          </div>
-
-          <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
-            <button type="button" (click)="closeModal()" class="btn btn-outline btn-sm">Annulla</button>
-            <button type="submit" class="btn btn-gold btn-sm" [disabled]="!formData.title || !formData.description || !dateString">
-              {{ editingId() ? 'Salva Modifiche' : 'Crea Evento' }}
-            </button>
-          </div>
-        </form>
-      </app-modal>
+      <ng-container *ngIf="past().length > 0">
+        <h2 class="bo-section-label">Passati</h2>
+        <section class="bo-panel">
+          <ul class="bo-list">
+            <li class="bo-row is-muted" *ngFor="let ev of past()">
+              <div class="date-box">
+                <span class="d-day">{{ day(ev) }}</span>
+                <span class="d-month">{{ month(ev) }}</span>
+              </div>
+              <div class="bo-row-main">
+                <div class="bo-row-title">{{ ev.title }}</div>
+                <div class="bo-row-sub">{{ when(ev) }}<ng-container *ngIf="ev.maxSeats"> · {{ ev.reservedSeats || 0 }} ospiti</ng-container></div>
+              </div>
+              <div class="bo-row-actions">
+                <button type="button" class="bo-btn small" (click)="duplicate(ev)">Riproponi</button>
+                <button type="button" class="bo-btn small danger-ghost" (click)="remove(ev)" [attr.aria-label]="'Elimina ' + ev.title">
+                  <bo-icon name="trash" [size]="16"></bo-icon>
+                </button>
+              </div>
+            </li>
+          </ul>
+        </section>
+      </ng-container>
     </div>
+
+    <bo-sheet *ngIf="isEditorOpen()" [title]="editingId() ? 'Modifica evento' : 'Nuovo evento'" (closed)="closeEditor()">
+      <form class="bo-form" id="evento-form" (ngSubmit)="save()">
+        <div class="bo-field">
+          <label for="e-title">Nome della serata</label>
+          <input id="e-title" name="title" [(ngModel)]="form.title" required placeholder="Es. Giovedì del crudo" />
+        </div>
+
+        <div class="bo-field">
+          <label for="e-desc">Descrizione e menù</label>
+          <textarea id="e-desc" name="description" rows="5" [(ngModel)]="form.description" required
+            placeholder="Portate, vini in abbinamento, musica…"></textarea>
+        </div>
+
+        <div class="bo-field">
+          <label for="e-date">Data e ora</label>
+          <input id="e-date" name="eventDate" type="datetime-local" [(ngModel)]="form.eventDate" required />
+        </div>
+
+        <div class="bo-grid-3">
+          <div class="bo-field">
+            <label for="e-price">Prezzo (€)</label>
+            <input id="e-price" name="price" type="number" min="0" step="1" inputmode="decimal" [(ngModel)]="form.price" placeholder="0 = libero" />
+          </div>
+          <div class="bo-field">
+            <label for="e-seats">Posti totali</label>
+            <input id="e-seats" name="maxSeats" type="number" min="0" inputmode="numeric" [(ngModel)]="form.maxSeats" placeholder="Nessun limite" />
+          </div>
+          <div class="bo-field">
+            <label for="e-res">Già prenotati</label>
+            <input id="e-res" name="reservedSeats" type="number" min="0" inputmode="numeric" [(ngModel)]="form.reservedSeats" />
+          </div>
+        </div>
+
+        <div class="bo-field">
+          <span class="bo-label">Foto (facoltativa)</span>
+          <bo-photo-picker [(images)]="form.images"></bo-photo-picker>
+          <span class="hint">Senza foto, il sito mostra la data in grande con il veliero.</span>
+        </div>
+
+        <label class="bo-switch">
+          <input type="checkbox" name="isActive" [(ngModel)]="form.isActive" />
+          <span class="track"></span>
+          Visibile sul sito
+        </label>
+      </form>
+
+      <ng-container sheet-footer>
+        <button type="button" class="bo-btn" (click)="closeEditor()">Annulla</button>
+        <button type="submit" form="evento-form" class="bo-btn primary"
+          [disabled]="isSaving() || !form.title.trim() || !form.description.trim() || !form.eventDate">
+          {{ isSaving() ? 'Salvataggio…' : (editingId() ? 'Salva modifiche' : 'Crea evento') }}
+        </button>
+      </ng-container>
+    </bo-sheet>
+
+    <div class="bo-toast" *ngIf="toast() as t" [class.error]="t.error">{{ t.text }}</div>
   `,
   styles: [`
-    .management-page {
-      padding: 2.5rem 0 5rem;
-      background: var(--color-bg-main);
-      min-height: 80vh;
+    .date-box {
+      width: 56px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.4rem 0;
+      border-radius: 8px;
+      background: var(--bg-surface-alt);
+
+      .d-day {
+        font-family: var(--font-heading);
+        font-size: 1.6rem;
+        font-weight: 600;
+        line-height: 1;
+        color: var(--color-accent);
+      }
+
+      .d-month {
+        font-family: var(--font-sans);
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
     }
 
-    .page-top-nav {
-      margin-bottom: 1.5rem;
-      .back-link {
-        color: var(--color-navy-medium);
-        font-weight: 600;
-        font-size: 0.9rem;
+    .status-line { margin-top: 0.4rem; display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+    .seat-counter {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
+
+      button {
+        width: 40px;
+        height: 40px;
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
-        &:hover { color: var(--color-gold-dark); }
+        justify-content: center;
+        border: 1px solid var(--border-subtle);
+        border-radius: 50%;
+        background: var(--bg-surface);
+        color: var(--color-accent-hover);
+        cursor: pointer;
+
+        &:hover:not(:disabled) { border-color: var(--color-accent); }
+        &:disabled { opacity: 0.35; cursor: not-allowed; }
       }
     }
 
-    .management-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-      h1 { font-size: 2.2rem; color: var(--color-navy-dark); margin-bottom: 0.25rem; }
-      p { color: var(--color-text-muted); margin-bottom: 0; }
+    .seat-value {
+      min-width: 64px;
+      text-align: center;
+      line-height: 1.1;
+
+      strong { font-size: 1.15rem; color: var(--text-primary); }
+      span { font-size: 0.85rem; color: var(--text-muted); }
+      small { display: block; font-size: 0.7rem; color: var(--text-muted); }
     }
 
-    .alert-box {
-      padding: 0.85rem 1.25rem;
-      border-radius: 6px;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.92rem;
-      &.alert-success { background: rgba(42, 157, 143, 0.15); color: var(--color-success); }
-      &.alert-error { background: rgba(217, 4, 41, 0.15); color: var(--color-danger); }
-    }
-
-    .table-card {
-      padding: 1.5rem;
-      .table-responsive { overflow-x: auto; }
-      .data-table {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: left;
-        font-size: 0.92rem;
-
-        th {
-          background: var(--color-seafoam);
-          color: var(--color-navy-dark);
-          font-weight: 700;
-          padding: 0.85rem 1rem;
-          border-bottom: 2px solid var(--color-border);
-        }
-
-        td {
-          padding: 1rem;
-          border-bottom: 1px solid var(--color-border);
-          vertical-align: middle;
-
-          .sub-desc {
-            font-size: 0.8rem;
-            color: var(--color-text-muted);
-            margin-bottom: 0;
-            max-width: 250px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-
-          .action-btns {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-            .btn-action {
-              background: transparent;
-              border: 1px solid var(--color-border);
-              border-radius: 4px;
-              width: 32px;
-              height: 32px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              cursor: pointer;
-              &.edit { color: var(--color-navy-medium); &:hover { background: var(--color-navy-medium); color: #fff; } }
-              &.delete { color: var(--color-danger); &:hover { background: var(--color-danger); color: #fff; } }
-            }
-          }
-        }
-      }
+    @media (max-width: 760px) {
+      .event-row .seat-counter { order: 3; }
+      .event-row .bo-row-actions { order: 4; width: auto; margin-left: auto; }
     }
   `],
 })
 export class EventiManagementComponent implements OnInit {
   private eventoService = inject(EventoService);
+  private route = inject(ActivatedRoute);
 
-  public events = signal<Evento[]>([]);
-  public isModalOpen = signal<boolean>(false);
-  public editingId = signal<string | null>(null);
-  public feedbackMsg = signal<string>('');
-  public isError = signal<boolean>(false);
-  public dateString: string = '';
-  public imagesText: string = '';
+  events = signal<Evento[]>([]);
+  isEditorOpen = signal(false);
+  editingId = signal<string | null>(null);
+  isSaving = signal(false);
+  toast = signal<{ text: string; error: boolean } | null>(null);
 
-  public formData: Partial<Evento> = {
-    title: '',
-    description: '',
-    price: 50,
-    maxSeats: 40,
-    reservedSeats: 0,
-    image: '',
-    isActive: true,
-  };
+  form: EventoForm = this.emptyForm();
+
+  upcoming = computed(() =>
+    this.events()
+      .filter((e) => +new Date(e.eventDate) >= Date.now())
+      .sort((a, b) => +new Date(a.eventDate) - +new Date(b.eventDate))
+  );
+
+  past = computed(() =>
+    this.events()
+      .filter((e) => +new Date(e.eventDate) < Date.now())
+      .sort((a, b) => +new Date(b.eventDate) - +new Date(a.eventDate))
+  );
 
   ngOnInit(): void {
-    this.loadEvents();
+    this.load();
+    if (this.route.snapshot.queryParamMap.get('nuovo')) this.openCreate();
   }
 
-  loadEvents(): void {
-    this.eventoService.getAllEventi().subscribe({
-      next: (res) => { if (res.success) this.events.set(res.data); },
+  load(): void {
+    this.eventoService.getAllEventi().subscribe({ next: (res) => this.events.set(res.data || []) });
+  }
+
+  day(ev: Evento): string {
+    return new Intl.DateTimeFormat('it-IT', { day: 'numeric' }).format(new Date(ev.eventDate));
+  }
+
+  month(ev: Evento): string {
+    return new Intl.DateTimeFormat('it-IT', { month: 'short' }).format(new Date(ev.eventDate)).replace('.', '');
+  }
+
+  when(ev: Evento): string {
+    return formatDateTimeLabel(ev.eventDate);
+  }
+
+  seatsLeft(ev: Evento): number {
+    return Math.max((ev.maxSeats || 0) - (ev.reservedSeats || 0), 0);
+  }
+
+  /** Aggiorna subito la lista e salva in background: il gestore registra le prenotazioni mentre è al telefono. */
+  changeSeats(ev: Evento, delta: number): void {
+    const next = Math.min(Math.max((ev.reservedSeats || 0) + delta, 0), ev.maxSeats || Infinity);
+    const id = entityId(ev);
+    this.events.update((list) => list.map((e) => (entityId(e) === id ? { ...e, reservedSeats: next } : e)));
+    this.eventoService.updateEvento(id, { reservedSeats: next }).subscribe({
+      error: (err) => {
+        this.showToast(err.message || 'Aggiornamento posti non riuscito.', true);
+        this.load();
+      },
     });
   }
 
-  openCreateModal(): void {
+  openCreate(): void {
     this.editingId.set(null);
-    this.formData = {
-      title: '',
-      description: '',
-      price: 60,
-      maxSeats: 45,
-      reservedSeats: 0,
-      image: '',
-      isActive: true,
-    };
-    this.imagesText = '';
-    const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    this.dateString = nextWeek.toISOString().slice(0, 16);
-    this.isModalOpen.set(true);
+    this.form = this.emptyForm();
+    this.isEditorOpen.set(true);
   }
 
-  openEditModal(ev: Evento): void {
-    this.editingId.set(ev.id || ev._id || null);
-    this.formData = {
+  openEdit(ev: Evento): void {
+    this.editingId.set(entityId(ev));
+    this.form = {
       title: ev.title,
       description: ev.description,
-      price: ev.price,
-      maxSeats: ev.maxSeats,
-      reservedSeats: ev.reservedSeats,
-      image: ev.image,
+      eventDate: toLocalDateTimeInput(ev.eventDate),
+      price: ev.price ?? null,
+      maxSeats: ev.maxSeats ?? null,
+      reservedSeats: ev.reservedSeats || 0,
       isActive: ev.isActive,
+      images: ev.images?.length ? [...ev.images] : ev.image ? [ev.image] : [],
     };
-    if (ev.images && ev.images.length > 0) {
-      this.imagesText = ev.images.join('\n');
-    } else if (ev.image) {
-      this.imagesText = ev.image;
-    } else {
-      this.imagesText = '';
-    }
-    this.dateString = ev.eventDate ? new Date(ev.eventDate).toISOString().slice(0, 16) : '';
-    this.isModalOpen.set(true);
+    this.isEditorOpen.set(true);
   }
 
-  closeModal(): void {
-    this.isModalOpen.set(false);
+  /** Crea un nuovo evento partendo da uno passato: stessi testi, data da scegliere. */
+  duplicate(ev: Evento): void {
+    this.openEdit(ev);
+    this.editingId.set(null);
+    this.form.eventDate = '';
+    this.form.reservedSeats = 0;
+    this.form.isActive = true;
   }
 
-  saveEvent(): void {
-    const payload: any = { ...this.formData };
-    if (this.dateString) payload.eventDate = new Date(this.dateString).toISOString();
+  closeEditor(): void {
+    this.isEditorOpen.set(false);
+  }
 
-    const parsedImages = this.imagesText
-      ? this.imagesText.split(/[\n,]+/).map(s => s.trim()).filter(Boolean)
-      : [];
-    payload.images = parsedImages;
-    if (parsedImages.length > 0) {
-      payload.image = parsedImages[0];
-    }
+  save(): void {
+    const payload: Partial<Evento> = {
+      title: this.form.title.trim(),
+      description: this.form.description.trim(),
+      eventDate: new Date(this.form.eventDate).toISOString(),
+      price: Number(this.form.price) || 0,
+      reservedSeats: Number(this.form.reservedSeats) || 0,
+      isActive: this.form.isActive,
+      images: this.form.images,
+      image: this.form.images[0] || '',
+    };
+    if (this.form.maxSeats) payload.maxSeats = Number(this.form.maxSeats);
 
     const id = this.editingId();
-    if (id) {
-      this.eventoService.updateEvento(id, payload).subscribe({
-        next: () => {
-          this.setFeedback('Evento aggiornato con successo.');
-          this.closeModal();
-          this.loadEvents();
-        },
-        error: (err) => this.setFeedback(err.message, true),
-      });
-    } else {
-      this.eventoService.createEvento(payload).subscribe({
-        next: () => {
-          this.setFeedback('Nuovo evento creato con successo.');
-          this.closeModal();
-          this.loadEvents();
-        },
-        error: (err) => this.setFeedback(err.message, true),
-      });
-    }
-  }
-
-  toggleActive(ev: Evento): void {
-    const id = ev.id || ev._id;
-    if (!id) return;
-    this.eventoService.updateEvento(id, { isActive: !ev.isActive }).subscribe({
-      next: () => this.loadEvents(),
+    const request = id ? this.eventoService.updateEvento(id, payload) : this.eventoService.createEvento(payload);
+    this.isSaving.set(true);
+    request.subscribe({
+      next: () => {
+        this.isSaving.set(false);
+        this.closeEditor();
+        this.showToast(id ? 'Modifiche salvate.' : 'Evento creato.');
+        this.load();
+      },
+      error: (err) => {
+        this.isSaving.set(false);
+        this.showToast(err.message || 'Salvataggio non riuscito.', true);
+      },
     });
   }
 
-  deleteEvent(ev: Evento): void {
-    const id = ev.id || ev._id;
-    if (!id) return;
-    if (confirm(`Eliminare l'evento "${ev.title}"?`)) {
-      this.eventoService.deleteEvento(id).subscribe({
-        next: () => {
-          this.setFeedback('Evento eliminato.');
-          this.loadEvents();
-        },
-        error: (err) => this.setFeedback(err.message, true),
-      });
-    }
+  remove(ev: Evento): void {
+    if (!confirm(`Eliminare l'evento «${ev.title}»?`)) return;
+    this.eventoService.deleteEvento(entityId(ev)).subscribe({
+      next: () => {
+        this.showToast('Evento eliminato.');
+        this.load();
+      },
+      error: (err) => this.showToast(err.message || 'Eliminazione non riuscita.', true),
+    });
   }
 
-  private setFeedback(msg: string, isErr = false): void {
-    this.feedbackMsg.set(msg);
-    this.isError.set(isErr);
-    setTimeout(() => this.feedbackMsg.set(''), 4000);
+  private emptyForm(): EventoForm {
+    const nextWeek = new Date();
+    nextWeek.setDate(nextWeek.getDate() + 7);
+    nextWeek.setHours(20, 0, 0, 0);
+    return {
+      title: '',
+      description: '',
+      eventDate: toLocalDateTimeInput(nextWeek),
+      price: null,
+      maxSeats: null,
+      reservedSeats: 0,
+      isActive: true,
+      images: [],
+    };
+  }
+
+  private showToast(text: string, error = false): void {
+    this.toast.set({ text, error });
+    setTimeout(() => this.toast.set(null), 3500);
   }
 }

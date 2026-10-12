@@ -2495,7 +2495,8 @@ export class MenuComponent implements OnInit, AfterViewInit, OnDestroy {
   fetchMenu(): void {
     this.isLoading.set(true);
 
-    const params: any = {};
+    // Solo i piatti disponibili: il gestore li spegne quando finiscono.
+    const params: any = { available: true };
 
     if (this.searchQuery.trim()) params.search = this.searchQuery.trim();
     if (this.selectedExcludedAllergens().length > 0) {

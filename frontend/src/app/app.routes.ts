@@ -63,6 +63,8 @@ export const routes: Routes = [
   {
     path: 'gestore',
     canActivate: [authGuard, gestoreGuard],
+    loadComponent: () =>
+      import('./features/gestore/layout/gestore-layout.component').then((m) => m.GestoreLayoutComponent),
     children: [
       {
         path: '',

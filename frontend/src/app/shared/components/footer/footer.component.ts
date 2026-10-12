@@ -1,4 +1,5 @@
 import {
+  computed,
   Component,
   inject,
   OnInit,
@@ -13,6 +14,7 @@ import { RouterModule } from '@angular/router';
 import { InfoService } from '../../../core/services/info.service';
 import { AnimationService } from '../../../core/services/animation.service';
 import { InfoLocale } from '../../../core/models';
+import { summarizeHours } from '../../../core/utils/opening-hours';
 import {
   VelieroShipComponent,
   NauticalStarComponent,
@@ -119,18 +121,20 @@ import {
             <ul class="hours-list">
               <li>
                 <span class="day-label">Pranzo</span>
-                <strong class="day-val">12:00–14:00</strong>
+                <strong class="day-val">{{ hours().lunch }}</strong>
               </li>
               <li>
                 <span class="day-label">Cena</span>
-                <strong class="day-val">19:00–22:00</strong>
+                <strong class="day-val">{{ hours().dinner }}</strong>
               </li>
-              <li class="closed-day">
-                <span class="day-label">Mercoledì</span>
+              <li class="closed-day" *ngFor="let day of hours().closedDays">
+                <span class="day-label">{{ day }}</span>
                 <strong class="closed-tag">CHIUSO</strong>
               </li>
             </ul>
-            <p class="hours-notes"><span>Aperti tutti gli altri giorni, a pranzo e a cena.</span></p>
+            <p class="hours-notes">
+              <span>{{ hours().isUniform ? 'Aperti tutti gli altri giorni, a pranzo e a cena.' : 'Orari diversi in alcuni giorni: vedi Dove Siamo.' }}</span>
+            </p>
           </div>
 
           <!-- Col 4: Contacts & Reservations -->
@@ -611,6 +615,7 @@ export class FooterComponent implements OnInit {
   private infoService = inject(InfoService);
 
   public info = signal<InfoLocale | null>(null);
+  public hours = computed(() => summarizeHours(this.info()?.openingHours));
   public currentYear = new Date().getFullYear();
 
   ngOnInit(): void {

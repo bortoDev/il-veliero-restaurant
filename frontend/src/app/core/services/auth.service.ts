@@ -28,9 +28,16 @@ export class AuthService {
 
   constructor() {
     // Validate session on bootstrap if token exists
+    // Deferred: the JWT interceptor injects AuthService, so an HTTP call made while this
+    // constructor is still running fails with a circular-dependency error and wiped the session.
+    // Only a real 401 (expired/revoked token) should log the user out, not a network hiccup.
     if (this.getToken()) {
-      this.fetchCurrentUser().subscribe({
-        error: () => this.clearSession(false),
+      setTimeout(() => {
+        this.fetchCurrentUser().subscribe({
+          error: (err) => {
+            if (err?.status === 401) this.clearSession(false);
+          },
+        });
       });
     }
   }

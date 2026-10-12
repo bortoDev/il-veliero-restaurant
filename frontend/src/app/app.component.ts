@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map } from 'rxjs/operators';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 
@@ -9,13 +11,18 @@ import { FooterComponent } from './shared/components/footer/footer.component';
   standalone: true,
   imports: [CommonModule, RouterModule, NavbarComponent, FooterComponent],
   template: `
-    <div class="app-layout">
-      <app-navbar></app-navbar>
-      <main class="main-wrapper">
-        <router-outlet></router-outlet>
-      </main>
-      <app-footer></app-footer>
-    </div>
+    <!-- L'area gestore ha una sua cornice (barra laterale), senza navbar e footer del sito pubblico -->
+    <router-outlet *ngIf="isBackOffice(); else publicSite"></router-outlet>
+
+    <ng-template #publicSite>
+      <div class="app-layout">
+        <app-navbar></app-navbar>
+        <main class="main-wrapper">
+          <router-outlet></router-outlet>
+        </main>
+        <app-footer></app-footer>
+      </div>
+    </ng-template>
   `,
   styles: [`
     .app-layout {
@@ -33,5 +40,15 @@ import { FooterComponent } from './shared/components/footer/footer.component';
   `],
 })
 export class AppComponent {
+  private router = inject(Router);
+
   title = 'Ristorante Il Veliero';
+
+  readonly isBackOffice = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects.startsWith('/gestore'))
+    ),
+    { initialValue: typeof window !== 'undefined' && window.location.pathname.startsWith('/gestore') }
+  );
 }

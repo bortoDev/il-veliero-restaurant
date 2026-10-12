@@ -1,389 +1,328 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AvvisoService } from '../../../core/services/avviso.service';
 import { Avviso, AvvisoSeverity } from '../../../core/models';
-import { ModalComponent } from '../../../shared/components/modal/modal.component';
+import { BoIconComponent } from '../shared/bo-icon.component';
+import { BoSheetComponent } from '../shared/bo-sheet.component';
+import { entityId, formatDateTimeLabel, toLocalDateTimeInput } from '../shared/bo-utils';
+
+interface AvvisoForm {
+  title: string;
+  message: string;
+  severity: AvvisoSeverity;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+}
+
+type AvvisoState = 'live' | 'scheduled' | 'expired' | 'off';
+
+const SEVERITY_LABEL: Record<AvvisoSeverity, string> = {
+  info: 'Informazione',
+  warning: 'Attenzione',
+  danger: 'Importante',
+};
 
 @Component({
   selector: 'app-avvisi-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ModalComponent],
+  imports: [CommonModule, FormsModule, RouterModule, BoIconComponent, BoSheetComponent],
   template: `
-    <div class="management-page">
-      <div class="container">
-        <div class="page-top-nav">
-          <a routerLink="/gestore/dashboard" class="back-link">
-            <i class="fa-solid fa-arrow-left"></i> Torna alla Dashboard
-          </a>
+    <div class="bo-page">
+      <header class="bo-header">
+        <div>
+          <h1>Avvisi</h1>
+          <p>Brevi comunicazioni per i clienti: chiusure, ferie, orari speciali. Compaiono in cima alla pagina Eventi finché sono attivi.</p>
         </div>
+        <button type="button" class="bo-btn primary" (click)="openCreate()">
+          <bo-icon name="plus"></bo-icon> Nuovo avviso
+        </button>
+      </header>
 
-        <div class="management-header">
-          <div>
-            <h1>Gestione Avvisi & Chiusure</h1>
-            <p>Configura i banner dinamici visibili in cima a tutte le pagine del sito (es. ferie, chiusure, avvisi).</p>
-          </div>
-          <button (click)="openCreateModal()" class="btn btn-gold">
-            <i class="fa-solid fa-plus"></i> Nuovo Avviso
-          </button>
-        </div>
-
-        <div *ngIf="feedbackMsg()" class="alert-box" [ngClass]="isError() ? 'alert-error' : 'alert-success'">
-          <i class="fa-solid" [ngClass]="isError() ? 'fa-circle-xmark' : 'fa-circle-check'"></i>
-          <span>{{ feedbackMsg() }}</span>
-        </div>
-
-        <div class="table-card card">
-          <div class="table-responsive">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Titolo & Messaggio</th>
-                  <th>Livello Gravità</th>
-                  <th>Inizio Validità</th>
-                  <th>Fine Validità</th>
-                  <th>Stato Attivo</th>
-                  <th style="text-align: right;">Azioni</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let avviso of notices()">
-                  <td>
-                    <strong>{{ avviso.title }}</strong>
-                    <p class="sub-desc">{{ avviso.message }}</p>
-                  </td>
-                  <td>
-                    <span class="badge" [ngClass]="{
-                      'badge-info': avviso.severity === 'info',
-                      'badge-warning': avviso.severity === 'warning',
-                      'badge-danger': avviso.severity === 'danger'
-                    }">{{ avviso.severity }}</span>
-                  </td>
-                  <td>{{ avviso.startDate | date:'dd/MM/yyyy HH:mm' }}</td>
-                  <td>{{ avviso.endDate ? (avviso.endDate | date:'dd/MM/yyyy HH:mm') : 'Nessuna (Continuo)' }}</td>
-                  <td>
-                    <button
-                      (click)="toggleActive(avviso)"
-                      class="badge"
-                      [ngClass]="avviso.isActive ? 'badge-success' : 'badge-danger'"
-                      style="cursor: pointer; border: none;"
-                    >
-                      {{ avviso.isActive ? 'Attivo' : 'Disattivato' }}
-                    </button>
-                  </td>
-                  <td style="text-align: right;">
-                    <div class="action-btns">
-                      <button (click)="openEditModal(avviso)" class="btn-action edit" title="Modifica">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                      </button>
-                      <button (click)="deleteNotice(avviso)" class="btn-action delete" title="Elimina">
-                        <i class="fa-solid fa-trash-can"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Create / Edit Modal -->
-      <app-modal
-        *ngIf="isModalOpen()"
-        [title]="editingId() ? 'Modifica Avviso' : 'Crea Nuovo Banner Avviso'"
-        (closed)="closeModal()"
-      >
-        <form (ngSubmit)="saveNotice()">
-          <div class="form-group">
-            <label>Titolo Avviso *</label>
-            <input type="text" class="form-control" [(ngModel)]="formData.title" name="title" required placeholder="Chiusura Straordinaria">
-          </div>
-
-          <div class="form-group">
-            <label>Messaggio del Banner *</label>
-            <textarea class="form-control" [(ngModel)]="formData.message" name="message" rows="3" required placeholder="Testo visibile a tutti i visitatori..."></textarea>
-          </div>
-
-          <div class="form-group">
-            <label>Livello Gravità *</label>
-            <select class="form-control" [(ngModel)]="formData.severity" name="severity" required>
-              <option value="info">Info (Azzurro — Notizie e aperture)</option>
-              <option value="warning">Warning (Arancione — Consigli e posti limitati)</option>
-              <option value="danger">Danger (Rosso — Chiusure straordinarie o allerta)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Foto dell'Avviso (opzionali, una o più immagini)</label>
-            <textarea
-              class="form-control"
-              [(ngModel)]="imagesText"
-              name="imagesText"
-              rows="2"
-              placeholder="/uploads/avvisi/foto1.jpg&#10;/uploads/avvisi/foto2.jpg"
-            ></textarea>
-            <small style="display: block; margin-top: 0.35rem; color: var(--color-text-muted); font-size: 0.78rem;">
-              Inserisci uno o più URL per accompagnare l'avviso con una o più fotografie nel banner.
-            </small>
-          </div>
-
-          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-            <div class="form-group">
-              <label>Data Inizio</label>
-              <input type="datetime-local" class="form-control" [(ngModel)]="startDateString" name="startDate">
+      <section class="bo-panel">
+        <ul class="bo-list" *ngIf="notices().length > 0; else empty">
+          <li class="bo-row" *ngFor="let a of notices()" [class.is-muted]="state(a) === 'expired' || state(a) === 'off'">
+            <span class="sev-bar" [ngClass]="'sev-' + a.severity" aria-hidden="true"></span>
+            <div class="bo-row-main">
+              <div class="bo-row-title">{{ a.title }}</div>
+              <div class="bo-row-sub">{{ a.message }}</div>
+              <div class="status-line">
+                <span class="bo-chip" [ngClass]="stateClass(a)">{{ stateLabel(a) }}</span>
+                <span class="period">{{ period(a) }}</span>
+              </div>
             </div>
-            <div class="form-group">
-              <label>Data Fine (opzionale)</label>
-              <input type="datetime-local" class="form-control" [(ngModel)]="endDateString" name="endDate">
+            <div class="bo-row-actions">
+              <label class="bo-switch" [attr.aria-label]="'Attiva o disattiva ' + a.title">
+                <input type="checkbox" [checked]="a.isActive" (change)="toggle(a)" />
+                <span class="track"></span>
+              </label>
+              <button type="button" class="bo-btn small" (click)="openEdit(a)">
+                <bo-icon name="edit" [size]="16"></bo-icon> Modifica
+              </button>
+              <button type="button" class="bo-btn small danger-ghost" (click)="remove(a)" [attr.aria-label]="'Elimina ' + a.title">
+                <bo-icon name="trash" [size]="16"></bo-icon>
+              </button>
             </div>
+          </li>
+        </ul>
+        <ng-template #empty>
+          <div class="bo-empty">
+            <strong>Nessun avviso</strong>
+            <p>Ad esempio: «Chiusi per ferie dal 10 al 20 gennaio».</p>
+            <button type="button" class="bo-btn primary" (click)="openCreate()">Scrivi un avviso</button>
           </div>
+        </ng-template>
+      </section>
+    </div>
 
-          <div class="form-group" style="margin: 1.5rem 0;">
-            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-              <input type="checkbox" [(ngModel)]="formData.isActive" name="isActive">
-              <strong>Banner attivo e visibile immediatamente</strong>
+    <bo-sheet *ngIf="isEditorOpen()" [title]="editingId() ? 'Modifica avviso' : 'Nuovo avviso'" (closed)="closeEditor()">
+      <form class="bo-form" id="avviso-form" (ngSubmit)="save()">
+        <div class="bo-field">
+          <label for="a-title">Titolo</label>
+          <input id="a-title" name="title" [(ngModel)]="form.title" required placeholder="Es. Chiusura per ferie" />
+        </div>
+
+        <div class="bo-field">
+          <label for="a-msg">Messaggio</label>
+          <textarea id="a-msg" name="message" rows="3" [(ngModel)]="form.message" required
+            placeholder="Es. Il ristorante resterà chiuso dal 10 al 20 gennaio. Vi aspettiamo dal 21!"></textarea>
+        </div>
+
+        <div class="bo-field">
+          <span class="bo-label">Tipo</span>
+          <div class="sev-choice">
+            <label *ngFor="let s of severities" [class.selected]="form.severity === s" [ngClass]="'sev-' + s">
+              <input type="radio" name="severity" [value]="s" [(ngModel)]="form.severity" />
+              {{ severityLabel(s) }}
             </label>
           </div>
+        </div>
 
-          <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
-            <button type="button" (click)="closeModal()" class="btn btn-outline btn-sm">Annulla</button>
-            <button type="submit" class="btn btn-gold btn-sm" [disabled]="!formData.title || !formData.message">
-              {{ editingId() ? 'Salva Modifiche' : 'Pubblica Avviso' }}
-            </button>
+        <div class="bo-grid-2">
+          <div class="bo-field">
+            <label for="a-start">Visibile dal</label>
+            <input id="a-start" name="startDate" type="datetime-local" [(ngModel)]="form.startDate" />
           </div>
-        </form>
-      </app-modal>
-    </div>
+          <div class="bo-field">
+            <label for="a-end">Fino al</label>
+            <input id="a-end" name="endDate" type="datetime-local" [(ngModel)]="form.endDate" />
+            <span class="hint">Lascia vuoto per tenerlo finché non lo spegni.</span>
+          </div>
+        </div>
+
+        <label class="bo-switch">
+          <input type="checkbox" name="isActive" [(ngModel)]="form.isActive" />
+          <span class="track"></span>
+          Attivo
+        </label>
+      </form>
+
+      <ng-container sheet-footer>
+        <button type="button" class="bo-btn" (click)="closeEditor()">Annulla</button>
+        <button type="submit" form="avviso-form" class="bo-btn primary" [disabled]="isSaving() || !form.title.trim() || !form.message.trim()">
+          {{ isSaving() ? 'Salvataggio…' : (editingId() ? 'Salva modifiche' : 'Pubblica avviso') }}
+        </button>
+      </ng-container>
+    </bo-sheet>
+
+    <div class="bo-toast" *ngIf="toast() as t" [class.error]="t.error">{{ t.text }}</div>
   `,
   styles: [`
-    .management-page {
-      padding: 2.5rem 0 5rem;
-      background: var(--color-bg-main);
-      min-height: 80vh;
+    .sev-bar {
+      align-self: stretch;
+      width: 4px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      background: var(--color-accent);
+
+      &.sev-warning { background: var(--status-warning); }
+      &.sev-danger { background: var(--status-danger); }
     }
 
-    .page-top-nav {
-      margin-bottom: 1.5rem;
-      .back-link {
-        color: var(--color-navy-medium);
-        font-weight: 600;
-        font-size: 0.9rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        &:hover { color: var(--color-gold-dark); }
-      }
-    }
+    .bo-row .bo-row-sub { white-space: normal; }
 
-    .management-header {
+    .status-line {
       display: flex;
-      justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-      h1 { font-size: 2.2rem; color: var(--color-navy-dark); margin-bottom: 0.25rem; }
-      p { color: var(--color-text-muted); margin-bottom: 0; }
+      gap: 0.5rem;
+      margin-top: 0.45rem;
     }
 
-    .alert-box {
-      padding: 0.85rem 1.25rem;
-      border-radius: 6px;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.92rem;
-      &.alert-success { background: rgba(42, 157, 143, 0.15); color: var(--color-success); }
-      &.alert-error { background: rgba(217, 4, 41, 0.15); color: var(--color-danger); }
-    }
+    .period { font-size: 0.8rem; color: var(--text-muted); }
 
-    .table-card {
-      padding: 1.5rem;
-      .table-responsive { overflow-x: auto; }
-      .data-table {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: left;
-        font-size: 0.92rem;
+    .bo-row-actions .bo-switch { margin-right: 0.35rem; }
 
-        th {
-          background: var(--color-seafoam);
-          color: var(--color-navy-dark);
-          font-weight: 700;
-          padding: 0.85rem 1rem;
-          border-bottom: 2px solid var(--color-border);
-        }
+    .sev-choice {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
 
-        td {
-          padding: 1rem;
-          border-bottom: 1px solid var(--color-border);
-          vertical-align: middle;
+      label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        border: 1px solid var(--border-subtle);
+        border-radius: 6px;
+        background: var(--bg-surface);
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--text-stone);
+        cursor: pointer;
 
-          .sub-desc {
-            font-size: 0.8rem;
-            color: var(--color-text-muted);
-            margin-bottom: 0;
-            max-width: 300px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
+        input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 
-          .action-btns {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-            .btn-action {
-              background: transparent;
-              border: 1px solid var(--color-border);
-              border-radius: 4px;
-              width: 32px;
-              height: 32px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              cursor: pointer;
-              &.edit { color: var(--color-navy-medium); &:hover { background: var(--color-navy-medium); color: #fff; } }
-              &.delete { color: var(--color-danger); &:hover { background: var(--color-danger); color: #fff; } }
-            }
-          }
-        }
+        &.selected { border-width: 2px; color: var(--text-primary); }
+        &.selected.sev-info { border-color: var(--color-accent); }
+        &.selected.sev-warning { border-color: var(--status-warning); }
+        &.selected.sev-danger { border-color: var(--status-danger); }
       }
     }
   `],
 })
 export class AvvisiManagementComponent implements OnInit {
   private avvisoService = inject(AvvisoService);
+  private route = inject(ActivatedRoute);
 
-  public notices = signal<Avviso[]>([]);
-  public isModalOpen = signal<boolean>(false);
-  public editingId = signal<string | null>(null);
-  public feedbackMsg = signal<string>('');
-  public isError = signal<boolean>(false);
+  readonly severities: AvvisoSeverity[] = ['info', 'warning', 'danger'];
 
-  public startDateString: string = '';
-  public endDateString: string = '';
-  public imagesText: string = '';
+  notices = signal<Avviso[]>([]);
+  isEditorOpen = signal(false);
+  editingId = signal<string | null>(null);
+  isSaving = signal(false);
+  toast = signal<{ text: string; error: boolean } | null>(null);
 
-  public formData: Partial<Avviso> = {
-    title: '',
-    message: '',
-    severity: 'info',
-    isActive: true,
-  };
+  form: AvvisoForm = this.emptyForm();
 
   ngOnInit(): void {
-    this.loadNotices();
+    this.load();
+    if (this.route.snapshot.queryParamMap.get('nuovo')) this.openCreate();
   }
 
-  loadNotices(): void {
+  load(): void {
     this.avvisoService.getAllAvvisi().subscribe({
-      next: (res) => { if (res.success) this.notices.set(res.data); },
+      next: (res) => {
+        const order: Record<AvvisoState, number> = { live: 0, scheduled: 1, off: 2, expired: 3 };
+        this.notices.set([...(res.data || [])].sort((a, b) => order[this.state(a)] - order[this.state(b)]));
+      },
     });
   }
 
-  openCreateModal(): void {
+  severityLabel(s: AvvisoSeverity): string {
+    return SEVERITY_LABEL[s];
+  }
+
+  state(a: Avviso): AvvisoState {
+    if (!a.isActive) return 'off';
+    const now = Date.now();
+    if (a.endDate && +new Date(a.endDate) < now) return 'expired';
+    if (a.startDate && +new Date(a.startDate) > now) return 'scheduled';
+    return 'live';
+  }
+
+  stateLabel(a: Avviso): string {
+    return { live: 'Visibile ora', scheduled: 'Programmato', expired: 'Scaduto', off: 'Spento' }[this.state(a)];
+  }
+
+  stateClass(a: Avviso): string {
+    return { live: 'ok', scheduled: 'info', expired: 'off', off: 'off' }[this.state(a)];
+  }
+
+  period(a: Avviso): string {
+    const from = a.startDate ? `dal ${formatDateTimeLabel(a.startDate)}` : '';
+    const to = a.endDate ? ` al ${formatDateTimeLabel(a.endDate)}` : ' · senza scadenza';
+    return from + to;
+  }
+
+  toggle(a: Avviso): void {
+    const id = entityId(a);
+    this.notices.update((list) => list.map((n) => (entityId(n) === id ? { ...n, isActive: !a.isActive } : n)));
+    this.avvisoService.updateAvviso(id, { isActive: !a.isActive }).subscribe({
+      next: () => this.showToast(a.isActive ? 'Avviso spento.' : 'Avviso attivato.'),
+      error: (err) => {
+        this.showToast(err.message || 'Aggiornamento non riuscito.', true);
+        this.load();
+      },
+    });
+  }
+
+  openCreate(): void {
     this.editingId.set(null);
-    this.formData = {
+    this.form = this.emptyForm();
+    this.isEditorOpen.set(true);
+  }
+
+  openEdit(a: Avviso): void {
+    this.editingId.set(entityId(a));
+    this.form = {
+      title: a.title,
+      message: a.message,
+      severity: a.severity,
+      startDate: toLocalDateTimeInput(a.startDate),
+      endDate: toLocalDateTimeInput(a.endDate),
+      isActive: a.isActive,
+    };
+    this.isEditorOpen.set(true);
+  }
+
+  closeEditor(): void {
+    this.isEditorOpen.set(false);
+  }
+
+  save(): void {
+    const payload: any = {
+      title: this.form.title.trim(),
+      message: this.form.message.trim(),
+      severity: this.form.severity,
+      isActive: this.form.isActive,
+      startDate: this.form.startDate ? new Date(this.form.startDate).toISOString() : new Date().toISOString(),
+      endDate: this.form.endDate ? new Date(this.form.endDate).toISOString() : null,
+    };
+
+    const id = this.editingId();
+    const request = id ? this.avvisoService.updateAvviso(id, payload) : this.avvisoService.createAvviso(payload);
+    this.isSaving.set(true);
+    request.subscribe({
+      next: () => {
+        this.isSaving.set(false);
+        this.closeEditor();
+        this.showToast(id ? 'Modifiche salvate.' : 'Avviso pubblicato.');
+        this.load();
+      },
+      error: (err) => {
+        this.isSaving.set(false);
+        this.showToast(err.message || 'Salvataggio non riuscito.', true);
+      },
+    });
+  }
+
+  remove(a: Avviso): void {
+    if (!confirm(`Eliminare l'avviso «${a.title}»?`)) return;
+    this.avvisoService.deleteAvviso(entityId(a)).subscribe({
+      next: () => {
+        this.showToast('Avviso eliminato.');
+        this.load();
+      },
+      error: (err) => this.showToast(err.message || 'Eliminazione non riuscita.', true),
+    });
+  }
+
+  private emptyForm(): AvvisoForm {
+    return {
       title: '',
       message: '',
       severity: 'info',
+      startDate: toLocalDateTimeInput(new Date()),
+      endDate: '',
       isActive: true,
     };
-    this.imagesText = '';
-    this.startDateString = '';
-    this.endDateString = '';
-    this.isModalOpen.set(true);
   }
 
-  openEditModal(avviso: Avviso): void {
-    this.editingId.set(avviso.id || avviso._id || null);
-    this.formData = {
-      title: avviso.title,
-      message: avviso.message,
-      severity: avviso.severity,
-      isActive: avviso.isActive,
-    };
-    if (avviso.images && avviso.images.length > 0) {
-      this.imagesText = avviso.images.join('\n');
-    } else if (avviso.image) {
-      this.imagesText = avviso.image;
-    } else {
-      this.imagesText = '';
-    }
-    this.startDateString = avviso.startDate ? new Date(avviso.startDate).toISOString().slice(0, 16) : '';
-    this.endDateString = avviso.endDate ? new Date(avviso.endDate).toISOString().slice(0, 16) : '';
-    this.isModalOpen.set(true);
-  }
-
-  closeModal(): void {
-    this.isModalOpen.set(false);
-  }
-
-  saveNotice(): void {
-    const payload: any = { ...this.formData };
-    if (this.startDateString) payload.startDate = new Date(this.startDateString).toISOString();
-    if (this.endDateString) payload.endDate = new Date(this.endDateString).toISOString();
-    else payload.endDate = null;
-
-    const parsedImages = this.imagesText
-      ? this.imagesText.split(/[\n,]+/).map(s => s.trim()).filter(Boolean)
-      : [];
-    payload.images = parsedImages;
-    if (parsedImages.length > 0) {
-      payload.image = parsedImages[0];
-    }
-
-    const id = this.editingId();
-    if (id) {
-      this.avvisoService.updateAvviso(id, payload).subscribe({
-        next: () => {
-          this.setFeedback('Avviso aggiornato con successo.');
-          this.closeModal();
-          this.loadNotices();
-        },
-        error: (err) => this.setFeedback(err.message, true),
-      });
-    } else {
-      this.avvisoService.createAvviso(payload).subscribe({
-        next: () => {
-          this.setFeedback('Avviso pubblicato con successo.');
-          this.closeModal();
-          this.loadNotices();
-        },
-        error: (err) => this.setFeedback(err.message, true),
-      });
-    }
-  }
-
-  toggleActive(avviso: Avviso): void {
-    const id = avviso.id || avviso._id;
-    if (!id) return;
-    this.avvisoService.updateAvviso(id, { isActive: !avviso.isActive }).subscribe({
-      next: () => this.loadNotices(),
-    });
-  }
-
-  deleteNotice(avviso: Avviso): void {
-    const id = avviso.id || avviso._id;
-    if (!id) return;
-    if (confirm(`Eliminare l'avviso "${avviso.title}"?`)) {
-      this.avvisoService.deleteAvviso(id).subscribe({
-        next: () => {
-          this.setFeedback('Avviso eliminato.');
-          this.loadNotices();
-        },
-        error: (err) => this.setFeedback(err.message, true),
-      });
-    }
-  }
-
-  private setFeedback(msg: string, isErr = false): void {
-    this.feedbackMsg.set(msg);
-    this.isError.set(isErr);
-    setTimeout(() => this.feedbackMsg.set(''), 4000);
+  private showToast(text: string, error = false): void {
+    this.toast.set({ text, error });
+    setTimeout(() => this.toast.set(null), 3500);
   }
 }

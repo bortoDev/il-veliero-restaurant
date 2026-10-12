@@ -1,0 +1,439 @@
+// ==========================================================================
+// AREA GESTORE — stili condivisi del back-office
+// Stessa palette marina del sito, ma sobria: niente decorazioni, testi
+// leggibili, pulsanti con etichetta e bersagli grandi per l'uso da telefono.
+// ==========================================================================
+
+.bo-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 2rem 2rem 6rem;
+
+  @media (max-width: 760px) {
+    padding: 1.25rem 1rem 6.5rem;
+  }
+}
+
+// --- Intestazione di pagina -------------------------------------------------
+.bo-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+
+  h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(1.9rem, 4vw, 2.4rem);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+    margin: 0 0 0.3rem;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 760px) {
+    flex-direction: column;
+    align-items: stretch;
+
+    .bo-btn { width: 100%; }
+  }
+}
+
+// --- Pulsanti ---------------------------------------------------------------
+.bo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0 1.15rem;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+
+  svg { flex-shrink: 0; }
+
+  &:hover { border-color: var(--border-medium); background: var(--bg-sand-light); color: var(--text-primary); }
+  &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  &.primary {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #FFFFFF;
+
+    &:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); color: #FFFFFF; }
+  }
+
+  &.danger-ghost {
+    border-color: transparent;
+    background: transparent;
+    color: var(--status-danger);
+
+    &:hover { background: rgba(220, 38, 38, 0.06); }
+  }
+
+  &.ghost {
+    border-color: transparent;
+    background: transparent;
+    color: var(--color-accent-hover);
+
+    &:hover { background: var(--color-accent-subtle); }
+  }
+
+  &.small {
+    min-height: 36px;
+    padding: 0 0.8rem;
+    font-size: 0.82rem;
+  }
+}
+
+// --- Pannelli e liste -------------------------------------------------------
+.bo-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+
+  & + .bo-panel { margin-top: 1.25rem; }
+}
+
+.bo-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+
+  h2 {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0;
+  }
+}
+
+.bo-panel-body { padding: 1.25rem; }
+
+.bo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bo-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+
+  &:last-child { border-bottom: none; }
+
+  .bo-row-main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .bo-row-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.98rem;
+    line-height: 1.35;
+  }
+
+  .bo-row-sub {
+    font-size: 0.84rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bo-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+  }
+
+  &.is-muted .bo-row-title,
+  &.is-muted .bo-thumb { opacity: 0.5; }
+
+  // Su telefono: titolo a tutta riga, comandi (prezzo, interruttori, pulsanti) sulla riga sotto.
+  @media (max-width: 760px) {
+    flex-wrap: wrap;
+    row-gap: 0.75rem;
+    padding: 0.9rem 1rem;
+
+    .bo-row-main { flex: 1 1 calc(100% - 80px); }
+
+    .bo-row-actions {
+      margin-left: auto;
+      justify-content: flex-end;
+    }
+  }
+}
+
+.bo-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: var(--bg-surface-alt);
+  flex-shrink: 0;
+}
+
+// --- Chip di stato ----------------------------------------------------------
+.bo-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  background: var(--bg-surface-alt);
+  color: var(--text-stone);
+  white-space: nowrap;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  &.ok { background: rgba(22, 163, 74, 0.1); color: #15803D; }
+  &.warn { background: rgba(180, 83, 9, 0.1); color: #B45309; }
+  &.danger { background: rgba(220, 38, 38, 0.08); color: #B91C1C; }
+  &.info { background: var(--color-accent-subtle); color: var(--color-accent-hover); }
+  &.off { color: var(--text-muted); }
+}
+
+// --- Interruttore on/off ----------------------------------------------------
+.bo-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+
+  input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .track {
+    width: 42px;
+    height: 24px;
+    border-radius: 999px;
+    background: var(--border-medium);
+    position: relative;
+    flex-shrink: 0;
+    transition: background var(--transition-fast);
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      transition: transform var(--transition-fast);
+    }
+  }
+
+  input:checked + .track { background: var(--status-success); }
+  input:checked + .track::after { transform: translateX(18px); }
+  input:focus-visible + .track { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+}
+
+// --- Schede (categorie, filtri) ---------------------------------------------
+.bo-tabs {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  margin-bottom: 1rem;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+
+  button {
+    flex-shrink: 0;
+    min-height: 38px;
+    padding: 0 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-stone);
+    cursor: pointer;
+
+    .count {
+      margin-left: 0.35rem;
+      font-weight: 500;
+      color: var(--text-light);
+    }
+
+    &.active {
+      background: var(--bg-navy-dark);
+      border-color: var(--bg-navy-dark);
+      color: #FFFFFF;
+
+      .count { color: var(--text-inverse-muted); }
+    }
+  }
+}
+
+.bo-search {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  background: var(--bg-surface);
+  margin-bottom: 1rem;
+
+  &:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+}
+
+// --- Moduli -----------------------------------------------------------------
+.bo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.bo-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  > label,
+  .bo-label {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  input:not([type='checkbox']):not([type='file']),
+  select,
+  textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    background: var(--bg-surface);
+
+    &:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-subtle); }
+  }
+
+  textarea { resize: vertical; line-height: 1.5; }
+}
+
+.bo-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  @media (max-width: 560px) { grid-template-columns: 1fr; }
+}
+
+.bo-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+
+  @media (max-width: 560px) { grid-template-columns: 1fr 1fr; }
+}
+
+// --- Stato vuoto e notifiche ------------------------------------------------
+.bo-empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: var(--text-muted);
+
+  strong {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.35rem;
+  }
+
+  p { margin: 0 auto 1.25rem; max-width: 380px; color: var(--text-muted); }
+}
+
+.bo-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  z-index: 3000;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  background: var(--bg-navy-dark);
+  color: #FFFFFF;
+  font-size: 0.9rem;
+  box-shadow: var(--shadow-hover);
+  max-width: calc(100vw - 2rem);
+
+  &.error { background: #B91C1C; }
+
+  @media (max-width: 760px) { bottom: 5.5rem; }
+}
+
+.bo-section-label {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 2rem 0 0.75rem;
+}

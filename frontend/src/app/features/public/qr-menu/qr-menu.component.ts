@@ -316,7 +316,7 @@ export class QrMenuComponent implements OnInit {
   public filteredDishes = signal<MenuItem[]>([]);
 
   ngOnInit(): void {
-    this.menuService.getMenuItems().subscribe({
+    this.menuService.getMenuItems({ available: true }).subscribe({
       next: (res) => {
         if (res.success) {
           this.dishes.set(res.data);

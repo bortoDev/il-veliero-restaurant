@@ -5,12 +5,18 @@ import {
   ElementRef,
   ViewChild,
   inject,
+  signal,
+  computed,
+  OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { VideoCardMediaComponent } from '../../../shared/components/video-card/video-card.component';
 import { VelieroShipComponent } from '../../../shared/components/svg-icons';
 import { AnimationService } from '../../../core/services/animation.service';
+import { InfoService } from '../../../core/services/info.service';
+import { OpeningHours } from '../../../core/models';
+import { summarizeHours } from '../../../core/utils/opening-hours';
 import gsap from 'gsap';
 
 export interface ShowcaseCardItem {
@@ -232,15 +238,15 @@ export interface ShowcaseCardItem {
               <div class="schedule-editorial-list">
                 <div class="schedule-row">
                   <span class="service-label">Pranzo</span>
-                  <span class="service-time">12:00 – 14:00</span>
+                  <span class="service-time">{{ hours().lunch }}</span>
                 </div>
                 <div class="schedule-row">
                   <span class="service-label">Cena</span>
-                  <span class="service-time">19:00 – 22:00</span>
+                  <span class="service-time">{{ hours().dinner }}</span>
                 </div>
-                <div class="schedule-row schedule-closed">
+                <div class="schedule-row schedule-closed" *ngIf="hours().closedDays.length">
                   <span class="service-label">Riposo settimanale</span>
-                  <span class="service-time">Mercoledì chiuso</span>
+                  <span class="service-time">{{ hours().closedDays.join(', ') }} chiuso</span>
                 </div>
               </div>
             </div>
@@ -1166,8 +1172,20 @@ export interface ShowcaseCardItem {
     }
   `],
 })
-export class HomeComponent implements AfterViewInit, OnDestroy {
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private animService = inject(AnimationService);
+  private infoService = inject(InfoService);
+
+  /** Orari dal database (modificabili dall'area gestore). */
+  private openingHours = signal<OpeningHours | undefined>(undefined);
+  public hours = computed(() => summarizeHours(this.openingHours()));
+
+  ngOnInit(): void {
+    this.infoService.getInfoLocale().subscribe({
+      next: (res) => this.openingHours.set(res.data?.openingHours),
+      error: () => {},
+    });
+  }
 
   /**
    * Centralized configuration for the 3 showcase cards.

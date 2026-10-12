@@ -3,410 +3,251 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { InfoService } from '../../../core/services/info.service';
-import { InfoLocale, OpeningHours, DaySchedule } from '../../../core/models';
+import { DaySchedule, InfoLocale, OpeningHours } from '../../../core/models';
+import { BoIconComponent } from '../shared/bo-icon.component';
+import { DAY_KEYS, DAY_LABELS, DayKey, normalizeOpeningHours } from '../../../core/utils/opening-hours';
 
 @Component({
   selector: 'app-info-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, BoIconComponent],
   template: `
-    <div class="management-page">
-      <div class="container">
-        <div class="page-top-nav">
-          <a routerLink="/gestore/dashboard" class="back-link">
-            <i class="fa-solid fa-arrow-left"></i> Torna alla Dashboard Gestore
-          </a>
+    <div class="bo-page">
+      <header class="bo-header">
+        <div>
+          <h1>Orari e contatti</h1>
+          <p>Quello che scrivi qui compare nella pagina Dove Siamo, nella home e in fondo a ogni pagina del sito.</p>
         </div>
+      </header>
 
-        <div class="management-header">
-          <div>
-            <h1>Informazioni & Orari Locale</h1>
-            <p>Modifica recapiti telefonici, email, indirizzo, orari settimanali e storia del ristorante a Bassano del Grappa.</p>
+      <form *ngIf="info as d; else loading" (ngSubmit)="save()" id="info-form" class="info-form">
+        <!-- ORARI -->
+        <section class="bo-panel">
+          <div class="bo-panel-head"><h2>Orari di apertura</h2></div>
+          <div class="hours">
+            <div class="hours-row hours-head" aria-hidden="true">
+              <span>Giorno</span><span>Aperto</span><span>Pranzo</span><span>Cena</span>
+            </div>
+            <div class="hours-row" *ngFor="let key of days" [class.closed]="day(key).isClosed">
+              <span class="day-name">{{ dayLabel(key) }}</span>
+              <label class="bo-switch">
+                <input type="checkbox" [checked]="!day(key).isClosed" (change)="toggleDay(key)" [attr.aria-label]="dayLabel(key) + ' aperto'" />
+                <span class="track"></span>
+              </label>
+              <ng-container *ngIf="!day(key).isClosed; else closedTpl">
+                <span class="slot" data-label="Pranzo">
+                  <input type="time" [(ngModel)]="day(key).lunch!.open" [name]="key + '-lo'" aria-label="Pranzo dalle" />
+                  <span>–</span>
+                  <input type="time" [(ngModel)]="day(key).lunch!.close" [name]="key + '-lc'" aria-label="Pranzo alle" />
+                </span>
+                <span class="slot" data-label="Cena">
+                  <input type="time" [(ngModel)]="day(key).dinner!.open" [name]="key + '-do'" aria-label="Cena dalle" />
+                  <span>–</span>
+                  <input type="time" [(ngModel)]="day(key).dinner!.close" [name]="key + '-dc'" aria-label="Cena alle" />
+                </span>
+              </ng-container>
+              <ng-template #closedTpl><span class="closed-label">Chiuso</span></ng-template>
+            </div>
           </div>
-          <button (click)="saveInfo()" class="btn btn-gold" [disabled]="isLoading()">
-            <i class="fa-solid" [ngClass]="isLoading() ? 'fa-spinner fa-spin' : 'fa-floppy-disk'"></i>
-            {{ isLoading() ? 'Salvataggio...' : 'Salva Modifiche' }}
-          </button>
-        </div>
+          <div class="bo-panel-body">
+            <div class="bo-field">
+              <label for="i-notes">Nota sugli orari (facoltativa)</label>
+              <input id="i-notes" name="notes" [(ngModel)]="d.openingHours.notes" placeholder="Es. La pizzeria può aprire qualche minuto prima" />
+            </div>
+          </div>
+        </section>
 
-        <div *ngIf="feedbackMsg()" class="alert-box" [ngClass]="isError() ? 'alert-error' : 'alert-success'">
-          <i class="fa-solid" [ngClass]="isError() ? 'fa-circle-xmark' : 'fa-circle-check'"></i>
-          <span>{{ feedbackMsg() }}</span>
-        </div>
-
-        <form (ngSubmit)="saveInfo()" *ngIf="infoData">
-          <div class="editor-grid">
-            <!-- Left Column: Business & Contacts -->
-            <div class="editor-col">
-              <div class="card editor-card">
-                <h2><i class="fa-solid fa-building"></i> Dati Principali & Fiscali</h2>
-                
-                <div class="form-group">
-                  <label>Nome Insegna / Brand *</label>
-                  <input type="text" class="form-control" [(ngModel)]="infoData.name" name="name" required placeholder="Il Veliero — Ristorante & Pizzeria dal Campione del Mondo">
-                </div>
-
-                <div class="form-group">
-                  <label>Ragione Sociale</label>
-                  <input type="text" class="form-control" [(ngModel)]="infoData.legalName" name="legalName" placeholder="Pizza dal Campione del Mondo s.n.c. di Bortolato Federico e Mazzeracca Sabina">
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label>Partita IVA</label>
-                    <input type="text" class="form-control" [(ngModel)]="infoData.pIva" name="pIva" placeholder="03450720242">
-                  </div>
-                  <div class="form-group">
-                    <label>Codice SDI</label>
-                    <input type="text" class="form-control" [(ngModel)]="infoData.sdi" name="sdi" placeholder="P62QHVQ">
-                  </div>
-                </div>
+        <!-- CONTATTI -->
+        <section class="bo-panel">
+          <div class="bo-panel-head"><h2>Contatti</h2></div>
+          <div class="bo-panel-body bo-form">
+            <div class="bo-grid-2">
+              <div class="bo-field">
+                <label for="i-phone">Telefono per prenotare</label>
+                <input id="i-phone" name="phone" type="tel" [(ngModel)]="d.phone" required />
               </div>
-
-              <div class="card editor-card">
-                <h2><i class="fa-solid fa-address-book"></i> Recapiti & Sede</h2>
-
-                <div class="form-group">
-                  <label>Indirizzo *</label>
-                  <input type="text" class="form-control" [(ngModel)]="infoData.address" name="address" required placeholder="Via G. Fattori 7 - Località San Michele">
-                </div>
-
-                <div class="form-row form-row-3">
-                  <div class="form-group">
-                    <label>Città</label>
-                    <input type="text" class="form-control" [(ngModel)]="infoData.city" name="city" placeholder="Bassano del Grappa">
-                  </div>
-                  <div class="form-group">
-                    <label>CAP</label>
-                    <input type="text" class="form-control" [(ngModel)]="infoData.postalCode" name="postalCode" placeholder="36061">
-                  </div>
-                  <div class="form-group">
-                    <label>Provincia</label>
-                    <input type="text" class="form-control" [(ngModel)]="infoData.province" name="province" placeholder="VI">
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label>Telefono Fisso *</label>
-                    <div class="input-icon-wrap">
-                      <i class="fa-solid fa-phone"></i>
-                      <input type="tel" class="form-control" [(ngModel)]="infoData.phone" name="phone" required placeholder="0424 500 200">
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label>Cellulare / WhatsApp</label>
-                    <div class="input-icon-wrap">
-                      <i class="fa-brands fa-whatsapp"></i>
-                      <input type="tel" class="form-control" [(ngModel)]="infoData.whatsapp" name="whatsapp" placeholder="es. 333 1234567">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label>Email Principale *</label>
-                    <div class="input-icon-wrap">
-                      <i class="fa-solid fa-envelope"></i>
-                      <input type="email" class="form-control" [(ngModel)]="infoData.email" name="email" required placeholder="pizzadalcampione@gmail.com">
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label>Email Secondaria</label>
-                    <div class="input-icon-wrap">
-                      <i class="fa-solid fa-envelope-open"></i>
-                      <input type="email" class="form-control" [(ngModel)]="infoData.secondaryEmail" name="secondaryEmail" placeholder="pizzadalcampione@gmail.com">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="form-row" *ngIf="infoData.coordinates">
-                  <div class="form-group">
-                    <label>Latitudine GPS</label>
-                    <input type="number" step="0.0001" class="form-control" [(ngModel)]="infoData.coordinates.lat" name="lat">
-                  </div>
-                  <div class="form-group">
-                    <label>Longitudine GPS</label>
-                    <input type="number" step="0.0001" class="form-control" [(ngModel)]="infoData.coordinates.lng" name="lng">
-                  </div>
-                </div>
-              </div>
-
-              <!-- Social Links -->
-              <div class="card editor-card" *ngIf="infoData.socialLinks">
-                <h2><i class="fa-solid fa-share-nodes"></i> Social Links</h2>
-                <div class="form-group">
-                  <label>Instagram URL</label>
-                  <div class="input-icon-wrap">
-                    <i class="fa-brands fa-instagram"></i>
-                    <input type="url" class="form-control" [(ngModel)]="infoData.socialLinks.instagram" name="instagram" placeholder="https://www.instagram.com/ilvelierotrattoria">
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label>Facebook URL</label>
-                  <div class="input-icon-wrap">
-                    <i class="fa-brands fa-facebook"></i>
-                    <input type="url" class="form-control" [(ngModel)]="infoData.socialLinks.facebook" name="facebook" placeholder="https://facebook.com/ilvelierobassano">
-                  </div>
-                </div>
+              <div class="bo-field">
+                <label for="i-wa">Cellulare / WhatsApp</label>
+                <input id="i-wa" name="whatsapp" type="tel" [(ngModel)]="d.whatsapp" />
               </div>
             </div>
-
-            <!-- Right Column: Opening Hours & Story -->
-            <div class="editor-col">
-              <div class="card editor-card" *ngIf="infoData.openingHours">
-                <h2><i class="fa-solid fa-clock"></i> Orari di Apertura Settimanali</h2>
-                <p class="section-desc">Imposta le fasce orarie per pranzo e cena (Mercoledì chiuso per turno di riposo).</p>
-
-                <div class="days-schedule-table">
-                  <div *ngFor="let day of daysList" class="day-row" [ngClass]="{'is-closed': getSchedule(day.key).isClosed}">
-                    <div class="day-name">
-                      <strong>{{ day.label }}</strong>
-                    </div>
-
-                    <div class="day-closed-toggle">
-                      <label>
-                        <input type="checkbox" [(ngModel)]="getSchedule(day.key).isClosed" [name]="day.key + '_closed'">
-                        Chiuso
-                      </label>
-                    </div>
-
-                    <div class="day-shifts" *ngIf="!getSchedule(day.key).isClosed">
-                      <div class="shift-group">
-                        <span class="shift-label">Pranzo:</span>
-                        <input type="time" class="form-control time-input" [(ngModel)]="getSchedule(day.key).lunch!.open" [name]="day.key + '_lunch_open'">
-                        <span>-</span>
-                        <input type="time" class="form-control time-input" [(ngModel)]="getSchedule(day.key).lunch!.close" [name]="day.key + '_lunch_close'">
-                      </div>
-
-                      <div class="shift-group">
-                        <span class="shift-label">Cena:</span>
-                        <input type="time" class="form-control time-input" [(ngModel)]="getSchedule(day.key).dinner!.open" [name]="day.key + '_dinner_open'">
-                        <span>-</span>
-                        <input type="time" class="form-control time-input" [(ngModel)]="getSchedule(day.key).dinner!.close" [name]="day.key + '_dinner_close'">
-                      </div>
-                    </div>
-
-                    <div class="day-closed-msg" *ngIf="getSchedule(day.key).isClosed">
-                      <span class="badge badge-danger">Chiuso per Riposo Settimanale</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="form-group" style="margin-top: 1.5rem;">
-                  <label>Note sugli Orari</label>
-                  <input type="text" class="form-control" [(ngModel)]="infoData.openingHours.notes" name="notes" placeholder="es. Pranzo 12:00-14:00 | Cena 19:00-22:00. Chiuso il Mercoledì per riposo settimanale.">
-                </div>
+            <div class="bo-grid-2">
+              <div class="bo-field">
+                <label for="i-email">Email</label>
+                <input id="i-email" name="email" type="email" [(ngModel)]="d.email" required />
               </div>
-
-              <div class="card editor-card">
-                <h2><i class="fa-solid fa-book-open"></i> Storia del Ristorante</h2>
-                <p class="section-desc">Testo narrativo visualizzato nella pagina "La Nostra Storia" e nelle sezioni informative.</p>
-                <div class="form-group">
-                  <textarea class="form-control" [(ngModel)]="infoData.historyStory" name="historyStory" rows="8" required placeholder="Inserisci il testo narrativo della storia..."></textarea>
-                </div>
+              <div class="bo-field">
+                <label for="i-email2">Seconda email</label>
+                <input id="i-email2" name="secondaryEmail" type="email" [(ngModel)]="d.secondaryEmail" />
+              </div>
+            </div>
+            <div class="bo-field">
+              <label for="i-addr">Indirizzo</label>
+              <input id="i-addr" name="address" [(ngModel)]="d.address" required />
+            </div>
+            <div class="bo-grid-3">
+              <div class="bo-field">
+                <label for="i-city">Città</label>
+                <input id="i-city" name="city" [(ngModel)]="d.city" />
+              </div>
+              <div class="bo-field">
+                <label for="i-cap">CAP</label>
+                <input id="i-cap" name="postalCode" inputmode="numeric" [(ngModel)]="d.postalCode" />
+              </div>
+              <div class="bo-field">
+                <label for="i-prov">Provincia</label>
+                <input id="i-prov" name="province" [(ngModel)]="d.province" />
               </div>
             </div>
           </div>
+        </section>
 
-          <div class="form-actions-bottom card">
-            <button type="submit" class="btn btn-gold btn-lg" [disabled]="isLoading()">
-              <i class="fa-solid" [ngClass]="isLoading() ? 'fa-spinner fa-spin' : 'fa-floppy-disk'"></i>
-              Salva Tutte le Modifiche
-            </button>
+        <!-- SOCIAL -->
+        <section class="bo-panel">
+          <div class="bo-panel-head"><h2>Social</h2></div>
+          <div class="bo-panel-body bo-form">
+            <div class="bo-field">
+              <label for="i-ig">Instagram</label>
+              <input id="i-ig" name="instagram" type="url" [(ngModel)]="d.socialLinks!.instagram" placeholder="https://www.instagram.com/…" />
+            </div>
+            <div class="bo-field">
+              <label for="i-fb">Facebook</label>
+              <input id="i-fb" name="facebook" type="url" [(ngModel)]="d.socialLinks!.facebook" placeholder="https://facebook.com/…" />
+            </div>
           </div>
-        </form>
-      </div>
+        </section>
+
+        <!-- DATI AZIENDALI -->
+        <section class="bo-panel">
+          <div class="bo-panel-head"><h2>Dati aziendali</h2></div>
+          <div class="bo-panel-body bo-form">
+            <div class="bo-field">
+              <label for="i-name">Nome del locale</label>
+              <input id="i-name" name="name" [(ngModel)]="d.name" required />
+            </div>
+            <div class="bo-field">
+              <label for="i-legal">Ragione sociale</label>
+              <input id="i-legal" name="legalName" [(ngModel)]="d.legalName" />
+            </div>
+            <div class="bo-grid-2">
+              <div class="bo-field">
+                <label for="i-piva">Partita IVA</label>
+                <input id="i-piva" name="pIva" [(ngModel)]="d.pIva" />
+              </div>
+              <div class="bo-field">
+                <label for="i-sdi">Codice SDI</label>
+                <input id="i-sdi" name="sdi" [(ngModel)]="d.sdi" />
+              </div>
+            </div>
+          </div>
+        </section>
+      </form>
+
+      <ng-template #loading>
+        <div class="bo-empty"><p>Caricamento…</p></div>
+      </ng-template>
     </div>
+
+    <!-- Barra di salvataggio sempre visibile -->
+    <div class="save-bar" *ngIf="info">
+      <span class="save-hint">{{ isDirty() ? 'Ci sono modifiche non salvate' : 'Tutto salvato' }}</span>
+      <button type="submit" form="info-form" class="bo-btn primary" [disabled]="isSaving()">
+        <bo-icon name="check" [size]="18"></bo-icon> {{ isSaving() ? 'Salvataggio…' : 'Salva' }}
+      </button>
+    </div>
+
+    <div class="bo-toast" *ngIf="toast() as t" [class.error]="t.error">{{ t.text }}</div>
   `,
   styles: [`
-    .management-page {
-      padding: 2.5rem 0 5rem;
-      background: var(--color-bg-main);
-      min-height: 80vh;
-    }
+    .info-form { display: block; }
 
-    .page-top-nav {
-      margin-bottom: 1.5rem;
-      .back-link {
-        color: var(--color-navy-medium);
-        font-weight: 600;
-        font-size: 0.9rem;
-        display: inline-flex;
+    .hours { padding: 0.25rem 0; }
+
+    .hours-row {
+      display: grid;
+      grid-template-columns: 120px 64px 1fr 1fr;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.6rem 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+
+      &.hours-head {
+        padding-top: 0.75rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+
+      &.closed { background: var(--bg-sand-light); }
+
+      .day-name { font-weight: 600; color: var(--text-primary); }
+
+      .slot {
+        display: flex;
         align-items: center;
         gap: 0.4rem;
-        &:hover { color: var(--color-gold-dark); }
+        color: var(--text-muted);
+
+        input {
+          min-height: 40px;
+          padding: 0 0.5rem;
+          border: 1px solid var(--border-subtle);
+          border-radius: 6px;
+          font-family: var(--font-sans);
+          font-size: 0.92rem;
+          background: var(--bg-surface);
+          width: 100%;
+          max-width: 112px;
+        }
+      }
+
+      .closed-label {
+        grid-column: span 2;
+        font-size: 0.9rem;
+        font-style: italic;
+        color: var(--status-danger);
       }
     }
 
-    .management-header {
+    .save-bar {
+      position: fixed;
+      left: 248px;
+      right: 0;
+      bottom: 0;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-      h1 { font-size: 2.2rem; color: var(--color-navy-dark); margin-bottom: 0.25rem; }
-      p { color: var(--color-text-muted); margin-bottom: 0; }
-    }
-
-    .alert-box {
-      padding: 0.85rem 1.25rem;
-      border-radius: 6px;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.92rem;
-      &.alert-success { background: rgba(42, 157, 143, 0.15); color: var(--color-success); }
-      &.alert-error { background: rgba(217, 4, 41, 0.15); color: var(--color-danger); }
-    }
-
-    .editor-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      align-items: start;
-
-      .editor-col {
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-      }
-
-      .editor-card {
-        padding: 2rem;
-
-        h2 {
-          font-size: 1.25rem;
-          color: var(--color-navy-dark);
-          margin-bottom: 1.25rem;
-          padding-bottom: 0.5rem;
-          border-bottom: 2px solid var(--color-seafoam);
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-
-          i {
-            color: var(--color-gold-dark);
-            font-size: 1.1rem;
-          }
-        }
-
-        .section-desc {
-          font-size: 0.85rem;
-          color: var(--color-text-muted);
-          margin-bottom: 1.25rem;
-          line-height: 1.45;
-        }
-      }
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-
-      &.form-row-3 {
-        grid-template-columns: 2fr 1fr 1fr;
-      }
-    }
-
-    .input-icon-wrap {
-      position: relative;
-      i {
-        position: absolute;
-        left: 0.9rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--color-text-light);
-      }
-      .form-control {
-        padding-left: 2.5rem;
-      }
-    }
-
-    .days-schedule-table {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-
-      .day-row {
-        display: flex;
-        align-items: center;
-        padding: 0.75rem 1rem;
-        background: var(--color-seafoam);
-        border-radius: 6px;
-        gap: 1rem;
-        flex-wrap: wrap;
-
-        &.is-closed {
-          background: #f8fafc;
-          opacity: 0.85;
-        }
-
-        .day-name {
-          width: 100px;
-          color: var(--color-navy-dark);
-        }
-
-        .day-closed-toggle {
-          display: flex;
-          align-items: center;
-          font-size: 0.85rem;
-          margin-right: 0.5rem;
-
-          label {
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-            cursor: pointer;
-            margin-bottom: 0;
-          }
-        }
-
-        .day-shifts {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          flex: 1;
-          flex-wrap: wrap;
-
-          .shift-group {
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-            font-size: 0.82rem;
-
-            .shift-label {
-              font-weight: 600;
-              color: var(--color-navy-medium);
-            }
-
-            .time-input {
-              width: 85px;
-              padding: 0.25rem 0.4rem;
-              font-size: 0.82rem;
-            }
-          }
-        }
-
-        .day-closed-msg {
-          flex: 1;
-        }
-      }
-    }
-
-    .form-actions-bottom {
-      margin-top: 2.5rem;
-      padding: 1.5rem 2rem;
-      display: flex;
       justify-content: flex-end;
+      gap: 1rem;
+      padding: 0.8rem 2rem;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-subtle);
+      z-index: 50;
+
+      .save-hint { font-size: 0.85rem; color: var(--text-muted); }
     }
 
-    @media (max-width: 992px) {
-      .editor-grid {
-        grid-template-columns: 1fr;
+    @media (max-width: 900px) {
+      .save-bar { left: 0; bottom: 60px; padding: 0.6rem 1rem; }
+    }
+
+    @media (max-width: 640px) {
+      .hours-row {
+        grid-template-columns: 1fr auto;
+        row-gap: 0.5rem;
+
+        &.hours-head { display: none; }
+
+        .slot { grid-column: span 2; }
+        .slot::before {
+          content: attr(data-label);
+          width: 56px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: var(--text-stone);
+        }
+        .closed-label { grid-column: span 2; }
       }
     }
   `],
@@ -414,95 +255,68 @@ import { InfoLocale, OpeningHours, DaySchedule } from '../../../core/models';
 export class InfoManagementComponent implements OnInit {
   private infoService = inject(InfoService);
 
-  public infoData: Partial<InfoLocale> | null = null;
-  public feedbackMsg = signal<string>('');
-  public isError = signal<boolean>(false);
-  public isLoading = signal<boolean>(false);
+  readonly days = DAY_KEYS;
 
-  public daysList: Array<{ key: keyof OpeningHours; label: string }> = [
-    { key: 'monday', label: 'Lunedì' },
-    { key: 'tuesday', label: 'Martedì' },
-    { key: 'wednesday', label: 'Mercoledì' },
-    { key: 'thursday', label: 'Giovedì' },
-    { key: 'friday', label: 'Venerdì' },
-    { key: 'saturday', label: 'Sabato' },
-    { key: 'sunday', label: 'Domenica' },
-  ];
+  info: (Partial<InfoLocale> & { openingHours: OpeningHours }) | null = null;
+  private savedSnapshot = '';
+
+  isSaving = signal(false);
+  toast = signal<{ text: string; error: boolean } | null>(null);
 
   ngOnInit(): void {
     this.infoService.getInfoLocale().subscribe({
       next: (res) => {
-        if (res.success && res.data) {
-          const raw = res.data;
-          this.infoData = {
-            ...raw,
-            coordinates: raw.coordinates || { lat: 45.7667, lng: 11.7333 },
-            socialLinks: {
-              facebook: 'https://facebook.com/ilvelierobassano',
-              instagram: 'https://www.instagram.com/ilvelierotrattoria',
-              whatsapp: '',
-              ...(raw.socialLinks || {}),
-            },
-            openingHours: this.normalizeOpeningHours(raw.openingHours),
-          };
-        }
+        const raw = res.data;
+        this.info = {
+          ...raw,
+          socialLinks: { instagram: '', facebook: '', ...(raw?.socialLinks || {}) },
+          openingHours: normalizeOpeningHours(raw?.openingHours),
+        };
+        this.savedSnapshot = JSON.stringify(this.info);
       },
+      error: () => this.showToast('Impossibile caricare i dati del locale.', true),
     });
   }
 
-  private normalizeOpeningHours(hours?: OpeningHours): OpeningHours {
-    const defaultSchedule = (lunchOpen = '12:00', lunchClose = '14:00', dinnerOpen = '19:00', dinnerClose = '22:00', isClosed = false): DaySchedule => ({
-      lunch: { open: lunchOpen, close: lunchClose },
-      dinner: { open: dinnerOpen, close: dinnerClose },
-      isClosed,
-    });
-
-    return {
-      monday: hours?.monday || defaultSchedule(),
-      tuesday: hours?.tuesday || defaultSchedule(),
-      wednesday: hours?.wednesday || defaultSchedule('', '', '', '', true),
-      thursday: hours?.thursday || defaultSchedule(),
-      friday: hours?.friday || defaultSchedule(),
-      saturday: hours?.saturday || defaultSchedule(),
-      sunday: hours?.sunday || defaultSchedule(),
-      notes: hours?.notes || 'Pranzo 12:00-14:00 | Cena 19:00-22:00. Chiuso il Mercoledì per riposo settimanale.',
-    };
+  dayLabel(key: DayKey): string {
+    return DAY_LABELS[key];
   }
 
-  getSchedule(dayKey: keyof OpeningHours): DaySchedule {
-    if (!this.infoData || !this.infoData.openingHours) {
-      return { lunch: { open: '', close: '' }, dinner: { open: '', close: '' }, isClosed: false };
-    }
-    const schedule = this.infoData.openingHours[dayKey];
-    if (typeof schedule === 'object' && schedule !== null && 'isClosed' in schedule) {
-      const s = schedule as DaySchedule;
-      s.lunch = s.lunch || { open: '12:00', close: '14:00' };
-      s.dinner = s.dinner || { open: '19:00', close: '22:00' };
-      return s;
-    }
-    return { lunch: { open: '', close: '' }, dinner: { open: '', close: '' }, isClosed: false };
+  day(key: DayKey): DaySchedule {
+    return this.info!.openingHours[key] as DaySchedule;
   }
 
-  saveInfo(): void {
-    if (!this.infoData) return;
-    this.isLoading.set(true);
+  toggleDay(key: DayKey): void {
+    const d = this.day(key);
+    d.isClosed = !d.isClosed;
+    if (!d.isClosed) {
+      if (!d.lunch?.open) d.lunch = { open: '12:00', close: '14:00' };
+      if (!d.dinner?.open) d.dinner = { open: '19:00', close: '22:00' };
+    }
+  }
 
-    this.infoService.updateInfoLocale(this.infoData).subscribe({
+  isDirty(): boolean {
+    return !!this.info && JSON.stringify(this.info) !== this.savedSnapshot;
+  }
+
+  save(): void {
+    if (!this.info) return;
+    this.isSaving.set(true);
+    this.infoService.updateInfoLocale(this.info).subscribe({
       next: () => {
-        this.isLoading.set(false);
-        this.setFeedback('Informazioni del locale e orari salvati con successo.');
+        this.isSaving.set(false);
+        this.savedSnapshot = JSON.stringify(this.info);
+        this.showToast('Salvato. Il sito è già aggiornato.');
       },
       error: (err) => {
-        this.isLoading.set(false);
-        this.setFeedback(err.message || 'Errore durante il salvataggio dei dati.', true);
+        this.isSaving.set(false);
+        this.showToast(err.message || 'Salvataggio non riuscito.', true);
       },
     });
   }
 
-  private setFeedback(msg: string, isErr = false): void {
-    this.feedbackMsg.set(msg);
-    this.isError.set(isErr);
-    setTimeout(() => this.feedbackMsg.set(''), 4000);
+  private showToast(text: string, error = false): void {
+    this.toast.set({ text, error });
+    setTimeout(() => this.toast.set(null), 3500);
   }
 }
-

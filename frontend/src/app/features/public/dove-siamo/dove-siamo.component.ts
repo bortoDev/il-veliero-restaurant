@@ -1,6 +1,7 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InfoService } from '../../../core/services/info.service';
+import { dayRows } from '../../../core/utils/opening-hours';
 import { InfoLocale } from '../../../core/models';
 import { VelieroShipComponent } from '../../../shared/components/svg-icons';
 
@@ -75,33 +76,9 @@ import { VelieroShipComponent } from '../../../shared/components/svg-icons';
               </div>
 
               <div class="hours-table">
-                <div class="hours-item">
-                  <span class="day-label">Lunedì</span>
-                  <span class="day-schedule">12:00 – 14:00 &nbsp;·&nbsp; 19:00 – 22:00</span>
-                </div>
-                <div class="hours-item">
-                  <span class="day-label">Martedì</span>
-                  <span class="day-schedule">12:00 – 14:00 &nbsp;·&nbsp; 19:00 – 22:00</span>
-                </div>
-                <div class="hours-item closed">
-                  <span class="day-label">Mercoledì</span>
-                  <span class="day-schedule day-closed">Chiuso per riposo settimanale</span>
-                </div>
-                <div class="hours-item">
-                  <span class="day-label">Giovedì</span>
-                  <span class="day-schedule">12:00 – 14:00 &nbsp;·&nbsp; 19:00 – 22:00</span>
-                </div>
-                <div class="hours-item">
-                  <span class="day-label">Venerdì</span>
-                  <span class="day-schedule">12:00 – 14:00 &nbsp;·&nbsp; 19:00 – 22:00</span>
-                </div>
-                <div class="hours-item">
-                  <span class="day-label">Sabato</span>
-                  <span class="day-schedule">12:00 – 14:00 &nbsp;·&nbsp; 19:00 – 22:00</span>
-                </div>
-                <div class="hours-item">
-                  <span class="day-label">Domenica</span>
-                  <span class="day-schedule">12:00 – 14:00 &nbsp;·&nbsp; 19:00 – 22:00</span>
+                <div class="hours-item" *ngFor="let row of hourRows()" [class.closed]="row.isClosed">
+                  <span class="day-label">{{ row.label }}</span>
+                  <span class="day-schedule" [class.day-closed]="row.isClosed">{{ row.isClosed ? 'Chiuso per riposo settimanale' : row.text }}</span>
                 </div>
               </div>
             </div>
@@ -430,6 +407,8 @@ import { VelieroShipComponent } from '../../../shared/components/svg-icons';
 export class DoveSiamoComponent implements OnInit {
   private infoService = inject(InfoService);
   public info = signal<InfoLocale | null>(null);
+  /** Orari dal database (modificabili dall'area gestore), con gli orari reali come riserva. */
+  public hourRows = computed(() => dayRows(this.info()?.openingHours));
 
   ngOnInit(): void {
     this.infoService.getInfoLocale().subscribe({

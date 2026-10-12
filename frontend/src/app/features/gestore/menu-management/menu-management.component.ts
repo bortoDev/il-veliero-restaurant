@@ -1,541 +1,498 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MenuService } from '../../../core/services/menu.service';
-import { MenuItem, MenuCategory } from '../../../core/models';
-import { ModalComponent } from '../../../shared/components/modal/modal.component';
-import { AllergenBadgeComponent } from '../../../shared/components/allergen-badge/allergen-badge.component';
+import { MenuCategory, MenuItem } from '../../../core/models';
+import { BoIconComponent } from '../shared/bo-icon.component';
+import { BoSheetComponent } from '../shared/bo-sheet.component';
+import { PhotoPickerComponent } from '../shared/photo-picker.component';
+import { entityId } from '../shared/bo-utils';
+
+const CATEGORIES: { key: MenuCategory; label: string }[] = [
+  { key: 'pesce', label: 'Pesce' },
+  { key: 'pizze', label: 'Pizze' },
+  { key: 'insalatone', label: 'Insalatone' },
+  { key: 'piatti_estivi', label: 'Piatti estivi' },
+  { key: 'carne', label: 'Carne' },
+  { key: 'contorni', label: 'Contorni' },
+  { key: 'vini', label: 'Vini' },
+  { key: 'bevande', label: 'Bevande' },
+];
+
+/** Sottocategorie usate dalla pagina pubblica del menù (stesse chiavi del database). */
+const SUBCATEGORIES: Record<MenuCategory, { key: string; label: string }[]> = {
+  pesce: [
+    { key: 'antipasti', label: 'Antipasti' },
+    { key: 'crudo', label: 'Crudo' },
+    { key: 'pescato_della_settimana', label: 'Pescato della settimana' },
+    { key: 'primi', label: 'Primi' },
+    { key: 'secondi', label: 'Secondi' },
+  ],
+  pizze: [
+    { key: 'stagionali', label: 'Di stagione' },
+    { key: 'classiche', label: 'Classiche' },
+    { key: 'della_casa', label: 'Della casa' },
+    { key: 'speciali', label: 'Speciali' },
+    { key: 'bianche', label: 'Bianche' },
+    { key: 'vegetariane', label: 'Verdure' },
+  ],
+  insalatone: [{ key: 'insalatone', label: 'Insalatone' }],
+  piatti_estivi: [{ key: 'piatti_estivi', label: 'Piatti estivi' }],
+  carne: [
+    { key: 'antipasti', label: 'Antipasti' },
+    { key: 'primi', label: 'Primi' },
+    { key: 'secondi', label: 'Secondi' },
+  ],
+  contorni: [
+    { key: 'contorni', label: 'Contorni' },
+    { key: 'coperto', label: 'Coperto' },
+  ],
+  vini: [
+    { key: 'bollicine_charmat', label: 'Bollicine Charmat' },
+    { key: 'bollicine_metodo_classico', label: 'Metodo classico' },
+    { key: 'bianchi', label: 'Bianchi' },
+    { key: 'rossi', label: 'Rossi' },
+    { key: 'rosati', label: 'Rosati' },
+  ],
+  bevande: [
+    { key: 'caffetteria', label: 'Caffetteria' },
+    { key: 'bibite', label: 'Bibite' },
+    { key: 'birre', label: 'Birre' },
+    { key: 'vino_sfuso', label: 'Vino della casa' },
+    { key: 'amari', label: 'Amari' },
+    { key: 'grappe', label: 'Grappe' },
+  ],
+};
+
+/** Tabella allergeni ufficiale 1–14, con le chiavi usate dal database. */
+const ALLERGENS: { n: number; slug: string; label: string }[] = [
+  { n: 1, slug: 'pesce', label: 'Pesce' },
+  { n: 2, slug: 'crostacei', label: 'Crostacei' },
+  { n: 3, slug: 'molluschi', label: 'Molluschi' },
+  { n: 4, slug: 'glutine', label: 'Glutine' },
+  { n: 5, slug: 'uova', label: 'Uova' },
+  { n: 6, slug: 'latte', label: 'Latte' },
+  { n: 7, slug: 'sedano', label: 'Sedano' },
+  { n: 8, slug: 'senape', label: 'Senape' },
+  { n: 9, slug: 'semi_di_sesamo', label: 'Sesamo' },
+  { n: 10, slug: 'frutta_a_guscio', label: 'Frutta a guscio' },
+  { n: 11, slug: 'arachidi', label: 'Arachidi' },
+  { n: 12, slug: 'anidride_solforosa', label: 'Solfiti' },
+  { n: 13, slug: 'lupini', label: 'Lupini' },
+  { n: 14, slug: 'soia', label: 'Soia' },
+];
+
+interface DishForm {
+  title: string;
+  description: string;
+  price: number | null;
+  category: MenuCategory;
+  subcategory: string;
+  allergenNumbers: number[];
+  isAvailable: boolean;
+  isChefSpecial: boolean;
+  images: string[];
+}
+
+interface DishGroup {
+  label: string;
+  dishes: MenuItem[];
+}
 
 @Component({
   selector: 'app-menu-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ModalComponent, AllergenBadgeComponent],
+  imports: [CommonModule, FormsModule, RouterModule, BoIconComponent, BoSheetComponent, PhotoPickerComponent],
   template: `
-    <div class="management-page">
-      <div class="container">
-        <div class="page-top-nav">
-          <a routerLink="/gestore/dashboard" class="back-link">
-            <i class="fa-solid fa-arrow-left"></i> Torna alla Dashboard
-          </a>
+    <div class="bo-page">
+      <header class="bo-header">
+        <div>
+          <h1>Menù</h1>
+          <p>Prezzi, descrizioni, allergeni e disponibilità. Se un piatto finisce, spegnilo: sparisce subito dal sito.</p>
         </div>
+        <button type="button" class="bo-btn primary" (click)="openCreate()">
+          <bo-icon name="plus"></bo-icon> Nuova voce
+        </button>
+      </header>
 
-        <div class="management-header">
-          <div>
-            <h1>Gestione Menù</h1>
-            <p>Aggiungi, modifica o elimina i piatti presenti nel menù del ristorante.</p>
-          </div>
-          <button (click)="openCreateModal()" class="btn btn-gold">
-            <i class="fa-solid fa-plus"></i> Nuovo Piatto
-          </button>
-        </div>
-
-        <!-- Success/Error Feedback -->
-        <div *ngIf="feedbackMsg()" class="alert-box" [ngClass]="isErrorFeedback() ? 'alert-error' : 'alert-success'">
-          <i class="fa-solid" [ngClass]="isErrorFeedback() ? 'fa-circle-xmark' : 'fa-circle-check'"></i>
-          <span>{{ feedbackMsg() }}</span>
-        </div>
-
-        <!-- Dishes Table Card -->
-        <div class="table-card card">
-          <div class="table-filters">
-            <input
-              type="text"
-              class="form-control table-search"
-              placeholder="Filtra per nome o descrizione..."
-              [(ngModel)]="searchFilter"
-              (ngModelChange)="applyLocalFilter()"
-            >
-            <select class="form-control table-cat-select" [(ngModel)]="categoryFilter" (ngModelChange)="applyLocalFilter()">
-              <option value="">Tutte le Categorie</option>
-              <option value="pesce">Pesce</option>
-              <option value="carne">Carne</option>
-              <option value="pizze">Pizze</option>
-              <option value="contorni">Contorni</option>
-              <option value="vini">Vini</option>
-            </select>
-          </div>
-
-          <div class="table-responsive">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Piatto</th>
-                  <th>Categoria</th>
-                  <th>Prezzo</th>
-                  <th>Allergeni</th>
-                  <th>Disponibile</th>
-                  <th>Specialità</th>
-                  <th style="text-align: right;">Azioni</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let dish of filteredDishes()">
-                  <td>
-                    <strong>{{ dish.title }}</strong>
-                    <p class="dish-sub-desc">{{ dish.description }}</p>
-                  </td>
-                  <td>
-                    <span class="badge badge-info">{{ dish.category }}</span>
-                    <span *ngIf="dish.subcategory" class="subcat-text">({{ dish.subcategory }})</span>
-                  </td>
-                  <td><strong>€ {{ dish.price.toFixed(2) }}</strong></td>
-                  <td>
-                    <div class="allergens-cell">
-                      <app-allergen-badge *ngFor="let a of dish.allergens" [allergen]="a"></app-allergen-badge>
-                    </div>
-                  </td>
-                  <td>
-                    <button
-                      (click)="toggleAvailability(dish)"
-                      class="badge"
-                      [ngClass]="dish.isAvailable ? 'badge-success' : 'badge-danger'"
-                      style="cursor: pointer; border: none;"
-                    >
-                      {{ dish.isAvailable ? 'Sì' : 'No' }}
-                    </button>
-                  </td>
-                  <td>
-                    <span *ngIf="dish.isChefSpecial" class="badge badge-gold">Chef</span>
-                  </td>
-                  <td style="text-align: right;">
-                    <div class="action-btns">
-                      <button (click)="openEditModal(dish)" class="btn-action edit" title="Modifica">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                      </button>
-                      <button (click)="deleteDish(dish)" class="btn-action delete" title="Elimina">
-                        <i class="fa-solid fa-trash-can"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+      <div class="bo-tabs" role="tablist">
+        <button
+          type="button"
+          *ngFor="let c of categories"
+          role="tab"
+          [class.active]="activeCategory() === c.key"
+          [attr.aria-selected]="activeCategory() === c.key"
+          (click)="activeCategory.set(c.key)"
+        >
+          {{ c.label }}<span class="count">{{ countFor(c.key) }}</span>
+        </button>
       </div>
 
-      <!-- Create / Edit Dish Modal -->
-      <app-modal
-        *ngIf="isModalOpen()"
-        [title]="editingDishId() ? 'Modifica Piatto' : 'Nuovo Piatto in Menù'"
-        (closed)="closeModal()"
-      >
-        <form (ngSubmit)="saveDish()">
-          <div class="form-group">
-            <label>Titolo Piatto *</label>
-            <input type="text" class="form-control" [(ngModel)]="formData.title" name="title" required placeholder="Spaghetti alle Vongole">
-          </div>
+      <input class="bo-search" type="search" placeholder="Cerca in tutto il menù…" [ngModel]="query()" (ngModelChange)="query.set($event)" />
 
-          <div class="form-group">
-            <label>Descrizione *</label>
-            <textarea class="form-control" [(ngModel)]="formData.description" name="description" rows="3" required placeholder="Ingredienti, preparazione e provenienza..."></textarea>
-          </div>
+      <ng-container *ngFor="let group of groups()">
+        <h2 class="bo-section-label">{{ group.label }}</h2>
+        <section class="bo-panel">
+          <ul class="bo-list">
+            <li class="bo-row dish-row" *ngFor="let dish of group.dishes" [class.is-muted]="!dish.isAvailable">
+              <div class="bo-row-main">
+                <div class="bo-row-title">
+                  {{ dish.title }}
+                  <span class="bo-chip info" *ngIf="dish.isChefSpecial">Consigliato</span>
+                </div>
+                <div class="bo-row-sub">
+                  <span class="allergen-nums" *ngIf="dish.allergenNumbers?.length">Allergeni {{ dish.allergenNumbers!.join(', ') }} · </span>{{ dish.description }}
+                </div>
+              </div>
+              <span class="price">{{ dish.price | currency:'EUR':'symbol':'1.2-2':'it' }}</span>
+              <div class="bo-row-actions">
+                <label class="bo-switch" [title]="dish.isAvailable ? 'Disponibile' : 'Non disponibile'">
+                  <input type="checkbox" [checked]="dish.isAvailable" (change)="toggleAvailability(dish)" [attr.aria-label]="'Disponibilità ' + dish.title" />
+                  <span class="track"></span>
+                </label>
+                <button type="button" class="bo-btn small" (click)="openEdit(dish)">
+                  <bo-icon name="edit" [size]="16"></bo-icon> Modifica
+                </button>
+              </div>
+            </li>
+          </ul>
+        </section>
+      </ng-container>
 
-          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-            <div class="form-group">
-              <label>Prezzo (€) *</label>
-              <input type="number" step="0.5" class="form-control" [(ngModel)]="formData.price" name="price" min="0" required>
-            </div>
-            <div class="form-group">
-              <label>Categoria *</label>
-              <select class="form-control" [(ngModel)]="formData.category" name="category" required>
-                <option value="pesce">Pesce</option>
-                <option value="carne">Carne</option>
-                <option value="pizze">Pizze</option>
-                <option value="contorni">Contorni</option>
-                <option value="vini">Vini</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Sottocategoria (es. antipasti, primi, secondi, crudo, dolci)</label>
-            <input type="text" class="form-control" [(ngModel)]="formData.subcategory" name="subcategory" placeholder="primi">
-          </div>
-
-          <div class="form-group">
-            <label>URL Immagine</label>
-            <input type="text" class="form-control" [(ngModel)]="formData.image" name="image" placeholder="/uploads/dishes/dish.jpg">
-          </div>
-
-          <div class="form-group">
-            <label>Allergeni (seleziona tutti quelli presenti)</label>
-            <div class="allergen-selection-grid">
-              <label *ngFor="let a of availableAllergens" class="allergen-label">
-                <input
-                  type="checkbox"
-                  [checked]="isAllergenSelected(a.key)"
-                  (change)="toggleAllergen(a.key)"
-                >
-                <span>{{ a.label }}</span>
-              </label>
-            </div>
-          </div>
-
-          <div class="form-row" style="display: flex; gap: 2rem; margin: 1.5rem 0;">
-            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-              <input type="checkbox" [(ngModel)]="formData.isAvailable" name="isAvailable">
-              <strong>Disponibile per l'ordine</strong>
-            </label>
-            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-              <input type="checkbox" [(ngModel)]="formData.isChefSpecial" name="isChefSpecial">
-              <strong>Specialità dello Chef</strong>
-            </label>
-          </div>
-
-          <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
-            <button type="button" (click)="closeModal()" class="btn btn-outline btn-sm">Annulla</button>
-            <button type="submit" class="btn btn-gold btn-sm" [disabled]="!formData.title || !formData.description || formData.price === undefined">
-              {{ editingDishId() ? 'Salva Modifiche' : 'Crea Piatto' }}
-            </button>
-          </div>
-        </form>
-      </app-modal>
+      <div class="bo-empty" *ngIf="groups().length === 0 && !isLoading()">
+        <strong>Nessuna voce trovata</strong>
+        <p>Prova con un'altra parola o un'altra categoria.</p>
+      </div>
     </div>
+
+    <bo-sheet *ngIf="isEditorOpen()" [title]="editingId() ? 'Modifica voce' : 'Nuova voce di menù'" (closed)="closeEditor()">
+      <form class="bo-form" id="dish-form" (ngSubmit)="save()">
+        <div class="bo-field">
+          <label for="d-title">Nome</label>
+          <input id="d-title" name="title" [(ngModel)]="form.title" required placeholder="Es. Spaghetti con vongole veraci" />
+        </div>
+
+        <div class="bo-field">
+          <label for="d-desc">Descrizione</label>
+          <textarea id="d-desc" name="description" rows="3" [(ngModel)]="form.description" required></textarea>
+        </div>
+
+        <div class="bo-grid-3">
+          <div class="bo-field">
+            <label for="d-price">Prezzo (€)</label>
+            <input id="d-price" name="price" type="number" min="0" step="0.5" inputmode="decimal" [(ngModel)]="form.price" required />
+          </div>
+          <div class="bo-field">
+            <label for="d-cat">Categoria</label>
+            <select id="d-cat" name="category" [(ngModel)]="form.category" (ngModelChange)="onCategoryChange()">
+              <option *ngFor="let c of categories" [value]="c.key">{{ c.label }}</option>
+            </select>
+          </div>
+          <div class="bo-field">
+            <label for="d-sub">Sezione</label>
+            <select id="d-sub" name="subcategory" [(ngModel)]="form.subcategory">
+              <option *ngFor="let s of subcategoriesFor(form.category)" [value]="s.key">{{ s.label }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="bo-field">
+          <span class="bo-label">Allergeni</span>
+          <div class="allergen-grid">
+            <label *ngFor="let a of allergens" [class.on]="hasAllergen(a.n)">
+              <input type="checkbox" [checked]="hasAllergen(a.n)" (change)="toggleAllergen(a.n)" />
+              <span class="num">{{ a.n }}</span> {{ a.label }}
+            </label>
+          </div>
+        </div>
+
+        <div class="bo-field">
+          <span class="bo-label">Foto (facoltativa)</span>
+          <bo-photo-picker [(images)]="form.images" [multiple]="false"></bo-photo-picker>
+        </div>
+
+        <div class="switches">
+          <label class="bo-switch">
+            <input type="checkbox" name="isAvailable" [(ngModel)]="form.isAvailable" />
+            <span class="track"></span>
+            Disponibile
+          </label>
+          <label class="bo-switch">
+            <input type="checkbox" name="isChefSpecial" [(ngModel)]="form.isChefSpecial" />
+            <span class="track"></span>
+            Consigliato dallo chef
+          </label>
+        </div>
+
+        <button *ngIf="editingId()" type="button" class="bo-btn danger-ghost delete-btn" (click)="remove()">
+          <bo-icon name="trash" [size]="16"></bo-icon> Elimina questa voce dal menù
+        </button>
+      </form>
+
+      <ng-container sheet-footer>
+        <button type="button" class="bo-btn" (click)="closeEditor()">Annulla</button>
+        <button type="submit" form="dish-form" class="bo-btn primary"
+          [disabled]="isSaving() || !form.title.trim() || !form.description.trim() || form.price === null">
+          {{ isSaving() ? 'Salvataggio…' : (editingId() ? 'Salva modifiche' : 'Aggiungi al menù') }}
+        </button>
+      </ng-container>
+    </bo-sheet>
+
+    <div class="bo-toast" *ngIf="toast() as t" [class.error]="t.error">{{ t.text }}</div>
   `,
   styles: [`
-    .management-page {
-      padding: 2.5rem 0 5rem;
-      background: var(--color-bg-main);
-      min-height: 80vh;
+    .dish-row .bo-row-title { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+
+    .allergen-nums { color: var(--text-stone); font-weight: 500; }
+
+    .price {
+      flex-shrink: 0;
+      min-width: 72px;
+      text-align: right;
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
     }
 
-    .page-top-nav {
-      margin-bottom: 1.5rem;
-
-      .back-link {
-        color: var(--color-navy-medium);
-        font-weight: 600;
-        font-size: 0.9rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-
-        &:hover {
-          color: var(--color-gold-dark);
-        }
-      }
-    }
-
-    .management-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-
-      h1 {
-        font-size: 2.2rem;
-        color: var(--color-navy-dark);
-        margin-bottom: 0.25rem;
-      }
-
-      p {
-        color: var(--color-text-muted);
-        margin-bottom: 0;
-      }
-    }
-
-    .alert-box {
-      padding: 0.85rem 1.25rem;
-      border-radius: 6px;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.92rem;
-
-      &.alert-success { background: rgba(42, 157, 143, 0.15); color: var(--color-success); }
-      &.alert-error { background: rgba(217, 4, 41, 0.15); color: var(--color-danger); }
-    }
-
-    .table-card {
-      padding: 1.5rem;
-
-      .table-filters {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-
-        .table-search { max-width: 320px; }
-        .table-cat-select { max-width: 220px; }
-      }
-
-      .table-responsive {
-        overflow-x: auto;
-      }
-
-      .data-table {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: left;
-        font-size: 0.92rem;
-
-        th {
-          background: var(--color-seafoam);
-          color: var(--color-navy-dark);
-          font-family: var(--font-body);
-          font-weight: 700;
-          padding: 0.85rem 1rem;
-          border-bottom: 2px solid var(--color-border);
-        }
-
-        td {
-          padding: 1rem;
-          border-bottom: 1px solid var(--color-border);
-          vertical-align: middle;
-
-          .dish-sub-desc {
-            font-size: 0.8rem;
-            color: var(--color-text-muted);
-            margin-bottom: 0;
-            max-width: 300px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-
-          .subcat-text {
-            font-size: 0.75rem;
-            color: var(--color-text-light);
-            margin-left: 0.25rem;
-          }
-
-          .allergens-cell {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.25rem;
-            max-width: 180px;
-          }
-
-          .action-btns {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-
-            .btn-action {
-              background: transparent;
-              border: 1px solid var(--color-border);
-              border-radius: 4px;
-              width: 32px;
-              height: 32px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              cursor: pointer;
-              transition: all var(--transition-fast);
-
-              &.edit {
-                color: var(--color-navy-medium);
-                &:hover { background: var(--color-navy-medium); color: #fff; }
-              }
-
-              &.delete {
-                color: var(--color-danger);
-                &:hover { background: var(--color-danger); color: #fff; }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    .allergen-selection-grid {
+    .allergen-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 0.5rem;
-      background: var(--color-seafoam);
-      padding: 0.75rem;
-      border-radius: 6px;
-      max-height: 150px;
-      overflow-y: auto;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.4rem;
 
-      .allergen-label {
+      label {
         display: flex;
         align-items: center;
-        gap: 0.4rem;
-        font-size: 0.8rem;
+        gap: 0.5rem;
+        min-height: 40px;
+        padding: 0 0.6rem;
+        border: 1px solid var(--border-subtle);
+        border-radius: 6px;
+        background: var(--bg-surface);
+        font-size: 0.88rem;
         cursor: pointer;
+
+        input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+
+        .num {
+          width: 22px;
+          height: 22px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          background: var(--bg-surface-alt);
+          font-size: 0.72rem;
+          font-weight: 700;
+          color: var(--text-stone);
+        }
+
+        &.on {
+          border-color: var(--color-accent);
+          background: var(--color-accent-subtle);
+          font-weight: 600;
+
+          .num { background: var(--color-accent); color: #FFFFFF; }
+        }
       }
+    }
+
+    .switches { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+
+    .delete-btn { align-self: flex-start; margin-top: 0.5rem; }
+
+    @media (max-width: 760px) {
+      .dish-row .price { order: 2; }
+      .dish-row .bo-row-actions { order: 3; width: auto; margin-left: auto; }
     }
   `],
 })
 export class MenuManagementComponent implements OnInit {
   private menuService = inject(MenuService);
 
-  public dishes = signal<MenuItem[]>([]);
-  public filteredDishes = signal<MenuItem[]>([]);
-  public searchFilter: string = '';
-  public categoryFilter: string = '';
+  readonly categories = CATEGORIES;
+  readonly allergens = ALLERGENS;
 
-  public isModalOpen = signal<boolean>(false);
-  public editingDishId = signal<string | null>(null);
-  public feedbackMsg = signal<string>('');
-  public isErrorFeedback = signal<boolean>(false);
+  dishes = signal<MenuItem[]>([]);
+  isLoading = signal(true);
+  activeCategory = signal<MenuCategory>('pesce');
+  query = signal('');
+  isEditorOpen = signal(false);
+  editingId = signal<string | null>(null);
+  isSaving = signal(false);
+  toast = signal<{ text: string; error: boolean } | null>(null);
 
-  public formData: Partial<MenuItem> = {
-    title: '',
-    description: '',
-    price: 0,
-    category: 'pesce',
-    subcategory: '',
-    allergens: [],
-    image: '',
-    isAvailable: true,
-    isChefSpecial: false,
-  };
+  form: DishForm = this.emptyForm('pesce');
 
-  public availableAllergens = [
-    { key: 'glutine', label: 'Glutine' },
-    { key: 'crostacei', label: 'Crostacei' },
-    { key: 'uova', label: 'Uova' },
-    { key: 'pesce', label: 'Pesce' },
-    { key: 'arachidi', label: 'Arachidi' },
-    { key: 'soia', label: 'Soia' },
-    { key: 'latte', label: 'Latte' },
-    { key: 'frutta_a_guscio', label: 'Frutta a Guscio' },
-    { key: 'sedano', label: 'Sedano' },
-    { key: 'senape', label: 'Senape' },
-    { key: 'semi_di_sesamo', label: 'Sesamo' },
-    { key: 'anidride_solforosa', label: 'Solfiti' },
-    { key: 'lupini', label: 'Lupini' },
-    { key: 'molluschi', label: 'Molluschi' },
-  ];
+  /** Con una ricerca attiva si cerca in tutto il menù, altrimenti si mostra la categoria scelta. */
+  groups = computed<DishGroup[]>(() => {
+    const q = this.query().trim().toLowerCase();
+    const source = q
+      ? this.dishes().filter((d) => d.title.toLowerCase().includes(q) || d.description.toLowerCase().includes(q))
+      : this.dishes().filter((d) => d.category === this.activeCategory());
+
+    const groups: DishGroup[] = [];
+    for (const dish of source) {
+      const label = q ? this.categoryLabel(dish.category) : this.subcategoryLabel(dish.category, dish.subcategory);
+      let group = groups.find((g) => g.label === label);
+      if (!group) {
+        group = { label, dishes: [] };
+        groups.push(group);
+      }
+      group.dishes.push(dish);
+    }
+    return groups;
+  });
 
   ngOnInit(): void {
-    this.loadDishes();
+    this.load();
   }
 
-  loadDishes(): void {
+  load(): void {
     this.menuService.getMenuItems().subscribe({
       next: (res) => {
-        if (res.success) {
-          this.dishes.set(res.data);
-          this.applyLocalFilter();
-        }
+        this.dishes.set(res.data || []);
+        this.isLoading.set(false);
+      },
+      error: () => this.isLoading.set(false),
+    });
+  }
+
+  countFor(category: MenuCategory): number {
+    return this.dishes().filter((d) => d.category === category).length;
+  }
+
+  subcategoriesFor(category: MenuCategory) {
+    return SUBCATEGORIES[category] || [];
+  }
+
+  categoryLabel(category: MenuCategory): string {
+    return CATEGORIES.find((c) => c.key === category)?.label || category;
+  }
+
+  subcategoryLabel(category: MenuCategory, sub?: string): string {
+    return SUBCATEGORIES[category]?.find((s) => s.key === sub)?.label || 'Altro';
+  }
+
+  toggleAvailability(dish: MenuItem): void {
+    const id = entityId(dish);
+    const next = !dish.isAvailable;
+    this.dishes.update((list) => list.map((d) => (entityId(d) === id ? { ...d, isAvailable: next } : d)));
+    this.menuService.updateMenuItem(id, { isAvailable: next }).subscribe({
+      next: () => this.showToast(next ? `«${dish.title}» di nuovo disponibile.` : `«${dish.title}» segnato come finito.`),
+      error: (err) => {
+        this.showToast(err.message || 'Aggiornamento non riuscito.', true);
+        this.load();
       },
     });
   }
 
-  applyLocalFilter(): void {
-    let list = this.dishes();
-    if (this.categoryFilter) {
-      list = list.filter((d) => d.category === this.categoryFilter);
-    }
-    if (this.searchFilter.trim()) {
-      const q = this.searchFilter.toLowerCase().trim();
-      list = list.filter(
-        (d) =>
-          d.title.toLowerCase().includes(q) ||
-          d.description.toLowerCase().includes(q)
-      );
-    }
-    this.filteredDishes.set(list);
+  openCreate(): void {
+    this.editingId.set(null);
+    this.form = this.emptyForm(this.activeCategory());
+    this.isEditorOpen.set(true);
   }
 
-  openCreateModal(): void {
-    this.editingDishId.set(null);
-    this.formData = {
-      title: '',
-      description: '',
-      price: 15.0,
-      category: 'pesce',
-      subcategory: 'primi',
-      allergens: [],
-      image: '',
-      isAvailable: true,
-      isChefSpecial: false,
-    };
-    this.isModalOpen.set(true);
-  }
-
-  openEditModal(dish: MenuItem): void {
-    this.editingDishId.set(dish.id || dish._id || null);
-    this.formData = {
+  openEdit(dish: MenuItem): void {
+    this.editingId.set(entityId(dish));
+    this.form = {
       title: dish.title,
       description: dish.description,
       price: dish.price,
       category: dish.category,
-      subcategory: dish.subcategory,
-      allergens: [...dish.allergens],
-      image: dish.image,
+      subcategory: dish.subcategory || this.subcategoriesFor(dish.category)[0]?.key || '',
+      allergenNumbers: [...(dish.allergenNumbers || [])],
       isAvailable: dish.isAvailable,
-      isChefSpecial: dish.isChefSpecial,
+      isChefSpecial: !!dish.isChefSpecial,
+      images: dish.image ? [dish.image] : [],
     };
-    this.isModalOpen.set(true);
+    this.isEditorOpen.set(true);
   }
 
-  closeModal(): void {
-    this.isModalOpen.set(false);
+  closeEditor(): void {
+    this.isEditorOpen.set(false);
   }
 
-  isAllergenSelected(key: string): boolean {
-    return this.formData.allergens?.includes(key) || false;
-  }
-
-  toggleAllergen(key: string): void {
-    const list = this.formData.allergens || [];
-    if (list.includes(key)) {
-      this.formData.allergens = list.filter((a) => a !== key);
-    } else {
-      this.formData.allergens = [...list, key];
+  onCategoryChange(): void {
+    const subs = this.subcategoriesFor(this.form.category);
+    if (!subs.some((s) => s.key === this.form.subcategory)) {
+      this.form.subcategory = subs[0]?.key || '';
     }
   }
 
-  saveDish(): void {
-    const id = this.editingDishId();
-    if (id) {
-      this.menuService.updateMenuItem(id, this.formData).subscribe({
-        next: () => {
-          this.setFeedback('Piatto aggiornato con successo.');
-          this.closeModal();
-          this.loadDishes();
-        },
-        error: (err) => this.setFeedback(err.message, true),
-      });
-    } else {
-      this.menuService.createMenuItem(this.formData).subscribe({
-        next: () => {
-          this.setFeedback('Nuovo piatto aggiunto con successo.');
-          this.closeModal();
-          this.loadDishes();
-        },
-        error: (err) => this.setFeedback(err.message, true),
-      });
-    }
+  hasAllergen(n: number): boolean {
+    return this.form.allergenNumbers.includes(n);
   }
 
-  toggleAvailability(dish: MenuItem): void {
-    const id = dish.id || dish._id;
-    if (!id) return;
+  toggleAllergen(n: number): void {
+    this.form.allergenNumbers = this.hasAllergen(n)
+      ? this.form.allergenNumbers.filter((x) => x !== n)
+      : [...this.form.allergenNumbers, n].sort((a, b) => a - b);
+  }
 
-    this.menuService.updateMenuItem(id, { isAvailable: !dish.isAvailable }).subscribe({
+  save(): void {
+    // Numeri e chiavi degli allergeni vengono inviati insieme, così restano allineati nel database.
+    const payload: Partial<MenuItem> = {
+      title: this.form.title.trim(),
+      description: this.form.description.trim(),
+      price: Number(this.form.price),
+      category: this.form.category,
+      subcategory: this.form.subcategory,
+      allergenNumbers: this.form.allergenNumbers,
+      allergens: ALLERGENS.filter((a) => this.form.allergenNumbers.includes(a.n)).map((a) => a.slug),
+      isAvailable: this.form.isAvailable,
+      isChefSpecial: this.form.isChefSpecial,
+      image: this.form.images[0] || '',
+    };
+
+    const id = this.editingId();
+    const request = id ? this.menuService.updateMenuItem(id, payload) : this.menuService.createMenuItem(payload);
+    this.isSaving.set(true);
+    request.subscribe({
       next: () => {
-        this.loadDishes();
+        this.isSaving.set(false);
+        this.closeEditor();
+        this.activeCategory.set(this.form.category);
+        this.showToast(id ? 'Modifiche salvate.' : 'Voce aggiunta al menù.');
+        this.load();
+      },
+      error: (err) => {
+        this.isSaving.set(false);
+        this.showToast(err.message || 'Salvataggio non riuscito.', true);
       },
     });
   }
 
-  deleteDish(dish: MenuItem): void {
-    const id = dish.id || dish._id;
-    if (!id) return;
-
-    if (confirm(`Sei sicuro di voler eliminare "${dish.title}" dal menù?`)) {
-      this.menuService.deleteMenuItem(id).subscribe({
-        next: () => {
-          this.setFeedback('Piatto rimosso con successo.');
-          this.loadDishes();
-        },
-        error: (err) => this.setFeedback(err.message, true),
-      });
-    }
+  remove(): void {
+    const id = this.editingId();
+    if (!id || !confirm(`Eliminare «${this.form.title}» dal menù? Se è solo finita, basta spegnerla.`)) return;
+    this.menuService.deleteMenuItem(id).subscribe({
+      next: () => {
+        this.closeEditor();
+        this.showToast('Voce eliminata.');
+        this.load();
+      },
+      error: (err) => this.showToast(err.message || 'Eliminazione non riuscita.', true),
+    });
   }
 
-  private setFeedback(msg: string, isError = false): void {
-    this.feedbackMsg.set(msg);
-    this.isErrorFeedback.set(isError);
-    setTimeout(() => this.feedbackMsg.set(''), 4000);
+  private emptyForm(category: MenuCategory): DishForm {
+    return {
+      title: '',
+      description: '',
+      price: null,
+      category,
+      subcategory: SUBCATEGORIES[category]?.[0]?.key || '',
+      allergenNumbers: [],
+      isAvailable: true,
+      isChefSpecial: false,
+      images: [],
+    };
+  }
+
+  private showToast(text: string, error = false): void {
+    this.toast.set({ text, error });
+    setTimeout(() => this.toast.set(null), 3500);
   }
 }
