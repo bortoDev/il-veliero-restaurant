@@ -535,7 +535,7 @@ interface LightboxState {
 
       .empty-icon {
         font-size: 2.75rem;
-        color: var(--color-accent, #0EA5E9);
+        color: var(--color-accent, #0369A1);
         opacity: 0.6;
         margin-bottom: 1.25rem;
       }
@@ -731,7 +731,7 @@ interface LightboxState {
             transition: color 0.25s ease;
 
             &:hover {
-              color: var(--color-accent-hover, #0284C7);
+              color: var(--color-accent-hover, #075985);
             }
           }
 
@@ -758,8 +758,8 @@ interface LightboxState {
 
               &:hover {
                 background: #f8fafc;
-                color: var(--color-accent-hover, #0284C7);
-                border-color: var(--color-accent, #0EA5E9);
+                color: var(--color-accent-hover, #075985);
+                border-color: var(--color-accent, #0369A1);
               }
 
               &.delete:hover {
@@ -1065,12 +1065,12 @@ interface LightboxState {
             }
 
             &:hover {
-              color: var(--color-accent-hover, #0284C7);
-              background: rgba(14, 165, 233, 0.06);
+              color: var(--color-accent-hover, #075985);
+              background: rgba(3, 105, 161, 0.08);
               transform: translateY(-1px);
 
               i {
-                color: var(--color-accent-hover, #0284C7);
+                color: var(--color-accent-hover, #075985);
               }
             }
 
@@ -1081,7 +1081,7 @@ interface LightboxState {
 
             &.share-link:hover i {
               animation: shareNudge 0.4s ease-in-out;
-              color: var(--color-accent-hover, #0284C7);
+              color: var(--color-accent-hover, #075985);
             }
           }
         }
@@ -1185,8 +1185,8 @@ interface LightboxState {
             flex-shrink: 0;
 
             &:hover {
-              background: var(--color-accent, #0EA5E9);
-              border-color: var(--color-accent, #0EA5E9);
+              background: var(--color-accent, #0369A1);
+              border-color: var(--color-accent, #0369A1);
             }
           }
 

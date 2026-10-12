@@ -297,7 +297,7 @@ import {
             left: 0;
             width: 32px;
             height: 1.5px;
-            background: var(--color-accent, #0EA5E9);
+            background: var(--color-accent, #0369A1);
           }
         }
 
@@ -382,12 +382,12 @@ import {
             color: var(--text-inverse, #F1F5F9);
             font-size: 1rem;
             transition: all var(--transition-fast);
-            border: 1px solid var(--border-accent, rgba(14, 165, 233, 0.3));
+            border: 1px solid var(--border-accent, rgba(3, 105, 161, 0.35));
 
             &:hover {
-              background: var(--color-accent, #0EA5E9);
+              background: var(--color-accent, #0369A1);
               color: #FFFFFF;
-              border-color: var(--color-accent, #0EA5E9);
+              border-color: var(--color-accent, #0369A1);
               transform: translateY(-1px);
             }
           }
@@ -411,7 +411,7 @@ import {
 
             i {
               font-size: 0.65rem;
-              color: var(--color-accent, #0EA5E9);
+              color: var(--color-accent, #0369A1);
             }
 
             &:hover {
@@ -470,7 +470,7 @@ import {
           i {
             margin-top: 0.15rem;
             font-size: 0.8rem;
-            color: var(--color-accent, #0EA5E9);
+            color: var(--color-accent, #0369A1);
           }
         }
 
@@ -487,7 +487,7 @@ import {
             color: var(--text-inverse, #F1F5F9);
 
             i {
-              color: var(--color-accent, #0EA5E9);
+              color: var(--color-accent, #0369A1);
               margin-top: 0.2rem;
               font-size: 0.9rem;
               min-width: 16px;
@@ -574,15 +574,15 @@ import {
             text-decoration: none;
             padding: 0.3rem 0.75rem;
             border-radius: 3px;
-            border: 1px solid var(--border-accent, rgba(14, 165, 233, 0.35));
-            background: rgba(14, 165, 233, 0.08);
+            border: 1px solid var(--border-accent, rgba(3, 105, 161, 0.35));
+            background: rgba(3, 105, 161, 0.08);
             transition: all var(--transition-fast);
 
             i { font-size: 0.75rem; }
 
             &:hover {
               color: #FFFFFF;
-              background: var(--color-accent, #0EA5E9);
+              background: var(--color-accent, #0369A1);
             }
           }
         }

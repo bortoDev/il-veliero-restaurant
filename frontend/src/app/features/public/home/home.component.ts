@@ -665,7 +665,7 @@ export interface ShowcaseCardItem {
 
           &:hover {
             transform: translateY(-4px);
-            border-color: var(--color-accent, #0EA5E9);
+            border-color: var(--color-accent, #0369A1);
             box-shadow: var(--shadow-hover);
 
             .card-media-wrapper {
@@ -674,18 +674,18 @@ export interface ShowcaseCardItem {
 
             .veliero-card-plaque {
               background-color: #FAF7F2;
-              border-color: var(--color-accent, #0EA5E9);
+              border-color: var(--color-accent, #0369A1);
 
               &::before {
-                border-color: rgba(14, 165, 233, 0.45);
+                border-color: rgba(3, 105, 161, 0.45);
               }
 
               .plaque-title {
-                color: var(--color-accent, #0EA5E9);
+                color: var(--color-accent, #0369A1);
               }
 
               .plaque-arrow-wrap {
-                color: var(--color-accent, #0EA5E9);
+                color: var(--color-accent, #0369A1);
 
                 .feather-arrow {
                   transform: translateX(4px);
@@ -810,7 +810,7 @@ export interface ShowcaseCardItem {
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.18em;
-            color: var(--color-accent, #0EA5E9);
+            color: var(--color-accent, #0369A1);
             margin-bottom: 0.6rem;
           }
 
@@ -929,11 +929,11 @@ export interface ShowcaseCardItem {
                 font-weight: 500;
                 letter-spacing: 0.08em;
                 color: #FFFFFF;
-                background-color: var(--color-accent, #0EA5E9);
-                border: 1px solid var(--color-accent-hover, #0284C7);
+                background-color: var(--color-accent, #0369A1);
+                border: 1px solid var(--color-accent-hover, #075985);
                 border-radius: 2px;
                 text-decoration: none;
-                box-shadow: 0 4px 14px rgba(14, 165, 233, 0.28);
+                box-shadow: 0 4px 14px rgba(3, 105, 161, 0.28);
                 transition: all var(--transition-fast);
 
                 i {
@@ -941,9 +941,9 @@ export interface ShowcaseCardItem {
                 }
 
                 &:hover {
-                  background-color: var(--color-accent-hover, #0284C7);
+                  background-color: var(--color-accent-hover, #075985);
                   transform: translateY(-2px);
-                  box-shadow: 0 6px 18px rgba(14, 165, 233, 0.42);
+                  box-shadow: 0 6px 18px rgba(3, 105, 161, 0.42);
                 }
 
                 &:active {
@@ -1028,15 +1028,15 @@ export interface ShowcaseCardItem {
               transform: scale(0.99);
 
               .veliero-card-plaque {
-                border-color: var(--color-accent, #0EA5E9);
+                border-color: var(--color-accent, #0369A1);
 
                 &::before {
-                  border-color: rgba(14, 165, 233, 0.45);
+                  border-color: rgba(3, 105, 161, 0.45);
                 }
 
                 .plaque-title,
                 .plaque-arrow-wrap {
-                  color: var(--color-accent, #0EA5E9);
+                  color: var(--color-accent, #0369A1);
                 }
 
                 .feather-arrow {

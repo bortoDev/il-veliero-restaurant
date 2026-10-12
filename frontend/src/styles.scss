@@ -14,7 +14,7 @@
   --bg-sand: #E2E8F0;                  // Slate 200
   --bg-sand-light: #F8FAFC;            // Slate 50
   --bg-parchment: #FFFFFF;             // Bianco Puro
-  --bg-pastel-sky: #0EA5E9;            // Sky 500 - Azzurro Oceano
+  --bg-pastel-sky: #0369A1;            // Sky 700 - Azzurro Oceano Profondo (WCAG AA 5.9:1)
   --bg-navy-dark: #1E293B;             // Slate 800 - Deep Slate Navy
   --bg-navy-deep: #0F172A;             // Slate 900 - Navy Profondo di supporto
   --bg-navy-card: #0F172A;             // Slate 900
@@ -37,10 +37,10 @@
   --text-inverse-muted: #CBD5E1;       // Slate 300 (Sottotitoli su fondo scuro)
 
   // --- Accenti Sartoriali & Metalli ---
-  --color-accent: #0EA5E9;             // Sky 500 - Azzurro Oceano Primario
-  --color-accent-hover: #0284C7;       // Sky 600 - Azzurro Intenso Hover
+  --color-accent: #0369A1;             // Sky 700 - Azzurro Primario conforme WCAG AA (5.9:1)
+  --color-accent-hover: #075985;       // Sky 800 - Azzurro Intenso Hover (> 7:1)
   --color-accent-light: #BAE6FD;       // Sky 200 - Azzurro Cielo Chiaro
-  --color-accent-subtle: rgba(14, 165, 233, 0.12);
+  --color-accent-subtle: rgba(3, 105, 161, 0.12);
   --color-gold: #EAB308;               // Yellow 500 - Oro Caldo / Campione del Mondo
   --color-gold-dark: #CA8A04;          // Yellow 600 - Oro Intenso
   --color-gold-subtle: rgba(234, 179, 8, 0.15);
@@ -48,14 +48,14 @@
   // --- Bordi & Separatori ---
   --border-subtle: #D4D4D8;            // Zinc 300 - Filetto neutro standard
   --border-medium: #A1A1AA;            // Zinc 400 - Bordo rinforzato
-  --border-accent: rgba(14, 165, 233, 0.35); // Bordo azzurro nobile
+  --border-accent: rgba(3, 105, 161, 0.35); // Bordo azzurro nobile
   --border-gold: rgba(234, 179, 8, 0.4);
 
   // --- Stati di Servizio & Gastronomia ---
   --status-success: #16A34A;           // Verde Smeraldo (Disponibile / Pescato fresco)
   --status-warning: #EAB308;           // Yellow 500 - Oro Sole (Specialità chef)
   --status-danger: #DC2626;            // Rosso Cremisi (Esaurito / Allergeni)
-  --status-info: #0EA5E9;              // Sky 500 - Azzurro Oceano
+  --status-info: #0369A1;              // Sky 700 - Azzurro Oceano WCAG AA
 
   // --- Skeleton Loaders Sartoriali (Cool Zinc Shimmer) ---
   --color-skeleton-base: #E2E8F0;
@@ -451,7 +451,7 @@ img {
 
     &:hover {
       background-color: var(--color-accent-hover);
-      border-color: #0369a1;
+      border-color: #0c4a6e;
       color: #FFFFFF;
     }
   }
@@ -585,7 +585,7 @@ img {
   &.badge-gold {
     background-color: var(--color-accent-subtle);
     border: 1px solid var(--border-accent);
-    color: var(--color-accent-hover);
+    color: var(--color-accent); // #0369A1 (Sky-700) per contrasto 5.9:1
   }
 
   &.badge-navy {

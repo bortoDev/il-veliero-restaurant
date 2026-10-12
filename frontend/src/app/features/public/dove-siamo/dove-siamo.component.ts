@@ -212,7 +212,7 @@ import { VelieroShipComponent } from '../../../shared/components/svg-icons';
         font-weight: 500;
         text-transform: uppercase;
         letter-spacing: var(--tracking-eyebrow, 0.16em);
-        color: var(--color-accent-hover, #0284C7);
+        color: var(--color-accent, #0369A1);
         display: block;
         margin-bottom: 0.35rem;
       }
@@ -241,7 +241,7 @@ import { VelieroShipComponent } from '../../../shared/components/svg-icons';
       gap: 1.25rem;
 
       .info-icon {
-        color: var(--color-accent-hover, #0284C7);
+        color: var(--color-accent, #0369A1);
         font-size: 1.15rem;
         margin-top: 0.35rem;
         width: 20px;
@@ -278,7 +278,7 @@ import { VelieroShipComponent } from '../../../shared/components/svg-icons';
             transition: color var(--transition-fast, 0.2s ease);
 
             &:hover {
-              color: var(--color-accent-hover, #0284C7);
+              color: var(--color-accent, #0369A1);
             }
           }
 
@@ -286,11 +286,11 @@ import { VelieroShipComponent } from '../../../shared/components/svg-icons';
             font-family: var(--font-sans);
             font-size: 0.95rem;
             font-weight: 400;
-            color: var(--color-accent-hover, #0284C7);
+            color: var(--color-accent, #0369A1);
             transition: color var(--transition-fast, 0.2s ease);
 
             &:hover {
-              color: var(--color-accent, #0EA5E9);
+              color: var(--color-accent-hover, #075985);
             }
           }
         }
@@ -365,7 +365,7 @@ import { VelieroShipComponent } from '../../../shared/components/svg-icons';
           font-weight: 500;
           text-transform: uppercase;
           letter-spacing: var(--tracking-eyebrow, 0.16em);
-          color: var(--color-accent-hover, #0284C7);
+          color: var(--color-accent, #0369A1);
           display: block;
           margin-bottom: 0.35rem;
         }

@@ -1909,13 +1909,13 @@ const MASTER_SECTION_DEFS: SectionDef[] = [
                 transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 
                 &:hover {
-                  border-color: #0284c7;
-                  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.12);
+                  border-color: #0369a1;
+                  box-shadow: 0 4px 14px rgba(3, 105, 161, 0.12);
                   transform: translateY(-2px);
 
                   .allergen-num-badge {
                     transform: scale(1.05);
-                    box-shadow: 0 3px 8px rgba(2, 132, 199, 0.35);
+                    box-shadow: 0 3px 8px rgba(3, 105, 161, 0.35);
                   }
                 }
 
@@ -1937,7 +1937,7 @@ const MASTER_SECTION_DEFS: SectionDef[] = [
                     min-width: 34px;
                     min-height: 34px;
                     border-radius: 50%;
-                    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+                    background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
                     color: #FFFFFF;
                     font-family: var(--font-body-editorial, 'Plus Jakarta Sans', sans-serif);
                     font-weight: 700;

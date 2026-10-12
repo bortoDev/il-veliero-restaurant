@@ -41,7 +41,7 @@ import { Avviso } from '../../../core/models';
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
       &.banner-info {
-        background: linear-gradient(90deg, #0284c7, #0369a1);
+        background: linear-gradient(90deg, #0369a1, #075985);
       }
 
       &.banner-warning {
